@@ -1,11 +1,12 @@
 # This is an example package definition file
 opam-version: "2.0"
-maintainer: "maintainer@example.com"
-authors: "Author Name"
-license: "MIT"
-homepage: "https://example.com"
-bug-reports: "https://example.com/issues"
+maintainer: "maintainergroupmail@samplemicrosoft.com"
+authors: [ "Cecilie Vebner" "Alberte Lohse" "Felix Bjerre" "Nikolaj Van Gool" "Emil Andersen" ]
+license: "GNU General Public License v3.0"
+homepage: "https://github.com/P4-Group/C64-MC"
+bug-reports: "https://github.com/P4-Group/C64-MC/issues"
 dev-repo: "git+https://github.com/P4-Group/C64-MC.git"
+synopsis: "A compiler which translate an easily understood langauge to music on C64" 
 
 build: [
   ["dune" "build" "-p" name "-j" jobs]
