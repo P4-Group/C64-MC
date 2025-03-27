@@ -4,10 +4,13 @@ on:
   pull_request:
     branches: [ "main" ]
 
+  workflow_dispatch:
+
 permissions:
-  read-all
+  read-all: read
   pull-requests: write
   checks: write
+  contents: read
 
 jobs:
   build:
@@ -89,7 +92,6 @@ jobs:
               console.log('Not a pull request, skipping comment and check.');
             }
 
-  # You can keep the other linting jobs as they are
   lint-doc:
     runs-on: ubuntu-latest
     steps:
