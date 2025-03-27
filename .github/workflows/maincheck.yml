@@ -23,17 +23,15 @@ jobs:
       - name: Set up OCaml
         uses: ocaml/setup-ocaml@v2
         with:
-          ocaml-version: '5.0'
-          ocaml-compiler: 'ocamlc' # Explicitly specify the compiler
-          opam-version: '2.1'
+          ocaml-compiler: 'ocaml-base-compiler.5.0.0' # Specify the full compiler name
           allow-prerelease-opam: false
           opam-pin: true
           opam-depext: true
-          opam-local-packages: '*.opam' # Corrected quoting
+          opam-local-packages: '*.opam'
           opam-disable-sandboxing: false
           dune-cache: false
           cache-prefix: v1
-          github-token: ${{ secrets.GITHUB_TOKEN }} # It's good practice to use the provided token
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install OPAM dependencies
         run: opam install . menhir --deps-only -y
