@@ -55,7 +55,7 @@ jobs:
             ocaml-compiler: 5
         - name: Install ocamlformat
           run: opam install ocamlformat
-        - run: opam exec -- ocamlformat --enable-outside-detected-project --check
+        -  run: opam exec -- ocamlformat --enable-outside-detected-project --check bin/**/*.ml lib/**/*.ml
 
   lint-opam:
     runs-on: ubuntu-latest
