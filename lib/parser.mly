@@ -4,36 +4,33 @@
     Open Token
     Open Lexer
     Open Utils
-
-    let check_tonename = function
-        | "A" -> A
-        | "B" -> B
-        | "C" -> C
-        | "D" -> D
-        | "E" -> E
-        | "F" -> F
-        | "G" -> G
-        | _ -> failwith "Invalid tonename"
-
 }
 
 %token <int> INT
-%token <int> PITCH
+%token <int> STDPITCH
 %token <int> TEMPO
-%token <int*int> SIG
-%token  <string> LETTER
-%token <tonename> TONENAME
-%token ACC COMMA
-%token LCB LSB
-%token RCB RSB
+%token <int*int> TIMESIG
+%token <string> LETTER
+%token <string> ID
+%token ACC
+%token SEQ
+%token LOOP
+%token SP (* start paranthesis *)
+%token EP (* end paranthesis *)
+%token LCB (* left curly bracket *)
+%token RCB (* right curly bracket *)
+%token LSB (* left square bracket *)
+%token RSB (* right square bracket *)
+%token COLON
+%token COMMA
 %token EOF
 
-%start prog 
+%start prog (* axiom *)
 %type <Ast.file> prog
 
 (* ---Semantic Actions--- *)
 
-(* ---Context Free Grammer--- *)
+(* ---Context Free Grammar--- *)
 
 (*
 {}: contains semantic action 
@@ -45,7 +42,7 @@ prog:
          {prs = p; ch1 = c1; ch2 = c2; ch3 = c3} }
 
 params:
-    | to = TEMPO? so = SIG? po = PITCH? {
+    | to = TEMPO? so = TIMESIG? po = STDPITCH? { 
         {tmp = to; sig = so; pitch = po} }
       
 
@@ -53,7 +50,7 @@ channel:
     | LSB ch = separated_list(COMMA, seqwv) RSB { ch }
 
 seqwv:  
-    | LP s = seq COMMA wv = waveform RP  { (seq, wv) }
+    | SP s = seq COMMA wv = waveform EP  { (seq, wv) }
     
 
 seq:
@@ -64,7 +61,7 @@ note:
 
 tone:
     | tonename
-    | tonename ACC {$1 $2}
+    | tonename ACCIDENTAL {$1 $2}
 
 oct:
 
@@ -74,6 +71,8 @@ frac:
 
 tonename: 
     | 
+
+waveform: 
 
 
 

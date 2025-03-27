@@ -4,6 +4,11 @@ type params =
     pitch : int option; }
 
 
+type seq =
+{ name : id ;
+  notes : note list ;}
+
+
 type transp = 
   | Octup
   | Octdwn

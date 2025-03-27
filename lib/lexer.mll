@@ -23,6 +23,8 @@ In a lexer everything is read as a sequence of characters (string).
  '*' zero or more occurences
  '?' indicates an optional component 
  '[]' indicates a range
+ '()' indicates a group
+ '|' indicates or
  *)
 
 let digit = ['0'-'9'] (* matches any single character between 0-9*)
@@ -33,9 +35,7 @@ let float = digit* frac (* matches zero or more digits before the decimal point*
 let whitespace = [' ' '\t']+
 let newline = '\n' | '\r'
 let letter = ['a'-'z' 'A'-'Z']+ 
-(* let tonename = ['A'-'G'] *)
-(* let id = ['a'-'z' 'A'-'Z' ]['a'-'z' 'A'-'Z' '0'-'9' '_']+ *)
-(* let accidental = '#' | '_'  *)
+let id = letter (letter | '-' | '_' | digit)* (* identity for a sequence *)
 
 (* ---Lexing Rules--- *)
 
@@ -62,6 +62,7 @@ rule read = parse {
     | whitespace {read lexbuf} (* calls itself recursively *)
     | newline {next_line lexbuf {read lexbuf}} (* define in utils *)
     | letter {LETTER (Lexing.lexeme lexbuf)}
+    | id {ID (Lexing.lexeme lexbuf)}
     | int {INT (int_of_string (Lexing.lexeme lexbuf))}
     | float (FLOAT (float_of_string (Lexing.lexeme lexbuf)))
     | "#" | "_" {ACC}
