@@ -5,7 +5,15 @@
     Open Lexer
     Open Utils
 
-
+    let check_tonename = function
+        | "A" -> A
+        | "B" -> B
+        | "C" -> C
+        | "D" -> D
+        | "E" -> E
+        | "F" -> F
+        | "G" -> G
+        | _ -> failwith "Invalid tonename"
 
 }
 
@@ -15,7 +23,7 @@
 %token <int*int> SIG
 %token  <string> LETTER
 %token <tonename> TONENAME
-%token ACC
+%token ACC COMMA
 %token LCB LSB
 %token RCB RSB
 %token EOF
@@ -41,6 +49,12 @@ params:
         {tmp = to; sig = so; pitch = po} }
       
 
+channel:
+    | LSB ch = separated_list(COMMA, seqwv) RSB { ch }
+
+seqwv:  
+    | LP s = seq COMMA wv = waveform RP  { (seq, wv) }
+    
 
 seq:
     | LCB note_list RCB {Simple $2}
