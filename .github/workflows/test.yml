@@ -45,18 +45,17 @@ jobs:
       - uses: ocaml/setup-ocaml/lint-doc@v3
 
   lint-fmt:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout tree
-        uses: actions/checkout@v4
-      - name: Set-up OCaml
-        uses: ocaml/setup-ocaml@v3
-        with:
-          ocaml-compiler: 5
-      - name: Install ocamlformat
-      - run: opam install ocamlformat
-      - run: opam exec -- ocamlformat --enable-outside-detected-project --check
-
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout tree
+          uses: actions/checkout@v4
+        - name: Set-up OCaml
+          uses: ocaml/setup-ocaml@v3
+          with:
+            ocaml-compiler: 5
+        - name: Install ocamlformat
+          run: opam install ocamlformat
+        - run: opam exec -- ocamlformat --enable-outside-detected-project --check
 
   lint-opam:
     runs-on: ubuntu-latest
