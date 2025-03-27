@@ -1,10 +1,9 @@
 (library
  (name C64MC)
-; (modules)
+ (modules ast lexer parser)
  (libraries menhirLib))
 
-; (ocamllex lexer)
-
-;(menhir
-; (modules parser)
-; (flags --table))
+(ocamllex lexer)
+(menhir
+ (modules parser)
+ (flags --table))
