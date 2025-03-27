@@ -1,4 +1,4 @@
-open PrTest
+open C64MC
 
 let () =
   if Array.length Sys.argv < 2 then
@@ -8,7 +8,7 @@ let () =
     let input_channel = open_in input_filename in
     try
       let lexbuf = Lexing.from_channel input_channel in
-      let ast = PrTest.Parser.file PrTest.Lexer.token lexbuf in (* Removed incorrect type annotation *)
+      let ast = C64MC.Parser.file C64MC.Lexer.token lexbuf in (* Removed incorrect type annotation *)
       let output = Codegen.compile ast in
       Printf.printf "Output:\n%s\n" output;
       close_in input_channel
