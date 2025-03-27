@@ -1,76 +1,74 @@
-type params = 
-  { tmp : int option ; 
-    sig : (int * int) option ;
+
+type loc = Lexing.position * Lexing.position
+
+type ident = { id: string; id_loc: loc }
+
+type params =
+  { tempo : int option ;
+    tmsig : (int * int) option ;
     pitch : int option; }
 
+and seqdef =
+{ name : ident;
+  seq : seq ;}
 
-type seq =
-{ name : id ;
-  notes : note list ;}
 
-
-type transp = 
+and transp =
   | Octup
   | Octdwn
 
-type acc = 
+and acc =
   | Sharp
   | Flat
 
-type oct = 
+and oct =
   | Orig of int
   | Mod of oct * transp
 
-type tonename = 
-  | A 
+and tonename =
+  | A
   | B
-  | C 
-  | D 
-  | E 
-  | F 
-  | G 
+  | C
+  | D
+  | E
+  | F
+  | G
 
-type tone = 
+and tone =
   | Nat of tonename
   | Alt of tonename * acc
 
-type frac = 
+and frac =
   | Full
   | Half
   | Quarter
   | Eight
   | Sixteen
-  
-type note = tone * oct * frac
 
-type waveform = 
+and note =
+ | Sound of tone * oct * frac
+ | Rest of frac
+
+and waveform =
   | Vpulse
   | Triangle
   | Sawtooth
   | Noise
 
-type pattern =
-  | Up
-  | Down
-  | Updown
-
-type chord = {
-  notes: (tone * oct) list
-}
-
-type seq = 
+and seq =
   | Simple of note list
   | Comp of seq * seq
   | Loop of seq * int
-  | Arpeg of chord * int * pattern * int
 
-type channel = (seq * waveform) list
+
+type channel = (ident * waveform) list
 
 type file = {
   prs: params;
+  sqs: seqdef list;
   ch1: channel;
-  ch2: channel;
-  ch3: channel;
+  (* ch2: channel; *)
+  (* ch3: channel; *)
 }
 
 
@@ -92,22 +90,22 @@ type file = {
 
 
 (*
-type tone = 
-  | C 
-  | D 
-  | E 
-  | F 
-  | G 
-  | A 
+type tone =
+  | C
+  | D
+  | E
+  | F
+  | G
+  | A
   | B
 
 type octave = int
 type frac = float
 
-type sequenceStmt = 
+type sequenceStmt =
   | Note        of tone * octave * frac
   | Transpose   of sequenceStmt list * int
-  
+
   | Loop        of sequenceStmt list * floopy_controly
     and floopy_controly =
     | x of int
