@@ -1,0 +1,4 @@
+(executable
+ (public_name C64MC)
+ (name main)
+ (libraries C64MC))
