@@ -2,11 +2,9 @@ name: CI
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   pull_request:
     branches: [ "main" ]
 
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 permissions:
@@ -14,13 +12,11 @@ permissions:
   checks: write
   contents: read
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
     runs-on: ubuntu-latest
     outputs:
-      build_status: ${{ job.status }} # Capture the job status
+      build_status: ${{ job.status }}
     steps:
       - uses: actions/checkout@v4
 
@@ -28,7 +24,16 @@ jobs:
         uses: ocaml/setup-ocaml@v2
         with:
           ocaml-version: '5.0'
+          ocaml-compiler: 'ocamlc' # Explicitly specify the compiler
           opam-version: '2.1'
+          allow-prerelease-opam: false
+          opam-pin: true
+          opam-depext: true
+          opam-local-packages: '*.opam' # Corrected quoting
+          opam-disable-sandboxing: false
+          dune-cache: false
+          cache-prefix: v1
+          github-token: ${{ secrets.GITHUB_TOKEN }} # It's good practice to use the provided token
 
       - name: Install OPAM dependencies
         run: opam install . menhir --deps-only -y
@@ -40,7 +45,6 @@ jobs:
       - name: Run tests
         run: dune runtest
 
-  # Job to comment on the PR and set the check status based on the build outcome
   report_status:
     needs: build
     runs-on: ubuntu-latest
@@ -66,7 +70,7 @@ jobs:
                 checkConclusion = 'failure';
               } else {
                 commentBody = `🚧 OCaml build status: ${buildStatus}`;
-                checkConclusion = 'neutral'; // Or 'pending' if the build didn't complete
+                checkConclusion = 'neutral';
               }
 
               if (commentBody) {
@@ -78,7 +82,6 @@ jobs:
                 });
               }
 
-              // Create or update a check run status
               await github.rest.checks.create({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
