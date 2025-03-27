@@ -1,7 +1,8 @@
 type params = 
-  | Tempo of int
-  | Timesig of int * int
-  | Stdpitch of int
+  { tmp : int option ; 
+    sig : (int * int) option ;
+    pitch : int option; }
+
 
 type transp = 
   | Octup
@@ -62,7 +63,6 @@ type channel = (seq * waveform) list
 
 type file = {
   prs: params;
-  ars: (string, chord) Hashtbl.t;
   ch1: channel;
   ch2: channel;
   ch3: channel;

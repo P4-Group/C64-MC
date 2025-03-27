@@ -4,18 +4,26 @@
     Open Token
     Open Lexer
     Open Utils
+
+
+
 }
 
 %token <int> INT
+%token <int> PITCH
 %token <int> TEMPO
+%token <int*int> SIG
 %token  <string> LETTER
 %token <tonename> TONENAME
 %token ACC
-%token LCB
-%token RCB
+%token LCB LSB
+%token RCB RSB
 %token EOF
 
-%start prog
+%start prog 
+%type <Ast.file> prog
+
+(* ---Semantic Actions--- *)
 
 (* ---Context Free Grammer--- *)
 
@@ -25,7 +33,13 @@ $: used for accessing the value of non-terminals or tokens
 *)
 
 prog:
-    | EOF {}
+    | p = params c1 = channel c2 = channel c3 = channel EOF {
+         {prs = p; ch1 = c1; ch2 = c2; ch3 = c3} }
+
+params:
+    | to = TEMPO? so = SIG? po = PITCH? {
+        {tmp = to; sig = so; pitch = po} }
+      
 
 
 seq:
