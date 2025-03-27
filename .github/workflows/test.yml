@@ -12,7 +12,7 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - macos-latest
+          - ubuntu-latest
 
     runs-on: ${{ matrix.os }}
 
@@ -34,7 +34,7 @@ jobs:
       - run: opam exec -- dune runtest
 
   lint-doc:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout tree
         uses: actions/checkout@v4
@@ -45,7 +45,7 @@ jobs:
       - uses: ocaml/setup-ocaml/lint-doc@v3
 
   lint-fmt:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout tree
         uses: actions/checkout@v4
@@ -56,7 +56,7 @@ jobs:
       - uses: ocaml/setup-ocaml/lint-fmt@v3
 
   lint-opam:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout tree
         uses: actions/checkout@v4
