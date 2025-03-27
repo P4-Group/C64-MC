@@ -54,8 +54,9 @@ jobs:
         with:
           ocaml-compiler: 5
       - name: Install ocamlformat
-        run: opam install ocamlformat
-      - uses: ocaml/setup-ocaml/lint-fmt@v3
+      - run: opam install ocamlformat
+      - run: opam exec -- ocamlformat --enable-outside-detected-project --check
+
 
   lint-opam:
     runs-on: ubuntu-latest
