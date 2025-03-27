@@ -6,12 +6,12 @@ license: "AGPL-3.0-only"
 homepage: "https://github.com/P4-Group/C64-MC"
 bug-reports: "https://github.com/P4-Group/C64-MC/issues"
 dev-repo: "git+https://github.com/P4-Group/C64-MC.git"
-synopsis: "A compiler which translate an easily understood langauge to music on C64" 
+synopsis: "A compiler which translate an easily understood langauge to music on C64"
 
 depends: [
   "ocaml" {>= "4.07.0"}
   "menhirLib" {>= "0"}
-  "dune" {>= 3.17}
+  "dune" {>= "3.1.7"}
 ]
 build: [
   ["dune" "subst"] {dev}
