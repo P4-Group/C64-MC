@@ -167,7 +167,7 @@ The tests folder of the GitHub repository. These samples demonstrate various fea
 
 This section provides an overview of the C64-MC compiler's architecture.
 
-* **Compiler Stages:** Describe the main stages of the compilation process:
+* **Compiler Stages:** 
     * Lexical analysis (scanning)
     * Syntax analysis (parsing)
     * Code generation (6502 assembly)
