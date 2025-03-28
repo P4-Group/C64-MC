@@ -45,7 +45,7 @@ async function runTests() {
       if (stats.isFile()) {
         console.log(`Running test: ${filePath}`);
         const program = 'opam';
-        const args = ['exec', '--', 'dune', 'exec', 'C64MC', filePath, '-T'];
+        const args = ['exec', '--', 'dune', 'exec', 'C64MC', filePath];
         await executeCommand(program, args);
       }
     }
