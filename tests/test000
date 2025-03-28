@@ -1,11 +1,2 @@
-
-
 tempo = 121
 
-timeSignature = (3, 4)
-
-standardPitch = 441
-
-Sequence s = { a4:4 }
-
-Channqsdfqel = [(s, Vpulse)]
