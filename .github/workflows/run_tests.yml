@@ -2,6 +2,7 @@ name: run_tests
 
 on:
   - pull_request
+  - workflow_dispatch
 
 permissions: read-all
 
