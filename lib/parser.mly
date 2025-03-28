@@ -5,6 +5,8 @@
     open Utils
 %}
 
+%token NEWLINE BEGIN END
+%token <Ast.constant> CST
 %token <int> INT
 %token <int> STDPITCH
 %token <int> TEMPO

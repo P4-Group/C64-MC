@@ -1,2 +1,10 @@
-tempo = 121
 
+
+
+
+
+
+tempo = 121
+timeSig = (4, 4)
+StdPitch = 441
+Sequence seq1 = { a4:4 b4:4 }

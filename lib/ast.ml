@@ -3,6 +3,11 @@ type loc = Lexing.position * Lexing.position
 
 type ident = { id: string; id_loc: loc }
 
+type constant =
+  | Cbool of bool
+  | Cstring of string
+  | Cint of int
+
 type params =
   { tempo : int option ;
     tmsig : (int * int) option ;

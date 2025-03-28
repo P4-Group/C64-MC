@@ -9,7 +9,7 @@ In a lexer everything is read as a sequence of characters (string).
 *)
 
 { (* Header *)
-    (* open Lexing *)
+    open Lexing
     open Parser
     (* open Utils *)
 
@@ -22,7 +22,19 @@ In a lexer everything is read as a sequence of characters (string).
         "Sequence", SEQUENCE ];
     fun s -> try Hashtbl.find h s with Not_found -> IDENT s
 
+  let stack = ref [0]  (* indentation stack *)
 
+  let rec unindent n = match !stack with
+    | m :: _ when m = n -> []
+    | m :: st when m > n -> stack := st; END :: unindent n
+    | _ -> raise (Lexical_error "bad indentation")
+
+  let update_stack n =
+    match !stack with
+    | m :: _ when m < n ->
+      stack := n :: !stack;
+      [NEWLINE; BEGIN]
+    | _ -> assert false
 
 }
 
@@ -48,6 +60,9 @@ let whitespace = [' ' '\t']+
 let newline = '\n' | '\r'
 let letter = ['a'-'z' 'A'-'Z']+
 let ident = letter (letter | '-' | '_' | digit)* (* identity for a sequence *)
+let space = ' ' | '\t'
+let comment = "#" [^'\n']*
+let integer = '0' | ['1'-'9'] digit*
 
 (* ---Lexing Rules--- *)
 
@@ -70,10 +85,13 @@ continues on reading the input.
 *)
 
 rule read = parse
+    | '\n' {new_line lexbuf; update_stack (indentation lexbuf)}
     | whitespace {read lexbuf} (* calls itself recursively *)
-    | newline {next_line lexbuf; read lexbuf} (* define in utils *)
-    | ident as s { id_or_keyword s }
-    | int {INT (int_of_string (Lexing.lexeme lexbuf))}
+    (* | newline {next_line lexbuf; read lexbuf} (* define in utils *) *)
+    | ident as s { [id_or_keyword s] }
+    | integer as s
+            { try [CST (Cint (Int.of_string s))]
+              with _ -> raise (Lexing_error ("constant too large: " ^ s)) }
     (* | float (FLOAT (float_of_string (Lexing.lexeme lexbuf))) *)
     | "#"  {SHARP}
     |  "_" {FLAT}
@@ -88,8 +106,11 @@ rule read = parse
     | "," {COMMA}
     | eof {EOF}
 
+(*
 and next_line = parse
    | _  { assert false }
+*)
+
 (* --Mutual Recursive Rules-- *)
 
 and comment = parse
@@ -97,6 +118,11 @@ and comment = parse
     | _ {comment lexbuf}
     | eof {failwith "non terminated comment"}
 
+and indentation = parse
+  | (space | comment)* '\n'
+      { new_line lexbuf; indentation lexbuf }
+  | space* as s
+      { String.length s }
 
 (* and sequence = parse
     | "}" {read lexbuf}
@@ -106,4 +132,4 @@ and comment = parse
 
 and channel = parse
     | "]" {read lexbuf}
-} *)
+ *)
