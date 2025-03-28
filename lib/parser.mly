@@ -11,9 +11,9 @@
 %token <int*int> TIMESIG
 %token <string> IDENT
 %token SHARP FLAT
-%token CHANNEL
-%token VPULSE SAWTOOTH TRIANGLE NOISE
 %token SEQUENCE
+%token CHANNEL1 CHANNEL2 CHANNEL3
+%token VPULSE SAWTOOTH TRIANGLE NOISE
 (* %token LOOP *)
 %token SP (* start paranthesis *)
 %token EP (* end paranthesis *)
@@ -21,7 +21,7 @@
 %token RCB (* right curly bracket *)
 %token LSB (* left square bracket *)
 %token RSB (* right square bracket *)
-%token COLON EQ
+%token COLON EQUAL
 %token COMMA
 %token EOF
 
@@ -40,34 +40,33 @@ $: used for accessing the value of non-terminals or tokens
 %%
 
 prog:
-    | p = params
-      sl = list(seqdef)
-      c1 = channel (* c2 = channel c3 = channel *) EOF
-    { {prs = p; sqs = sl; ch1 = c1; (* ch2 = c2; ch3 = c3 *)} }
+    | p = params seql = list(seqdef) ch1 = channel (* ch2 = channel ch3 = channel *) EOF
+    { {parameters = p; sequences = seql; channel1 = ch1; (* channel2 = ch2; channel3 = ch3 *)} }
 
 params:
-  | TEMPO EQ tmo = INT
-    TIMESIG EQ SP i = INT COMMA j = INT EP
-    STDPITCH EQ k = INT {
-    {tempo = Some tmo; tmsig = Some (i,j); pitch = Some k} }
+  | TEMPO ASSIGN t = INT
+    TIMESIG ASSIGN SP npm = INT COMMA bnv = INT EP
+    STDPITCH ASSIGN sp = INT {
+    {tempo = Some t; timesig = Some (npm,bnv); stdpitch = Some sp} }
 
 seqdef:
-    | SEQUENCE id = ident EQ LCB sbody = seqb RCB
-    { {name = id; seq = sbody} }
+    | SEQUENCE id = ident ASSIGN LCB sb = seq RCB
+    { {name = id; seq = sb} }
 
-seqb:
-    | nl = nonempty_list(note)
-    { Simple nl }
-    (* TODO: add two rules later for composition and loops *)
+seq:
+    | nl = nonempty_list(note) { Simple nl }
+    | s1 = seq s2 = seq { Comp (s1, s2) }
+    | s = seq l = INT { Loop (s, l) }
 
 note:
-  | n = ident a = option(acc) o = oct COLON f = frac
-  { let tnm = (id2tonename n.id) in
-    let tn = match a with
-     | None     -> Nat tnm
-     | Some acc -> Alt (tnm, acc) in                                   Sound (tn, o, f) }
+  | tn = ident a = option(acc) o = oct COLON f = frac
+  { let tn = (id2tonename t.id) in (*rename function ident_to_tone*)
+    let t = match a with
+     | None     -> Nat tn
+     | Some acc -> Alt (tn, acc) in 
+     Sound (t, o, f) }
   | r = ident f = frac
-     { if not (r.id = "R")
+     { if not (r.id = "r")
        then failwith "not a pause"
        else Rest f }
 acc:
@@ -87,7 +86,7 @@ frac:
               | _ -> failwith "wrong duration" }
 
 channel:
-  | CHANNEL EQ LSB ch = separated_list(COMMA, seqwv) RSB
+  | CHANNEL ASSIGN LSB ch = separated_list(COMMA, seqwv) RSB
       { ch }
 
 
