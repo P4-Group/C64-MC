@@ -1,19 +1,36 @@
 const fs = require('fs').promises;
 const path = require('path');
-const { exec } = require('child_process');
+const { spawn } = require('child_process');
 
-async function executeCommand(command, testFile) {
+async function executeCommand(program, args) {
   return new Promise((resolve, reject) => {
-    const fullCommand = `opam exec -- dune exec C64MC "${testFile}" -T`;
-    exec(fullCommand, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`Error executing command: ${fullCommand}`);
-        console.error(stderr);
-        reject(error);
-      } else {
+    const child = spawn(program, args);
+    let stdout = '';
+    let stderr = '';
+
+    child.stdout.on('data', (data) => {
+      stdout += data;
+    });
+
+    child.stderr.on('data', (data) => {
+      stderr += data;
+    });
+
+    child.on('close', (code) => {
+      if (code === 0) {
         console.log(stdout);
         resolve();
+      } else {
+        console.error(`Error executing command: ${program} ${args.join(' ')}`);
+        console.error(stderr);
+        reject(new Error(`Command failed with exit code ${code}`));
       }
+    });
+
+    child.on('error', (err) => {
+      console.error(`Error spawning command: ${program} ${args.join(' ')}`);
+      console.error(err);
+      reject(err);
     });
   });
 }
@@ -27,7 +44,9 @@ async function runTests() {
       const stats = await fs.stat(filePath);
       if (stats.isFile()) {
         console.log(`Running test: ${filePath}`);
-        await executeCommand(`opam exec -- dune exec C64MC`, filePath); // Pass the testFile separately
+        const program = 'opam';
+        const args = ['exec', '--', 'dune', 'exec', 'C64MC', filePath, '-T'];
+        await executeCommand(program, args);
       }
     }
   } catch (error) {
