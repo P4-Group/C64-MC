@@ -35,13 +35,13 @@ jobs:
 
       - name: Run tests on each file
         run: |
-          echo "Running tests on ${{ matrix.os }}"
-          if [[ "${{ matrix.os }}" == "ubuntu-latest" || "${{ matrix.os }}" == "macos-latest" ]]; then
-            find tests -type f -print0 | xargs -0 -I {} sh -c 'echo "Running test on {}"; opam exec -- dune exec C64MC "{}" -T'
-          elif [[ "${{ matrix.os }}" == "windows-latest" ]]; then
-            Get-ChildItem -Path "tests" -File | ForEach-Object {
-              Write-Host "Running test on $($_.FullName)"
-              opam exec -- dune exec C64MC "$($_.FullName)"
+          echo "Running tests on <span class="math-inline">\{\{ matrix\.os \}\}"
+          if \[\[ "</span>{{ matrix.os }}" == "ubuntu-latest" || "<span class="math-inline">\{\{ matrix\.os \}\}" \=\= "macos\-latest" \]\]; then
+          find tests \-type f \-print0 \| xargs \-0 \-I % sh \-c "echo 'Running test on %'; opam exec \-\- dune exec C64MC \\"%\\" \-T"
+          elif \[\[ "</span>{{ matrix.os }}" == "windows-latest" ]]; then
+                      Get-ChildItem -Path "tests" -File | ForEach-Object {
+                        Write-Host "Running test on $(<span class="math-inline">\_\.FullName\)"
+          opam exec \-\- dune exec C64MC "</span>($_.FullName)" -T
             }
           fi
         shell: bash
