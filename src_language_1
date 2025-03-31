@@ -6,19 +6,19 @@ standardPitch = 441;
 /* These are my sequences */
 
 sequence seq1Moody = { 
-  c_4:5 c_4:5 c#8:3 d_4:2 e#2:2 e#2:2 e#2:2 d_4:2 d_4:2 d_4:2 e#2:2 c2:2 c2:2
+  c_:4:5 c_:4:5 c#:8:3 d_:4:2 e#:2:2 e#:2:2 e#:2:2 d_:4:2 d_:4:2 d_:4:2 e#:2:2 c:2:2 c:2:2
 }
 
 sequence seq2 = { 
-  c4:2  e#2:2 d4 d:2 d e4:2 c2:2 c2:2  
+  c:4:2  e#:2:2 d:4:2 d:4:2 d e_:4:2 c:2:2 c:2:2  
 } 
 
 sequence seq3 = { 
-  c_4:5 c2:2 d_4:2 e#2:2 f_4:2 g4:1 a#2:2 b_4:2 c2:2 
+  c_:4:5 c:2:2 d_:4:2 e#:2:2 f_:4:2 g:4:1 a#:2:1 b_:4:2 c:2:2 
 }
 
 sequence seq-4 = { 
-  c4:4 c#2:2 d_4:2 e4:2 f_4:2 g4:1 a#2:2 b_4:2 c2:2
+  c:4:4 c#:2:2 d_:4:2 e:4:2 f_:4:2 g:4:1 a#:2:2 b_:4:2 c:2:2
 }
 
 
