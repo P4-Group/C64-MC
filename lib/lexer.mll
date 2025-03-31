@@ -98,8 +98,6 @@ rule read = parse
     | "=" {print_string "="; ASSIGN}
     | eof {print_endline "EOF"; EOF}
 
-and next_line = parse
-   | _  { assert false }
 (* --Mutual Recursive Rules-- *)
 
 and comment = parse
