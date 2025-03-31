@@ -1,0 +1,31 @@
+tempo = 121tempo = 121;
+timeSignature = (3, 4);
+standardPitch = 441;
+
+
+/* These are my sequences */
+
+sequence seq1Moody = { 
+  c_4:5 c_4:5 c#8:3 d_4:2 e#2:2 e#2:2 e#2:2 d_4:2 d_4:2 d_4:2 e#2:2 c2:2 c2:2
+}
+
+sequence seq2 = { 
+  c4:2  e#2:2 d4 d:2 d e4:2 c2:2 c2:2  
+} 
+
+sequence seq3 = { 
+  c_4:5 c2:2 d_4:2 e#2:2 f_4:2 g4:1 a#2:2 b_4:2 c2:2 
+}
+
+sequence seq-4 = { 
+  c4:4 c#2:2 d_4:2 e4:2 f_4:2 g4:1 a#2:2 b_4:2 c2:2
+}
+
+
+/* These are my channels */
+
+channel1 = [(seq1Moody; vPulse), (seq1Moody; sawtooth), (seq2, triangle), (seq3, noise)]
+
+channel2 = [(seq-4; noise), (seq1Moody; noise)]
+
+channel3 = [(seq3; sawtooth), (seq-4; triangle), (seq3; noise)]
