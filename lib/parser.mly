@@ -14,15 +14,15 @@
 %token SEQUENCE
 %token CHANNEL1 CHANNEL2 CHANNEL3
 %token VPULSE SAWTOOTH TRIANGLE NOISE
-(* %token LOOP *)
+%token LOOP
 %token SP (* start paranthesis *)
 %token EP (* end paranthesis *)
 %token LCB (* left curly bracket *)
 %token RCB (* right curly bracket *)
 %token LSB (* left square bracket *)
 %token RSB (* right square bracket *)
-%token COLON EQUAL
-%token COMMA
+%token COLON SEMICOLON COMMA
+%token ASSIGN (* = *)
 %token EOF
 
 %start prog (* axiom *)
@@ -39,36 +39,71 @@ $: used for accessing the value of non-terminals or tokens
 
 %%
 
+(* CFG: 
+   List of nonterminals with syntax and semantic action in the following structure:
+    nonterminal:
+      | syntax { semantic action }
+   Each option of how to interpret a nonterminal starts with a |.
+   The first nonterminal, prog, is the axiom.
+ *)
+
+ (* nonterminal: 
+    Name of the nonterminal we want to expand on below.
+    Example:
+      seqdef:
+    Parses syntax and defines semantic action of the seqdef nonterminal.
+ *)
+
+ (* syntax: 
+    Structure of tokens (written in all caps) and local variables (written as variable_name = nonterminal)
+    Example: 
+      | SEQUENCE id = ident ASSIGN LCB sb = seq RCB
+    Parses sequences in the generalized form (from source language):
+      sequence ident = { seq }, 
+    such as: 
+      sequence mySequence = { a4:2 b2:2 }
+    where 'id' holds the nonterminal ident and 'sb' holds the nonterminal seq
+ *)
+
+ (* semantic action: 
+    Defines the relevant building blocks of the AST and assigns values from the local variables above.
+    Example: 
+      { {name = id; seq = sb} } 
+    Takes the value of 'id' (which as seen above is an ident) and assigns it to the 'name' of AST's seqdef
+    Takes the value of 'sb' (which as seen above is a seq) and assigns it to the 'seq' of AST's seqdef
+*)
+
 prog:
-    | p = params seql = list(seqdef) ch1 = channel (* ch2 = channel ch3 = channel *) EOF
-    { {parameters = p; sequences = seql; channel1 = ch1; (* channel2 = ch2; channel3 = ch3 *)} }
+    | p = params seql = list(seqdef) ch1 = channel ch2 = channel ch3 = channel EOF (* Overall file structure: Define parameters, define sequences, define channels *)
+    { {parameters = p; sequences = seql; channel1 = ch1; channel2 = ch2; channel3 = ch3 } }
 
 params:
-  | TEMPO ASSIGN t = INT
-    TIMESIG ASSIGN SP npm = INT COMMA bnv = INT EP
-    STDPITCH ASSIGN sp = INT {
-    {tempo = Some t; timesig = Some (npm,bnv); stdpitch = Some sp} }
+  | TEMPO ASSIGN t = INT SEMICOLON (* tempo = int; *)
+    TIMESIG ASSIGN SP npm = INT COMMA bnv = INT EP SEMICOLON (* timeSignature = (int,int) *)
+    STDPITCH ASSIGN sp = INT SEMICOLON (* standardPitch = int; *)
+    { {tempo = Some t; timesig = Some (npm,bnv); stdpitch = Some sp} } (* all params use Some since they are optional/options (?) *)
 
 seqdef:
-    | SEQUENCE id = ident ASSIGN LCB sb = seq RCB
+    | SEQUENCE id = ident ASSIGN LCB sb = seq RCB (* sequence ident = { seq } *)
     { {name = id; seq = sb} }
 
 seq:
-    | nl = nonempty_list(note) { Simple nl }
-    | s1 = seq s2 = seq { Comp (s1, s2) }
-    | s = seq l = INT { Loop (s, l) }
+    | nl = nonempty_list(note) { Simple nl } (* actual sequence of notes within curly brackets *)
+    (*| s1 = seq s2 = seq { Comp (s1, s2) } *) (* won't work as is, maybe we scrap compound sequences *)
+    | LOOP SP RCB s = seq LCB COMMA l = INT EP { Loop (s, l) } (* loop({seq}, int) *) (* TODO: Is it fine that loop function is also in curly brackets? *)
+    (* TODO: Maybe add compound sequence if we can find a nice way to do it *)
 
 note:
-  | tn = ident a = option(acc) o = oct COLON f = frac
-  { let tn = (id2tonename t.id) in (*rename function ident_to_tone*)
-    let t = match a with
-     | None     -> Nat tn
-     | Some acc -> Alt (tn, acc) in 
-     Sound (t, o, f) }
-  | r = ident f = frac
-     { if not (r.id = "r")
-       then failwith "not a pause"
-       else Rest f }
+  | tn = ident a = option(acc) o = oct COLON f = frac (* ident accidental octave : fraction *)
+  { let tn = (id2tonename t.id) in (*Replaces tonename ident with actual AST tonename type*) (* TODO: rename function ident_to_tone *)
+    let t = match a with (* Check if accidental is present *)
+     | None     -> Nat tn (* If no, produces natural tone from tonename *)
+     | Some acc -> Alt (tn, acc) in (* If yes, produces altered tone from tonename * accidental *)
+     Sound (t, o, f) } (* Full note with octave and fraction *)
+  | r = ident f = frac (* ident fraction *)
+     { if not (r.id = "r") (* Check if tonename is actually r *)
+       then failwith "not a pause" (* If not, fails *)
+       else Rest f } (* If yes, produces rest note of fraction f *)
 acc:
   | SHARP { Sharp }
   | FLAT  { Flat }
@@ -81,17 +116,17 @@ frac:
               | 1 -> Full
               | 2 -> Half
               | 4 -> Quarter
-              | 8 -> Eight
-              | 16 -> Sixteen
+              | 8 -> Eighth
+              | 16 -> Sixteenth
               | _ -> failwith "wrong duration" }
 
 channel:
-  | CHANNEL ASSIGN LSB ch = separated_list(COMMA, seqwv) RSB
+  | CHANNEL ASSIGN LSB ch = separated_list(COMMA, seqwv) RSB (* channel = [seqwv+] *)
       { ch }
 
 
 seqwv:
-    | SP seqid = ident COMMA wv = waveform EP  { (seqid, wv) }
+    | SP seqid = ident COMMA wv = waveform EP  { (seqid, wv) } (* (ident,waveform) *)
 
 
 waveform:
@@ -102,5 +137,5 @@ waveform:
 
 
 ident:
-| id = IDENT { { id = id; id_loc = $startpos, $endpos } }
+| id = IDENT { { id = id; id_loc = $startpos, $endpos } } (*ident both has id (the corresponding string) and a start and end position (used in error handling etc)*)
 ;

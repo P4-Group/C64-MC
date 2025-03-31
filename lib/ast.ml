@@ -45,8 +45,8 @@ and frac =
   | Full
   | Half
   | Quarter
-  | Eight
-  | Sixteen
+  | Eighth
+  | Sixteenth
 
 and transp =
   | Octup
@@ -64,8 +64,8 @@ type file = {
   parameters: params;
   sequences: seqdef list;
   channel1: channel;
-  (* ch2: channel; *)
-  (* ch3: channel; *)
+  channel2: channel;
+  channel3: channel;
 }
 
 

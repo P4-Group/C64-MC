@@ -29,7 +29,8 @@ In a lexer everything is read as a sequence of characters (string).
         "vPulse", VPULSE;
         "triangle", TRIANGLE;
         "sawtooth", SAWTOOTH;
-        "noise", NOISE
+        "noise", NOISE;
+        "loop", LOOP
         ];
     fun s -> try Hashtbl.find h s with Not_found -> IDENT s
 }
