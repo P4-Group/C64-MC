@@ -14,7 +14,7 @@
 %token SEQUENCE
 %token CHANNEL1 CHANNEL2 CHANNEL3
 %token VPULSE SAWTOOTH TRIANGLE NOISE
-%token LOOP
+(*%token LOOP*)
 %token SP (* start paranthesis *)
 %token EP (* end paranthesis *)
 %token LCB (* left curly bracket *)
@@ -74,7 +74,7 @@ $: used for accessing the value of non-terminals or tokens
 *)
 
 prog:
-    | p = params seql = list(seqdef) ch1 = channel ch2 = channel ch3 = channel EOF (* Overall file structure: Define parameters, define sequences, define channels *)
+    | p = params seql = list(seqdef) ch1 = channel1 ch2 = channel2 ch3 = channel3 EOF (* Overall file structure: Define parameters, define sequences, define channels *)
     { {parameters = p; sequences = seql; channel1 = ch1; channel2 = ch2; channel3 = ch3 } }
 
 params:
@@ -90,16 +90,16 @@ seqdef:
 seq:
     | nl = nonempty_list(note) { Simple nl } (* actual sequence of notes within curly brackets *)
     (*| s1 = seq s2 = seq { Comp (s1, s2) } *) (* won't work as is, maybe we scrap compound sequences *)
-    | LOOP SP RCB s = seq LCB COMMA l = INT EP { Loop (s, l) } (* loop({seq}, int) *) (* TODO: Is it fine that loop function is also in curly brackets? *)
+    (*| LOOP SP RCB s = seq LCB COMMA l = INT EP { Loop (s, l) }*) (* loop({seq}, int) *) (* TODO: Is it fine that loop function is also in curly brackets? *)
     (* TODO: Maybe add compound sequence if we can find a nice way to do it *)
 
 note:
   | tn = ident a = option(acc) o = oct COLON f = frac (* ident accidental octave : fraction *)
-  { let tn = (id2tonename t.id) in (*Replaces tonename ident with actual AST tonename type*) (* TODO: rename function ident_to_tone *)
+  { let tn = (id2tonename tn.id) in (*Replaces tonename ident with actual AST tonename type*) (* TODO: rename function ident_to_tone *)
     let t = match a with (* Check if accidental is present *)
      | None     -> Nat tn (* If no, produces natural tone from tonename *)
      | Some acc -> Alt (tn, acc) in (* If yes, produces altered tone from tonename * accidental *)
-     Sound (t, o, f) } (* Full note with octave and fraction *)
+    Sound (t, o, f) } (* Full note with octave and fraction *)
   | r = ident f = frac (* ident fraction *)
      { if not (r.id = "r") (* Check if tonename is actually r *)
        then failwith "not a pause" (* If not, fails *)
@@ -120,9 +120,17 @@ frac:
               | 16 -> Sixteenth
               | _ -> failwith "wrong duration" }
 
-channel:
-  | CHANNEL ASSIGN LSB ch = separated_list(COMMA, seqwv) RSB (* channel = [seqwv+] *)
-      { ch }
+channel1:
+  | CHANNEL1 ASSIGN LSB ch1 = separated_list(COMMA, seqwv) RSB (* channel = [seqwv+] *)
+      { ch1 }
+
+channel2:
+  | CHANNEL2 ASSIGN LSB ch2 = separated_list(COMMA, seqwv) RSB (* channel = [seqwv+] *)
+      { ch2 }
+
+channel3:
+  | CHANNEL3 ASSIGN LSB ch3 = separated_list(COMMA, seqwv) RSB (* channel = [seqwv+] *)
+      { ch3 }
 
 
 seqwv:

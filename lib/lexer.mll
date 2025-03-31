@@ -19,9 +19,9 @@ In a lexer everything is read as a sequence of characters (string).
   let ident_or_keyword =
     let h = Hashtbl.create 17 in
     List.iter (fun (s,k) -> Hashtbl.add h s k)
-      [ "tempo", TEMPO;
-        "timeSignature", TIMESIG;
-        "standardPitch", STDPITCH;
+      [ "tempo", TEMPO 120;
+        "timeSignature", TIMESIG (4,4);
+        "standardPitch", STDPITCH 440;
         "sequence", SEQUENCE;
         "channel1", CHANNEL1;
         "channel2", CHANNEL2;
@@ -29,8 +29,7 @@ In a lexer everything is read as a sequence of characters (string).
         "vPulse", VPULSE;
         "triangle", TRIANGLE;
         "sawtooth", SAWTOOTH;
-        "noise", NOISE;
-        "loop", LOOP
+        "noise", NOISE
         ];
     fun s -> try Hashtbl.find h s with Not_found -> IDENT s
 }
@@ -80,9 +79,9 @@ continues on reading the input.
 
 rule read = parse
     | whitespace {read lexbuf} (* calls itself recursively *)
-    | newline {next_line lexbuf; read lexbuf} (* define in utils *)
-    | word as s { ident_or_keyword s } (* TODO: should it be word? *)
-    | int {INT (int_of_string (Lexing.lexeme lexbuf))}
+    | newline {Lexing.new_line lexbuf; print_endline "newline"; read lexbuf} (* define in utils *)
+    | ident as s { print_endline "ident"; ident_or_keyword s }
+    | int {print_endline "int"; INT (int_of_string (Lexing.lexeme lexbuf))}
     (* | float (FLOAT (float_of_string (Lexing.lexeme lexbuf))) *)
     | "/*" {comment lexbuf}
     | "#"  {SHARP}
@@ -96,8 +95,8 @@ rule read = parse
     | ":" {COLON}
     | ";" {SEMICOLON}
     | "," {COMMA}
-    | "=" {ASSIGN}
-    | eof {EOF}
+    | "=" {print_endline "="; ASSIGN}
+    | eof {print_endline "EOF"; EOF}
 
 and next_line = parse
    | _  { assert false }
