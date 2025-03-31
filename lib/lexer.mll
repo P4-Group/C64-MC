@@ -78,24 +78,24 @@ continues on reading the input.
 *)
 
 rule read = parse
-    | whitespace {read lexbuf} (* calls itself recursively *)
-    | newline {Lexing.new_line lexbuf; print_endline "newline"; read lexbuf} (* define in utils *)
-    | ident as s { print_endline "ident"; ident_or_keyword s }
-    | int {print_endline "int"; INT (int_of_string (Lexing.lexeme lexbuf))}
+    | whitespace {print_string " "; read lexbuf} (* calls itself recursively *)
+    | newline {Lexing.new_line lexbuf; print_endline ""; read lexbuf} (* define in utils *)
+    | ident as s { print_string "ident"; ident_or_keyword s }
+    | int {print_string "int"; INT (int_of_string (Lexing.lexeme lexbuf))}
     (* | float (FLOAT (float_of_string (Lexing.lexeme lexbuf))) *)
     | "/*" {comment lexbuf}
-    | "#"  {SHARP}
-    | "_" {FLAT}
-    | "{" {LCB}
-    | "}" {RCB}
-    | "[" {LSB}
-    | "]" {RSB}
-    | "(" {SP}
-    | ")" {EP}
-    | ":" {COLON}
-    | ";" {SEMICOLON}
-    | "," {COMMA}
-    | "=" {print_endline "="; ASSIGN}
+    | "#"  {print_string "#"; SHARP}
+    | "_" {print_string "_"; FLAT}
+    | "{" {print_string "{"; LCB}
+    | "}" {print_string "}"; RCB}
+    | "[" {print_string "["; LSB}
+    | "]" {print_string "]"; RSB}
+    | "(" {print_string "("; SP}
+    | ")" {print_string ")"; EP}
+    | ":" {print_string ":"; COLON}
+    | ";" {print_string ";"; SEMICOLON}
+    | "," {print_string ","; COMMA}
+    | "=" {print_string "="; ASSIGN}
     | eof {print_endline "EOF"; EOF}
 
 and next_line = parse
