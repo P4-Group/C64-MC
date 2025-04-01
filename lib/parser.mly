@@ -95,8 +95,8 @@ seq:
 
 note:
   | t = ident a = acc COLON f = frac option(COLON) o = oct (* ident accidental octave : fraction *)
-  { if (t.id = "r") then ( Rest f)
-    else (let t = (id2tonename t.id) in (*Replaces tonename ident with actual AST tonename type*) (* TODO: rename function ident_to_tone *)
+  { if (t.id = "r") then ( Rest f )
+    else (let t = (ident_totone t.id) in (*Replaces tonename ident with actual AST tonename type*) (* TODO: rename function ident_to_tone *)
     Sound (t, a, f, o)) } (* Full note with octave and fraction *)
   (*| r = ident COLON f = frac (* ident fraction *)
      { if not (r.id = "r") (* Check if tonename is actually r *)
