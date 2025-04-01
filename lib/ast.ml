@@ -17,14 +17,10 @@ and seqdef =
   seq : seq ;}
 
 and note =
-  | Sound of tone * oct * frac
+  | Sound of tone * acc * frac * oct
   | Rest of frac
 
 and tone =
-  | Nat of tonename
-  | Alt of tonename * acc
-
-and tonename =
   | A
   | B
   | C
@@ -34,10 +30,12 @@ and tonename =
   | G
 
 and acc =
+  | None
   | Sharp
   | Flat
 
 and oct =
+  | None
   | Orig of int
   | Mod of oct * transp
 

@@ -94,21 +94,21 @@ seq:
     (* TODO: Maybe add compound sequence if we can find a nice way to do it *)
 
 note:
-  | tn = ident a = option(acc) o = oct COLON f = frac (* ident accidental octave : fraction *)
-  { let tn = (id2tonename tn.id) in (*Replaces tonename ident with actual AST tonename type*) (* TODO: rename function ident_to_tone *)
-    let t = match a with (* Check if accidental is present *)
-     | None     -> Nat tn (* If no, produces natural tone from tonename *)
-     | Some acc -> Alt (tn, acc) in (* If yes, produces altered tone from tonename * accidental *)
-    Sound (t, o, f) } (* Full note with octave and fraction *)
-  | r = ident f = frac (* ident fraction *)
+  | t = ident a = acc COLON f = frac option(COLON) o = oct (* ident accidental octave : fraction *)
+  { if (t.id = "r") then ( Rest f)
+    else (let t = (id2tonename t.id) in (*Replaces tonename ident with actual AST tonename type*) (* TODO: rename function ident_to_tone *)
+    Sound (t, a, f, o)) } (* Full note with octave and fraction *)
+  (*| r = ident COLON f = frac (* ident fraction *)
      { if not (r.id = "r") (* Check if tonename is actually r *)
-       then failwith "not a pause" (* If not, fails *)
-       else Rest f } (* If yes, produces rest note of fraction f *)
+       then (Printf.printf "%s \n" r.id; failwith "not a pause") (* If not, fails *)
+       else Rest f } (* If yes, produces rest note of fraction f *)*)
 acc:
+  | { None }
   | SHARP { Sharp }
   | FLAT  { Flat }
 
 oct:
+  | { None }
   | i = INT { Orig i }
 
 frac:
