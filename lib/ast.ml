@@ -34,17 +34,17 @@ and acc =
   | Sharp
   | Flat
 
-and oct =
-  | None
-  | Orig of int
-  | Mod of oct * transp
-
 and frac =
   | Full
   | Half
   | Quarter
   | Eighth
   | Sixteenth
+
+and oct =
+  | None
+  | Orig of int
+  | Mod of oct * transp
 
 and transp =
   | Octup
