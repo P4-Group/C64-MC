@@ -1,6 +1,6 @@
 open Ast
 
-(* Pretty-print the parameters of a music file *)
+(* Pretty-print the parameters of an asm (For commodore 64) music file *)
 let pprint_params params =
   (* Print the tempo, or "None" if not specified *)
   Printf.printf "Tempo: %s\n" 
