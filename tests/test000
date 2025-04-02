@@ -1,2 +1,10 @@
-tempo = 121
+tempo = 121;
+timeSignature = (3,4);
+standardPitch = 440;
 
+sequence seq1 = { a:4:5 b_:4:5 }
+sequence seq2 = { b:2:3 c:2:8 r:2 }
+
+channel1 = [(seq1, vPulse)]
+channel2 = [(seq1, sawtooth)]
+channel3 = [(seq1, triangle)]

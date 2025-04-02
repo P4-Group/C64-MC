@@ -15,15 +15,23 @@ In a lexer everything is read as a sequence of characters (string).
 
  exception Lexical_error of string
 
-  let id_or_keyword =
+(* TODO: comments and move to Utils *)
+  let ident_or_keyword =
     let h = Hashtbl.create 17 in
     List.iter (fun (s,k) -> Hashtbl.add h s k)
-      [ "Vpulse", VPULSE;
-        "Sequence", SEQUENCE ];
+      [ "tempo", TEMPO 120;
+        "timeSignature", TIMESIG (4,4);
+        "standardPitch", STDPITCH 440;
+        "sequence", SEQUENCE;
+        "channel1", CHANNEL1;
+        "channel2", CHANNEL2;
+        "channel3", CHANNEL3;
+        "vPulse", VPULSE;
+        "triangle", TRIANGLE;
+        "sawtooth", SAWTOOTH;
+        "noise", NOISE
+        ];
     fun s -> try Hashtbl.find h s with Not_found -> IDENT s
-
-
-
 }
 
 (* ---Regular Expressions--- *)
@@ -47,7 +55,7 @@ let float = digit* frac (* matches zero or more digits before the decimal point*
 let whitespace = [' ' '\t']+
 let newline = '\n' | '\r'
 let letter = ['a'-'z' 'A'-'Z']+
-let ident = letter (letter | '-' | '_' | digit)* (* identity for a sequence *)
+let ident = letter (letter | '-' | digit)* (* identity for a sequence *)
 
 (* ---Lexing Rules--- *)
 
@@ -70,26 +78,26 @@ continues on reading the input.
 *)
 
 rule read = parse
-    | whitespace {read lexbuf} (* calls itself recursively *)
-    | newline {next_line lexbuf; read lexbuf} (* define in utils *)
-    | ident as s { id_or_keyword s }
-    | int {INT (int_of_string (Lexing.lexeme lexbuf))}
+    | whitespace {print_string " "; read lexbuf} (* calls itself recursively *)
+    | newline {Lexing.new_line lexbuf; print_endline ""; read lexbuf} (* define in utils *)
+    | ident as s { print_string "ident"; ident_or_keyword s }
+    | int {print_string "int"; INT (int_of_string (Lexing.lexeme lexbuf))}
     (* | float (FLOAT (float_of_string (Lexing.lexeme lexbuf))) *)
-    | "#"  {SHARP}
-    |  "_" {FLAT}
     | "/*" {comment lexbuf}
-    | "{" {LCB}
-    | "}" {RCB}
-    | "[" {LSB}
-    | "]" {RSB}
-    | "(" {SP}
-    | ")" {EP}
-    | ":" {COLON}
-    | "," {COMMA}
-    | eof {EOF}
+    | "#"  {print_string "#"; SHARP}
+    | "_" {print_string "_"; FLAT}
+    | "{" {print_string "{"; LCB}
+    | "}" {print_string "}"; RCB}
+    | "[" {print_string "["; LSB}
+    | "]" {print_string "]"; RSB}
+    | "(" {print_string "("; SP}
+    | ")" {print_string ")"; EP}
+    | ":" {print_string ":"; COLON}
+    | ";" {print_string ";"; SEMICOLON}
+    | "," {print_string ","; COMMA}
+    | "=" {print_string "="; ASSIGN}
+    | eof {print_endline "EOF"; EOF}
 
-and next_line = parse
-   | _  { assert false }
 (* --Mutual Recursive Rules-- *)
 
 and comment = parse
@@ -97,12 +105,9 @@ and comment = parse
     | _ {comment lexbuf}
     | eof {failwith "non terminated comment"}
 
-
 (* and sequence = parse
     | "}" {read lexbuf}
     | tonename {TONENAME (tonename_of_string (Lexing.lexeme lexbuf))}
-
-
 
 and channel = parse
     | "]" {read lexbuf}
