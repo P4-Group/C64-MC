@@ -22,23 +22,23 @@ let pprint_params params =
 
 (* Pretty-print an identifier *)
 let pprint_ident ident =
-  Printf.printf "Identifier: %s\n" ident.id
+  Printf.printf "\tIdentifier: %s\n" ident.id
 
 (* Pretty-print a sequence *)
 let rec pprint_seq seq =
   match seq with
   | Simple notes ->
       (* Print a simple sequence of notes *)
-      Printf.printf "Simple Sequence:\n";
+      Printf.printf "\tSimple Sequence:\n";
       List.iter pprint_note notes
   | Comp (seq1, seq2) ->
       (* Print a compound sequence consisting of two sub-sequences *)
-      Printf.printf "Compound Sequence:\n";
+      Printf.printf "\tCompound Sequence:\n";
       pprint_seq seq1;
       pprint_seq seq2
   | Loop (seq, count) ->
       (* Print a loop sequence with a specified count *)
-      Printf.printf "Loop Sequence (Count: %d):\n" count;
+      Printf.printf "\tLoop Sequence (Count: %d):\n" count;
       pprint_seq seq
 
 (* Pretty-print a note *)
@@ -46,11 +46,11 @@ and pprint_note note =
   match note with
   | Sound (tone, acc, frac, oct) ->
       (* Print a sound note with tone, accidental, fraction, and octave *)
-      Printf.printf "Sound Note: %s %s %s %s\n"
+      Printf.printf "\t\tSound Note: %s %s %s %s\n"
         (pprint_tone tone) (pprint_acc acc) (pprint_frac frac) (pprint_oct oct)
   | Rest frac ->
       (* Print a rest note with a specified fraction *)
-      Printf.printf "Rest Note: %s\n" (pprint_frac frac)
+      Printf.printf "\t\tRest Note: %s\n" (pprint_frac frac)
 
 (* Pretty-print a tone *)
 and pprint_tone tone =
@@ -94,7 +94,7 @@ let pprint_channel channel =
     (* Print the identifier of the channel *)
     pprint_ident ident;
     (* Print the waveform type *)
-    Printf.printf "Waveform: %s\n"
+    Printf.printf "\tWaveform: %s\n"
       (match waveform with
        | Vpulse -> "Pulse"
        | Triangle -> "Triangle"
