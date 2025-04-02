@@ -86,6 +86,7 @@ let pprint_file file =
   pprint_channel file.channel3
 
 (* Remove or comment out the following block *)
+(* For testing purposes *)
 (*
 let () =
   let ast =
