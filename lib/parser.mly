@@ -3,7 +3,11 @@
 %{
     open Ast
     open Utils
+
+    let sequence_list : (string, seq) Hashtbl.t = Hashtbl.create 10
 %}
+
+    
 
 %token <int> INT
 %token <int> STDPITCH
@@ -38,6 +42,7 @@ $: used for accessing the value of non-terminals or tokens
 *)
 
 %%
+
 
 (* CFG: 
    List of nonterminals with syntax and semantic action in the following structure:
@@ -77,6 +82,7 @@ prog:
     | p = params seql = list(seqdef) ch1 = channel1 ch2 = channel2 ch3 = channel3 EOF (* Overall file structure: Define parameters, define sequences, define channels *)
     { {parameters = p; sequences = seql; channel1 = ch1; channel2 = ch2; channel3 = ch3 } }
 
+
 params:
   | TEMPO ASSIGN t = INT SEMICOLON (* tempo = int; *)
     TIMESIG ASSIGN SP npm = INT COMMA bnv = INT EP SEMICOLON (* timeSignature = (int,int) *)
@@ -85,7 +91,12 @@ params:
 
 seqdef:
     | SEQUENCE id = ident ASSIGN LCB sb = seq RCB (* sequence ident = { seq } *)
-    { {name = id; seq = sb} }
+    { if Hashtbl.mem sequence_list id.id then
+        failwith "Sequences with the same name cannot be defined twice";
+
+      Hashtbl.add sequence_list id.id sb; 
+      {name = id; seq = sb}  
+    }
 
 seq:
     | nl = nonempty_list(note) { Simple nl } (* actual sequence of notes within curly brackets *)
@@ -131,7 +142,13 @@ channel3:
 
 
 seqwv:
-    | SP seqid = ident COMMA wv = waveform EP  { (seqid, wv) } (* (ident,waveform) *)
+    | SP seqid = ident COMMA wv = waveform EP  
+    { 
+      if not (Hashtbl.mem sequence_list seqid.id) then
+        failwith "Sequences must be defined before adding to a channel";
+      
+      (seqid, wv) 
+    } (* (ident,waveform) *)
 
 
 waveform:
@@ -139,6 +156,7 @@ waveform:
     | TRIANGLE    { Triangle }
     | SAWTOOTH    { Sawtooth }
     | NOISE       { Noise }
+    | IDENT { failwith "Has to be a valid waveform: vPulse, triangle, sawtooth, noise" }
 
 
 ident:

@@ -9,9 +9,7 @@ In a lexer everything is read as a sequence of characters (string).
 *)
 
 { (* Header *)
-    (* open Lexing *)
     open Parser
-    (* open Utils *)
 
  exception Lexical_error of string
 
