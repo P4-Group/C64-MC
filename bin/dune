@@ -1,4 +1,5 @@
 (executable
- (public_name C64MC)
+(public_name C64MC)
  (name main)
- (libraries C64MC))
+ (modules main)
+ (libraries menhirLib C64MC))

@@ -16,7 +16,8 @@ let () =
       Pprint.pprint_file _ast;
       (* let output = Codegen.compile ast in *)
       (* Printf.printf "Output:\n%s\n" output; *)
-      close_in input_channel
+
+      close_in input_channel;
     with
     | e ->
         close_in input_channel;
