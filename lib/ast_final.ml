@@ -8,14 +8,15 @@ type params = {
     stdpitch : int;
 }
 
-and sedef = {
+and seqdef = {
     name: ident;
     seq: note list;
 }
 
 and note = {
-    pitch = int;
-    duration = int;
+    highfreq = int;
+    lowfreq = int;
+    duration = int; (*Milliseconds*)
 }
 
 and waveform =
