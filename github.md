@@ -46,8 +46,7 @@
 +--------------------------+-----------------------------------------------------------------------------+
 ```
 
-## Extended Explaination
-
+## Extended Explanation
 1. **Single Source of Truth**  
     - The `trunk` branch is the main branch where all changes are integrated.  
     - It must always remain in a deployable state.  
