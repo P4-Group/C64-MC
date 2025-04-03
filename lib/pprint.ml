@@ -1,133 +1,116 @@
 open Ast
 
-(* Pretty-print the parameters of an asm (For commodore 64) music file *)
-let pprint_params params =
-  (* Print the tempo, or "None" if not specified *)
-  Printf.printf "Tempo: %s\n" 
-    (match params.tempo with 
-     | Some t -> string_of_int t 
-     | None -> "None");
+(* Define a generic AST type *)
+type generic_ast =
+  | Node of string * (generic_ast list) 
+  | Leaf of string                      
 
-  (* Print the time signature, or "None" if not specified *)
-  Printf.printf "Time Signature: %s\n"
-    (match params.timesig with
-     | Some (n, d) -> Printf.sprintf "%d/%d" n d
-     | None -> "None");
-
-  (* Print the standard pitch, or "None" if not specified *)
-  Printf.printf "Standard Pitch: %s\n" 
-    (match params.stdpitch with 
-     | Some p -> string_of_int p 
-     | None -> "None")
-
-(* Pretty-print an identifier *)
-let pprint_ident ident =
-  Printf.printf "\tIdentifier: %s\n" ident.id
-
-(* Pretty-print a sequence *)
-let rec pprint_seq seq =
-  match seq with
-  | Simple notes ->
-      (* Print a simple sequence of notes *)
-      Printf.printf "\tSimple Sequence:\n";
-      List.iter pprint_note notes
-  | Comp (seq1, seq2) ->
-      (* Print a compound sequence consisting of two sub-sequences *)
-      Printf.printf "\tCompound Sequence:\n";
-      pprint_seq seq1;
-      pprint_seq seq2
-  | Loop (seq, count) ->
-      (* Print a loop sequence with a specified count *)
-      Printf.printf "\tLoop Sequence (Count: %d):\n" count;
-      pprint_seq seq
-
-(* Pretty-print a note *)
-and pprint_note note =
-  match note with
-  | Sound (tone, acc, frac, oct) ->
-      (* Print a sound note with tone, accidental, fraction, and octave *)
-      Printf.printf "\t\tSound Note: %s %s %s %s\n"
-        (pprint_tone tone) (pprint_acc acc) (pprint_frac frac) (pprint_oct oct)
-  | Rest frac ->
-      (* Print a rest note with a specified fraction *)
-      Printf.printf "\t\tRest Note: %s\n" (pprint_frac frac)
-
-(* Pretty-print a tone *)
-and pprint_tone tone =
-  match tone with
-  | A -> "A" | B -> "B" | C -> "C" | D -> "D" | E -> "E" | F -> "F" | G -> "G"
-
-(* Pretty-print an accidental *)
-and pprint_acc acc =
-  match acc with
-  | None -> "Natural"
-  | Sharp -> "Sharp"
-  | Flat -> "Flat"
-
-(* Pretty-print a fraction *)
-and pprint_frac frac =
-  match frac with
-  | Full -> "Full"
-  | Half -> "Half"
-  | Quarter -> "Quarter"
-  | Eighth -> "Eighth"
-  | Sixteenth -> "Sixteenth"
-
-(* Pretty-print an octave *)
-and pprint_oct oct =
-  match oct with
-  | None -> "None"
-  | Orig i -> Printf.sprintf "Original(%d)" i
-  | Mod (oct, transp) ->
-      (* Print a modified octave with transposition *)
-      Printf.sprintf "Modified(%s, %s)" (pprint_oct oct) (pprint_transp transp)
-
-(* Pretty-print a transposition *)
-and pprint_transp transp =
-  match transp with
-  | Octup -> "Octave Up"
-  | Octdwn -> "Octave Down"
-
-(* Pretty-print a channel *)
-let pprint_channel channel =
-  List.iter (fun (ident, waveform) ->
-    (* Print the identifier of the channel *)
-    pprint_ident ident;
-    (* Print the waveform type *)
-    Printf.printf "\tWaveform: %s\n"
-      (match waveform with
-       | Vpulse -> "Pulse"
-       | Triangle -> "Triangle"
-       | Sawtooth -> "Sawtooth"
-       | Noise -> "Noise")
-  ) channel
-
-(* Pretty-print the entire music file *)
-let pprint_file file =
-  (* Print the file parameters *)
-  Printf.printf "File Parameters:\n";
-  pprint_params file.parameters;
-  Printf.printf "\nSequences:\n";
-  (* Print each sequence definition *)
-  List.iter (fun seqdef ->
-    pprint_ident seqdef.name;
-    pprint_seq seqdef.seq
-  ) file.sequences;
-  (* Print the channels *)
-  Printf.printf "\nChannel 1:\n";
-  pprint_channel file.channel1;
-  Printf.printf "\nChannel 2:\n";
-  pprint_channel file.channel2;
-  Printf.printf "\nChannel 3:\n";
-  pprint_channel file.channel3
-
-(* Remove or comment out the following block *)
-(* For testing purposes, since it allows for stdin*)
-(*
-let () =
-  let ast =
-    let lexbuf = Lexing.from_channel stdin in
-    Parser.prog Lexer.read lexbuf
+(* Conversion of our AST's to a generic AST *)
+let rec ast_to_generic_ast (file : Ast.file) : generic_ast =
+  let params_node =
+    Node ("Parameters", [
+      Leaf (Printf.sprintf "Tempo: %s" (match file.parameters.tempo with Some t -> string_of_int t | None -> "None"));
+      Leaf (Printf.sprintf "Time Signature: %s"
+              (match file.parameters.timesig with
+               | Some (n, d) -> Printf.sprintf "%d/%d" n d
+               | None -> "None"));
+      Leaf (Printf.sprintf "Standard Pitch: %s"
+              (match file.parameters.stdpitch with Some p -> string_of_int p | None -> "None"))
+    ])
   in
-  pprint_file ast
-*)
+  let sequences_node =
+    Node ("Sequences", List.map (fun seqdef ->
+      Node ("Sequence", [
+        Leaf (Printf.sprintf "Identifier: %s" seqdef.name.id);
+        ast_to_generic_seq seqdef.seq
+      ])
+    ) file.sequences)
+  in
+  let channels_node name channel =
+    Node (name, List.map (fun (ident, waveform) ->
+      Node ("Channel", [
+        Leaf (Printf.sprintf "Identifier: %s" ident.id);
+        Leaf (Printf.sprintf "Waveform: %s" (match waveform with
+          | Vpulse -> "Pulse"
+          | Triangle -> "Triangle"
+          | Sawtooth -> "Sawtooth"
+          | Noise -> "Noise"))
+      ])
+    ) channel)
+  in
+  Node ("File", [
+    params_node;
+    sequences_node;
+    channels_node "Channel 1" file.channel1;
+    channels_node "Channel 2" file.channel2;
+    channels_node "Channel 3" file.channel3
+  ])
+
+  and ast_to_generic_seq seq =
+    match seq with
+    | Simple notes ->
+        Node ("Simple Sequence", List.map ast_to_generic_note notes)
+    | Comp (seq1, seq2) ->
+        Node ("Compound Sequence", [ast_to_generic_seq seq1; ast_to_generic_seq seq2])
+    | Loop (seq, count) ->
+        Node ("Loop Sequence", [
+          Leaf (Printf.sprintf "Count: %d" count);
+          ast_to_generic_seq seq
+        ])
+
+  and ast_to_generic_note note =
+    match note with
+    | Sound (tone, acc, frac, oct) ->
+        Node ("Sound Note", [
+          Leaf (Printf.sprintf "Tone: %s" (pprint_tone tone));
+          Leaf (Printf.sprintf "Accidental: %s" (pprint_acc acc));
+          Leaf (Printf.sprintf "Fraction: %s" (pprint_frac frac));
+          Leaf (Printf.sprintf "Octave: %s" (pprint_oct oct))
+        ])
+    | Rest frac ->
+        Node ("Rest Note", [Leaf (Printf.sprintf "Fraction: %s" (pprint_frac frac))])
+
+  and pprint_tone tone =
+    match tone with
+    | A -> "A" | B -> "B" | C -> "C" | D -> "D" | E -> "E" | F -> "F" | G -> "G"
+
+  and pprint_acc acc =
+    match acc with
+    | None -> "Natural"
+    | Sharp -> "Sharp"
+    | Flat -> "Flat"
+
+  and pprint_frac frac =
+    match frac with
+    | Full -> "Full"
+    | Half -> "Half"
+    | Quarter -> "Quarter"
+    | Eighth -> "Eighth"
+    | Sixteenth -> "Sixteenth"
+
+  and pprint_oct oct =
+    match oct with
+    | None -> "None"
+    | Orig i -> Printf.sprintf "Original(%d)" i
+    | Mod (oct, transp) ->
+        Printf.sprintf "Modified(%s, %s)" (pprint_oct oct) (pprint_transp transp)
+
+  and pprint_transp transp =
+    match transp with
+    | Octup -> "Octave Up"
+    | Octdwn -> "Octave Down"
+
+  (* Pretty-print a generic AST *)
+  let rec pprint_generic_ast ?(indent_level=0) ast =
+    let indent = String.make (indent_level * 2) ' ' in
+    match ast with
+    | Node (name, children) ->
+        Printf.printf "%s%s:\n" indent name;
+        List.iter (pprint_generic_ast ~indent_level:(indent_level + 1)) children
+    | Leaf value ->
+        Printf.printf "%s- %s\n" indent value
+
+  (* Entry point for pretty-printing a file *)
+  let pprint_file file =
+    let generic_ast = ast_to_generic_ast file in
+    pprint_generic_ast generic_ast
