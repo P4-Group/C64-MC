@@ -30,7 +30,7 @@ and tone =
   | G
 
 and acc =
-  | None
+  | Nat
   | Sharp
   | Flat
 

@@ -6,58 +6,90 @@ let error ?loc s = raise (Error (loc, s))
 
 (*Insert specific errors here*)
 
-(* Insert params if needed *)
+let tempo = ref 0
+let timesig = ref (0,0)
+let stdpitch = ref 0
 
-let notes = function
+let set_params ( params : Ast.params ) =
+    tempo := (match params.tempo with
+      | Some t -> t
+      | None -> 120
+    );
+    timesig := (match params.timesig with
+      | Some ts -> ts
+      | None -> (4, 4)
+    );
+    stdpitch := (match params.stdpitch with
+      | Some sp -> sp
+      | None -> 440
+    );
+
+let base_offset = function
+  | C -> -9 | D -> -7 | E -> -5 | F -> -4 
+  | G -> -2 | A -> 0 | B -> 2
+
+let acc_offset
+  | Nat -> 0
+  | Sharp -> 1
+  | Flat -> -1
+
+  let oct_offset = function
+  | Some o -> (o - 4) * 12
+  | None -> 0
+
+let get_qn_duration () =
+    let _, bnv = !timesig in
+    let bnv_duration = 60000 / !tempo in
+    match bnv with 
+    | 1 -> bnv_duration / 4
+    | 2 -> bnv_duration / 2
+    | 4 -> bnv_duration
+    | 8 -> bnv_duration * 2
+    | 16 -> bnv_duration * 4
+    | _ -> failwith "Invalid basic note value in time signature"
+
+let qn = get_qn_duration ();
+
+let get_note_duration = function
+    | Whole -> qn_duration * 4
+    | Half -> qn_duration * 2
+    | Quarter -> qn_duration
+    | Eighth -> qn_duration / 2
+    | Sixteenth -> qn_duration / 4
+    
+let note_translate = function
   | Ast.Sound (t, a, f, o) -> 
-    note_translate(t, a, f, o);
-    note {highfreq: hf; lowfreq: lf; duration: d;}
-  | Ast.Rest t ->
-    let d = get_note_duration f;
-    note {highfreq: 0; lowfreq: 0; duration: d}
+    let semitone_offset = base_offset t + acc_offset a + oct_offset o in
+    let f_out = float_of_int !stdpitch *. (2. ** (float_of_int semitone_offset /. 12.)) in
+    let f_n = f_out /. 0.06097 in
+    let hf = int_of_float in
+    let lf = int_of_float f_n - (256 * hf) in
+    let d = get_note_duration f in
+    {highfreq: hf; lowfreq: lf; duration: d}
+  | Ast.Rest f ->
+    let d = get_note_duration f in
+    {highfreq: 0; lowfreq: 0; duration: d}
 
-let note_translate (t, a, f, o) = 
-    let frequency = ref Ast.stdpitch; (*Frequency starts at standard pitch*)
-    (*Depending on tone, move frequency up by n semitones in this formula:
-    fn = f0 * 2^(n/12)
-    where f0 is fixed starting pitch (standard pitch), and fn is resulting pitch  *)
-    begin match t with
-        | C -> frequency = frequency * 2^(-9/12) (* Start tone of fourth octave *)
-        | D -> frequency = frequency * 2^(-7/12)
-        | E -> frequency = frequency * 2^(-5/12)
-        | F -> frequency = frequency * 2^(-4/12)
-        | G -> frequency = frequency * 2^(-2/12)
-        | A -> (*Nothing happens, this is already standard pitch*)
-        | B -> frequency = frequency * 2^(2/12)
-    end
-    (*Depending on accidental, move up or down one semitone*)
-    begin match a with
-        | None -> (*Nothing happens*)
-        | Sharp -> frequency = frequency * 2^(1/12)
-        | Flat -> frequency = frequency * 2^(-1/12)
-    end
-    frequency = (frequency * o) / 4 (* Move tone to correct octave *)
-    frequency = frequency / 0.06097 (* Convert frequency output to oscillator decimal *)
-    let hf = int_of_float (frequency/256) (* High frequency *)
-    let lf = frequency - (256 * hf) (* Low frequency *)
+let seq_translate = List.map note_translate Ast.seq
 
-    let d = get_note_duration f 
-    (*TODO: Fix syntax, check calculations with unit tests*)
+let seqdef_translate (Ast.seqdef {name; seq}) =
+    { Final_ast.name; seq = seq_translate seq } (* TODO: Should actually update a hashtable insead! *)
 
-    let get_qn_duration =
-        let bnv_duration = 60000 / Ast.tempo
-        let qn_duration = ref bnv_duration
-        begin match Ast.timesig(1) with 
-            | 1 -> qn_duration = bnv_duration / 4
-            | 2 -> qn_duration = bnv_duration / 2
-            | 4 -> (* Nothing happens *)
-            | 8 -> qn_duration = bnv_duration * 2
-            | 16 -> qn_duration = bnv_duration * 4
-        end
+let waveform_translate = function
+  | Ast.Vpulse -> Vpulse
+  | Ast.Triangle -> Triangle
+  | Ast.Sawtooth -> Sawtooth
+  | Ast.Noise -> Noise
 
-    let get_note_duration = function
-        | Whole -> qn_duration * 4
-        | Half -> qn_duration * 2
-        | Quarter -> (* Nothing happens*)
-        | Eighth -> qn_duration / 2
-        | Sixteenth -> qn_duration / 4
+(*TODO: Should use the seqdef.name.id of new hashtable and waveform of waveform_translate *)
+let channel_translate = 
+
+let seqdef_list_translate = List.map seqdef_translate Ast.file.sqs (*TODO: Will just be the new hashtable*)
+
+let file_translate = Ast.file -> 
+    file.{ 
+      sqs: seqdef_list_translate; (*TODO: Should hold the new hashtable*)
+      ch1: channel_translate Ast.ch1;
+      ch2: channel_translate Ast.ch2; 
+      ch3: channel_translate Ast.ch3; 
+    }
