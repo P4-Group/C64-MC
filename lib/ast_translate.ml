@@ -6,24 +6,6 @@ let error ?loc s = raise (Error (loc, s))
 
 (*Insert specific errors here*)
 
-let tempo = ref 0
-let timesig = ref (0,0)
-let stdpitch = ref 0
-
-let set_params ( params : Ast.params ) =
-    tempo := (match params.tempo with
-      | Some t -> t
-      | None -> 120
-    );
-    timesig := (match params.timesig with
-      | Some ts -> ts
-      | None -> (4, 4)
-    );
-    stdpitch := (match params.stdpitch with
-      | Some sp -> sp
-      | None -> 440
-    );
-
 let base_offset = function
   | C -> -9 | D -> -7 | E -> -5 | F -> -4 
   | G -> -2 | A -> 0 | B -> 2
@@ -38,8 +20,14 @@ let acc_offset
   | None -> 0
 
 let get_qn_duration () =
-    let _, bnv = !timesig in
-    let bnv_duration = 60000 / !tempo in
+    let tempo = match Ast.params.tempo with
+      | Some t -> t
+      | None -> 120 in
+    let timesig = match Ast.params.timesig with
+      | Some ts -> ts
+      | None -> (4,4) in
+    let _, bnv = timesig in
+    let bnv_duration = 60000 / tempo in
     match bnv with 
     | 1 -> bnv_duration / 4
     | 2 -> bnv_duration / 2
@@ -58,7 +46,10 @@ let get_note_duration = function
     | Sixteenth -> qn_duration / 4
     
 let note_translate = function
-  | Ast.Sound (t, a, f, o) -> 
+  | Ast.Sound (t, a, f, o) ->
+    let stdpitch = match Ast.params.stdpitch with
+      | Some sp -> sp
+      | None -> 440 in 
     let semitone_offset = base_offset t + acc_offset a + oct_offset o in
     let f_out = float_of_int !stdpitch *. (2. ** (float_of_int semitone_offset /. 12.)) in
     let f_n = f_out /. 0.06097 in
