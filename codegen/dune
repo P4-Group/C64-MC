@@ -1,3 +1,3 @@
 (library
  (name Codegen)
- (modules instructionSet))
+ (modules instructionSet instructionGen))
