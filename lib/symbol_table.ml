@@ -15,6 +15,7 @@ type symbol_info = (* a record data structure used for grouping related informat
     memory_address : memory_address; 
   }
 
+
 (* Creating symbol table *)
 let symbol_table : (string, symbol_info) Hashtbl.t = Hashtbl.create 10
 
@@ -30,12 +31,21 @@ let add_sequence id seq =
 
   let symbol = SequenceSymbol {seq = seq; mem_address = None} in 
   Hashtbl.add symbol_table id symbol
+  
 
 (* Checks if the sequence id exists. If not, an error will be thrown. *)
 let check_sequence id =
   if not (Hashtbl.mem symbol_table id) then
-    failwith "Sequences must be defined before adding to a channel";
+     failwith "Sequences must be defined before adding to a channel"
 
+
+(* Updates the sequence in the translator *)
+let update_sequence id seq memory_address = 
+  if not (Hashtbl.mem symbol_table id) then
+    failwith "This sequence does not exist";
+  
+  let symbol = SequenceSymbol {seq = seq; mem_address = memory_address} in 
+  Hashtbl.replace symbol_table id symbol
 
 
 
