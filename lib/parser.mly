@@ -12,8 +12,6 @@
     let sequence_list : (string, seq) Hashtbl.t = Hashtbl.create 10
 %}
 
-    
-
 %token <int> INT
 %token <int> STDPITCH
 %token <int> TEMPO
