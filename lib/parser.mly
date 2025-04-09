@@ -3,11 +3,8 @@
 %{
     open Ast
     open Utils
-
-    let sequence_list : (string, seq) Hashtbl.t = Hashtbl.create 10
+    open Symbol_table
 %}
-
-    
 
 %token <int> INT
 %token <int> STDPITCH
@@ -91,10 +88,9 @@ params:
 
 seqdef:
     | SEQUENCE id = ident ASSIGN LCB sb = seq RCB (* sequence ident = { seq } *)
-    { if Hashtbl.mem sequence_list id.id then
-        failwith "Sequences with the same name cannot be defined twice";
-
-      Hashtbl.add sequence_list id.id sb; 
+    (* Checks if there already exists a sequence with the specified id in the symbol table.
+      If not, add the sequence to the symbol table. *)
+    { add_sequence id.id sb;
       {name = id; seq = sb}  
     }
 
@@ -144,9 +140,9 @@ channel3:
 seqwv:
     | SP seqid = ident COMMA wv = waveform EP  
     { 
-      if not (Hashtbl.mem sequence_list seqid.id) then
-        failwith "Sequences must be defined before adding to a channel";
-      
+      (* Calls a helper function to check if the defined sequence id exists in the symbol table.
+        If not, an error will be thrown. *)
+      check_sequence seqid.id;
       (seqid, wv) 
     } (* (ident,waveform) *)
 
