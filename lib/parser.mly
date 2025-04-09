@@ -4,6 +4,11 @@
     open Ast
     open Utils
 
+    (*Creating a hashtable to save sequence indentifiers and the sequence body
+      We only save the identifier string not the location
+      we declare a variable with the type hashtable, with a string as key and a seq as value. 
+      Lastly we we initialise the variable to a hashtable with 10 spaces.
+    *)
     let sequence_list : (string, seq) Hashtbl.t = Hashtbl.create 10
 %}
 
@@ -91,7 +96,9 @@ params:
 
 seqdef:
     | SEQUENCE id = ident ASSIGN LCB sb = seq RCB (* sequence ident = { seq } *)
-    { if Hashtbl.mem sequence_list id.id then
+    { (*We save sequences only if the identifier is unique and hasn't been used before
+        If a sequence exists we fail *)
+      if Hashtbl.mem sequence_list id.id then (*Checking only the name of the ident not the location*)
         failwith "Sequences with the same name cannot be defined twice";
 
       Hashtbl.add sequence_list id.id sb; 
@@ -143,14 +150,16 @@ channel3:
 
 seqwv:
     | SP seqid = ident COMMA wv = waveform EP  
-    { 
-      if not (Hashtbl.mem sequence_list seqid.id) then
+    { (*We add sequences to the channels only if the identifier is declared
+        If a sequence doesn't exists we fail *)
+      if not (Hashtbl.mem sequence_list seqid.id) then (*Checking only the name of the ident not the location*)
         failwith "Sequences must be defined before adding to a channel";
       
       (seqid, wv) 
     } (* (ident,waveform) *)
 
 
+(*Has IDENT in case that a user something other than one of the four keywords*)
 waveform:
     | VPULSE      { Vpulse }
     | TRIANGLE    { Triangle }
