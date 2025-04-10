@@ -2,7 +2,7 @@ open InstructionSet
 (*open Exceptions*) (*Uncomment when connected to rest of the program*)
 
 
-(*Just for testing purposes*)
+(*Just for testing purposes, remove when integrated fully in rest of program*)
 exception InstructionNotFoundError of string
 exception InsufficientInstructionArguments of string * int * int
 exception TooManyInstructionArguments of string * int * int
