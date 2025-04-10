@@ -76,7 +76,7 @@ let rec ast_to_generic_ast (file : Ast.file) : generic_ast =
 
   and pprint_acc acc =
     match acc with
-    | None -> "Natural"
+    | Nat -> "Natural"
     | Sharp -> "Sharp"
     | Flat -> "Flat"
 

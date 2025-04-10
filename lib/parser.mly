@@ -111,7 +111,7 @@ note:
     Sound (t, a, f, o)) } (* Full note with octave and fraction *)
 
 acc:
-  | { None }
+  | { Nat }
   | SHARP { Sharp }
   | FLAT  { Flat }
 
