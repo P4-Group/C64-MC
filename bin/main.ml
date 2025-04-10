@@ -17,9 +17,6 @@ let () =
       Pprint.pprint_file _ast;
       (* let output = Codegen.compile ast in *)
       (* Printf.printf "Output:\n%s\n" output; *)
-
-      (*Test function for the InstructSet/codegen module*)
-      InstructionSet.test_func 9;
   
       close_in input_channel;
     with
