@@ -88,6 +88,7 @@ params:
 
 seqdef:
     | SEQUENCE id = ident ASSIGN LCB sb = seq RCB (* sequence ident = { seq } *)
+
     (* Checks if there already exists a sequence with the specified id in the symbol table.
       If not, add the sequence to the symbol table. *)
     { add_sequence id.id sb;
@@ -139,6 +140,7 @@ channel3:
 
 seqwv:
     | SP seqid = ident COMMA wv = waveform EP  
+
     { 
       (* Calls a helper function to check if the defined sequence id exists in the symbol table.
         If not, an error will be thrown. *)
@@ -147,6 +149,7 @@ seqwv:
     } (* (ident,waveform) *)
 
 
+(*Has IDENT in case that a user something other than one of the four keywords*)
 waveform:
     | VPULSE      { Vpulse }
     | TRIANGLE    { Triangle }
