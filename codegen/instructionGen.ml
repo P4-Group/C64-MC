@@ -22,7 +22,7 @@ let construct_instruction (mnemonic : string) (args : string list) =
         let constructed_instruction = Printf.sprintf "%s %s" instr.mnemonic (String.concat ", " args) in
         constructed_instruction
 
-let construct_functional_instructions (label : string) (instruction_table : (string, string list) Hashtbl.t) =
+let construct_labelled_instructions (label : string) (instruction_table : (string, string list) Hashtbl.t) =
   write_line_tf (label ^ ":");
   Hashtbl.iter (fun mnemonic args ->
     let constructed_instruction = construct_instruction mnemonic args in
@@ -42,5 +42,5 @@ let () =
   Hashtbl.add instruct_hashtbl "LDA" ["$00"];
   Hashtbl.add instruct_hashtbl "STA" ["$01"];
   Hashtbl.add instruct_hashtbl "JMP" ["$02"];
-  construct_functional_instructions label instruct_hashtbl;
+  construct_labelled_instructions label instruct_hashtbl;
     
