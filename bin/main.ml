@@ -1,26 +1,40 @@
+(*---------------*)
+(* Main Exceptions *)
+(*---------------*)
 open C64MC
-open Codegen
+open Exceptions 
 
 let () =
-  Printf.printf "Program started.\n"; (* Debugging line *)
-  if Array.length Sys.argv < 2 then
-    Printf.eprintf "Usage: %s <input_file>\n" Sys.argv.(0)
-  else
-    let input_filename = Sys.argv.(1) in
-    Printf.printf "Opening file: %s\n" input_filename; (* Debugging line *)
-    let input_channel = open_in input_filename in
-    try
-      let lexbuf = Lexing.from_channel input_channel in
-      Printf.printf "File opened successfully. Parsing...\n"; (* Debugging line *)
-      let _ast = Parser.prog Lexer.read lexbuf in
-      (* Pretty-print the parsed AST *)
-      Pprint.pprint_file _ast;
-      (* let output = Codegen.compile ast in *)
-      (* Printf.printf "Output:\n%s\n" output; *)
-  
-      close_in input_channel;
-    with
-    | e ->
-        close_in input_channel;
-        Printf.eprintf "Error: %s\n" (Printexc.to_string e);
-        raise e
+  try
+    if Array.length Sys.argv < 2 then
+      raise (InsufficientArguments "Usage: <program> <input_file>")
+    else
+      let input_filename = Sys.argv.(1) in
+      Printf.printf "Opening file: %s\n" input_filename; (* Debugging line *)
+      if not (Sys.file_exists input_filename) then
+        raise (FileNotFoundError ("File not found: " ^ input_filename))
+      else
+        let input_channel = 
+          try open_in_bin input_filename 
+          with Sys_error _ -> raise (FilePermissionError ("Permission denied or file cannot be opened: " ^ input_filename)) 
+        in
+        let lexbuf = Lexing.from_channel input_channel in
+        Printf.printf "File opened successfully. Parsing...\n"; (* Debugging line *)
+        let _ast = Parser.prog Lexer.read lexbuf in
+        (* Pretty-print the parsed AST *)
+        Pprint.pprint_file _ast;
+
+
+        close_in input_channel
+  with
+  | InsufficientArguments msg ->
+      Printf.eprintf "Error: %s\n" msg
+  | FileNotFoundError msg ->
+      Printf.eprintf "Error: %s\n" msg
+  | FilePermissionError msg ->
+      Printf.eprintf "Error: %s\n" msg
+  | ParsingError msg ->
+      Printf.eprintf "Parsing Error: %s\n" msg
+  | e ->
+      Printf.eprintf "Unexpected Error: %s\n" (Printexc.to_string e);
+      raise e
