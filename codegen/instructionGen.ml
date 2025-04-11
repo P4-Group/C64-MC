@@ -1,18 +1,17 @@
 open InstructionSet
-(*open Exceptions*) (*Uncomment when connected to rest of the program*)
-
-
-(*Just for testing purposes, remove when integrated fully in rest of program*)
-exception InstructionNotFoundError of string
-exception InsufficientInstructionArguments of string * int * int
-exception TooManyInstructionArguments of string * int * int
-
+open Exceptions
 
 (* Write a line to a file without overwriting existing lines *)
 let write_line_tf (line : string) =
   let filename = "IR.asm" in
   let oc = open_out_gen [Open_creat; Open_text; Open_append] 0o666 filename in
   Printf.fprintf oc "%s\n" line;
+  close_out oc
+
+let write_stdlib (stdlib_string : string) =
+  let filename = "IR.asm" in
+  let oc = open_out_gen [Open_creat; Open_text; Open_append] 0o666 filename in
+  Printf.fprintf oc "%s\n" stdlib_string;
   close_out oc
 
 (* Construct an instruction from its mnemonic and arguments *)
@@ -39,9 +38,11 @@ let construct_labelled_instructions (label : string) (instruction_table : (strin
   ) instruction_table
 
 
+  
 
-(* Example usage *)
-let () =
+
+(* Example usage as a runnable function *)
+let run_example () =
   let args = ["10"; "20"] in
   let constructed_instruction = construct_instruction "ADC" args in
   write_line_tf constructed_instruction; 
@@ -50,6 +51,6 @@ let () =
   let instruct_hashtbl = Hashtbl.create 10 in
   Hashtbl.add instruct_hashtbl "LDA" ["$00"; "#$FF"];
   Hashtbl.add instruct_hashtbl "STA" ["$01"];
-  Hashtbl.add instruct_hashtbl "JMP" ["$02"; "$02"; "$02"; "$02"];
+  Hashtbl.add instruct_hashtbl "JMP" ["$02"];
   construct_labelled_instructions label instruct_hashtbl;
-    
+  write_stdlib Stdlib.preamble;
