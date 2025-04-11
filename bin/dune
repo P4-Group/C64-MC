@@ -2,4 +2,4 @@
 (public_name C64MC)
  (name main)
  (modules main)
- (libraries menhirLib C64MC))
+ (libraries menhirLib C64MC Codegen Exceptions))
