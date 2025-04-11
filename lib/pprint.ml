@@ -1,63 +1,99 @@
 open Ast
 
+type ast_file =
+  | Ast of Ast.file
+  | Ast_final of Ast_final.file
+
 (* Define a generic AST type *)
 type generic_ast =
   | Node of string * (generic_ast list) 
   | Leaf of string                      
 
 (* Conversion of our AST's to a generic AST *)
-let rec ast_to_generic_ast (file : Ast.file) : generic_ast =
-  let params_node =
-    Node ("Parameters", [
-      Leaf (Printf.sprintf "Tempo: %s" (match file.parameters.tempo with Some t -> string_of_int t | None -> "None"));
-      Leaf (Printf.sprintf "Time Signature: %s"
-              (match file.parameters.timesig with
-               | Some (n, d) -> Printf.sprintf "%d/%d" n d
-               | None -> "None"));
-      Leaf (Printf.sprintf "Standard Pitch: %s"
-              (match file.parameters.stdpitch with Some p -> string_of_int p | None -> "None"))
+let rec ast_to_generic_ast (file : ast_file) : generic_ast =
+  match file with
+  | Ast f ->
+    let params_node =
+      Node ("Parameters", [
+        Leaf (Printf.sprintf "Tempo: %s" (match f.parameters.tempo with Some t -> string_of_int t | None -> "None"));
+        Leaf (Printf.sprintf "Time Signature: %s"
+                (match f.parameters.timesig with
+                  | Some (n, d) -> Printf.sprintf "%d/%d" n d
+                  | None -> "None"));
+        Leaf (Printf.sprintf "Standard Pitch: %s"
+                (match f.parameters.stdpitch with Some p -> string_of_int p | None -> "None"))
+      ])
+    in
+    let sequences_node =
+      Node ("Sequences", List.map (fun seqdef ->
+        Node ("Sequence", [
+          Leaf (Printf.sprintf "Identifier: %s" seqdef.name.id);
+          ast_to_generic_seq seqdef.seq
+        ])
+      ) f.sequences)
+    in
+    let channels_node name channel =
+      Node (name, List.map (fun (ident, waveform) ->
+        Node ("Channel", [
+          Leaf (Printf.sprintf "Identifier: %s" ident.id);
+          Leaf (Printf.sprintf "Waveform: %s" (match waveform with
+            | Vpulse -> "Pulse"
+            | Triangle -> "Triangle"
+            | Sawtooth -> "Sawtooth"
+            | Noise -> "Noise"))
+        ])
+      ) channel)
+    in
+    Node ("File", [
+      params_node;
+      sequences_node;
+      channels_node "Channel 1" f.channel1;
+      channels_node "Channel 2" f.channel2;
+      channels_node "Channel 3" f.channel3
     ])
-  in
-  let sequences_node =
-    Node ("Sequences", List.map (fun seqdef ->
-      Node ("Sequence", [
-        Leaf (Printf.sprintf "Identifier: %s" seqdef.name.id);
-        ast_to_generic_seq seqdef.seq
-      ])
-    ) file.sequences)
-  in
-  let channels_node name channel =
-    Node (name, List.map (fun (ident, waveform) ->
-      Node ("Channel", [
-        Leaf (Printf.sprintf "Identifier: %s" ident.id);
-        Leaf (Printf.sprintf "Waveform: %s" (match waveform with
-          | Vpulse -> "Pulse"
-          | Triangle -> "Triangle"
-          | Sawtooth -> "Sawtooth"
-          | Noise -> "Noise"))
-      ])
-    ) channel)
-  in
-  Node ("File", [
-    params_node;
-    sequences_node;
-    channels_node "Channel 1" file.channel1;
-    channels_node "Channel 2" file.channel2;
-    channels_node "Channel 3" file.channel3
-  ])
+  | Ast_final f ->
+    let sequences_node =
+      Node ("Sequences", List.map (fun seqdef ->
+        Node ("Sequence", [
+          Leaf (Printf.sprintf "Identifier: %s" seqdef.name.id);
+          Node ("Assembly Note", [
+            Leaf (Printf.sprintf "High frequency: %s Hz" (string_of_int highfreq));
+            Leaf (Printf.sprintf "Low frequency: %s Hz" (string_of_int lowfreq));
+            Leaf (Printf.sprintf "Duration: %s ms" (string_of_int duration))
+          ])
+        ])
+      ) f.sequences) (*TODO: we don't have f.sequences for ast_final, need helper function(s) in symbol table*)
+    in
+    let channels_node name channel =
+      Node (name, List.map (fun (ident, waveform) ->
+        Node ("Channel", [
+          Leaf (Printf.sprintf "Identifier: %s" ident.Ast_final.id);
+          Leaf (Printf.sprintf "Waveform: %s" (match waveform with
+            | Ast_final.Vpulse -> "Pulse"
+            | Ast_final.Triangle -> "Triangle"
+            | Ast_final.Sawtooth -> "Sawtooth"
+            | Ast_final.Noise -> "Noise"))
+        ])
+      ) channel)
+    in
+    Node ("File", [
+      channels_node "Channel 1" f.ch1;
+      channels_node "Channel 2" f.ch2;
+      channels_node "Channel 3" f.ch3
+    ])
 
-  and ast_to_generic_seq seq = Node ("Simple Sequence", List.map ast_to_generic_note seq)
+  and ast_to_generic_seq seq = Node ("Note list", List.map ast_to_generic_note seq)
 
   and ast_to_generic_note note =
     match note with
-    | Sound (tone, acc, frac, oct) ->
+    | Ast.Sound (tone, acc, frac, oct) ->
         Node ("Sound Note", [
           Leaf (Printf.sprintf "Tone: %s" (pprint_tone tone));
           Leaf (Printf.sprintf "Accidental: %s" (pprint_acc acc));
           Leaf (Printf.sprintf "Fraction: %s" (pprint_frac frac));
           Leaf (Printf.sprintf "Octave: %s" (pprint_oct oct))
         ])
-    | Rest frac ->
+    | Ast.Rest frac ->
         Node ("Rest Note", [Leaf (Printf.sprintf "Fraction: %s" (pprint_frac frac))])
 
   and pprint_tone tone =
