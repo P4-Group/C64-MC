@@ -1,6 +1,3 @@
-(*---------------*)
-(* Main Exceptions *)
-(*---------------*)
 open C64MC
 open Exceptions 
 open Codegen
