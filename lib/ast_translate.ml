@@ -1,5 +1,4 @@
 open Ast_final
-open Symbol_table
 
 exception Error of Ast.loc option * string
 
@@ -66,10 +65,9 @@ let note_translate = function
 let seq_translate (seq : Ast.seq) = List.map note_translate seq
 
 let seqdef_translate (seqdef : Ast.seqdef) = 
-  let name = seqdef.name.id in
+  let seq_id = seqdef.name.id in
   let translated_seq = seq_translate seqdef.seq in
-  Symbol_table.update_sequence name translated_seq;
-  { name = seqdef.name; seq = translated_seq }
+  Symbol_table.update_sequence seq_id translated_seq None
 
 let waveform_translate = function
   | Ast.Vpulse -> Vpulse
@@ -77,7 +75,11 @@ let waveform_translate = function
   | Ast.Sawtooth -> Sawtooth
   | Ast.Noise -> Noise
 
-let channel_translate ch = List.map (fun (sn,wf) -> (sn, waveform_translate wf)) ch
+  let ident_translate (id : Ast.ident) : Ast_final.ident = 
+    { Ast_final.id = id.id; id_loc = id.id_loc }
+  
+
+let channel_translate ch = List.map (fun (sn,wf) -> (ident_translate sn, waveform_translate wf)) ch
 
 let file_translate (f : Ast.file) = 
   List.iter seqdef_translate f.sequences;
