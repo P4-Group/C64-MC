@@ -22,6 +22,7 @@ let () =
         (* Pretty-print the parsed AST *)
         (*Pprint.pprint_file _ast;*)
 
+
       InstructionGen.run_example ();
         close_in input_channel
   with

@@ -96,7 +96,7 @@ seqdef:
     }
 
 seq:
-    | nl = nonempty_list(note) { Simple nl } (* actual sequence of notes within curly brackets *)
+    | nl = nonempty_list(note) { nl } (* actual sequence of notes within curly brackets *)
     (*| s1 = seq s2 = seq { Comp (s1, s2) } *) (* won't work as is, maybe we scrap compound sequences *)
     (*| LOOP SP RCB s = seq LCB COMMA l = INT EP { Loop (s, l) }*) (* loop({seq}, int) *) (* TODO: Is it fine that loop function is also in curly brackets? *)
     (* TODO: Maybe add compound sequence if we can find a nice way to do it *)
@@ -108,7 +108,7 @@ note:
     Sound (t, a, f, o)) } (* Full note with octave and fraction *)
 
 acc:
-  | { None }
+  | { Nat }
   | SHARP { Sharp }
   | FLAT  { Flat }
 
@@ -118,7 +118,7 @@ oct:
 
 frac:
   | i = INT { match i with
-              | 1 -> Full
+              | 1 -> Whole
               | 2 -> Half
               | 4 -> Quarter
               | 8 -> Eighth
