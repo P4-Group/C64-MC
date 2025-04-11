@@ -1,8 +1,6 @@
-(*---------------*)
-(* Main Exceptions *)
-(*---------------*)
 open C64MC
 open Exceptions 
+open Codegen
 
 let () =
   try
@@ -22,9 +20,9 @@ let () =
         Printf.printf "File opened successfully. Parsing...\n"; (* Debugging line *)
         let _ast = Parser.prog Lexer.read lexbuf in
         (* Pretty-print the parsed AST *)
-        Pprint.pprint_file _ast;
+        (*Pprint.pprint_file _ast;*)
 
-
+      InstructionGen.run_example ();
         close_in input_channel
   with
   | InsufficientArguments msg ->
