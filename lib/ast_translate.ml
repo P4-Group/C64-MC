@@ -6,6 +6,8 @@ let error ?loc s = raise (Error (loc, s))
 
 (*Insert specific errors here*)
 
+let params : Ast.params ref = ref { Ast.tempo = None; Ast.timesig = None; Ast.stdpitch = None }
+
 let base_offset = function
   | Ast.C -> -9 | Ast.D -> -7 | Ast.E -> -5 | Ast.F -> -4 
   | Ast.G -> -2 | Ast.A -> 0 | Ast.B -> 2
@@ -20,12 +22,12 @@ let oct_offset = function
   | _ -> 0
 
 let get_qn_duration =
-    let tempo = 120 (*match params.tempo with
+    let tempo = match !params.tempo with
       | Some t -> t
-      | None -> 120*) in
-    let timesig = (4,4)(*match params.timesig with
+      | None -> 120 in
+    let timesig = match !params.timesig with
       | Some ts -> ts
-      | None -> (4,4)*) in
+      | None -> (4,4) in
     let _, bnv = timesig in
     let bnv_duration = 60000 / tempo in
     match bnv with 
@@ -48,9 +50,9 @@ let get_note_duration f =
     
 let note_translate = function
   | Ast.Sound (t, a, f, o) ->
-    let stdpitch = 440 (*match Ast.params.stdpitch with
+    let stdpitch = match !params.stdpitch with
       | Some sp -> sp
-      | None -> 440*) in 
+      | None -> 440 in 
     let semitone_offset = base_offset t + acc_offset a + oct_offset o in
     let f_out = float_of_int stdpitch *. (2. ** (float_of_int semitone_offset /. 12.)) in
     let f_n = f_out /. 0.06097 in
@@ -81,7 +83,11 @@ let waveform_translate = function
 
 let channel_translate ch = List.map (fun (sn,wf) -> (ident_translate sn, waveform_translate wf)) ch
 
+let set_params (p : Ast.params) =
+  params := p
+
 let file_translate (f : Ast.file) = 
+  set_params f.parameters;
   List.iter seqdef_translate f.sequences;
   {
     ch1 = channel_translate f.channel1;
