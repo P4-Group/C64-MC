@@ -1,4 +1,5 @@
 open Ast_final
+open Symbol_table
 
 exception Error of Ast.loc option * string
 
@@ -7,25 +8,25 @@ let error ?loc s = raise (Error (loc, s))
 (*Insert specific errors here*)
 
 let base_offset = function
-  | C -> -9 | D -> -7 | E -> -5 | F -> -4 
-  | G -> -2 | A -> 0 | B -> 2
+  | Ast.C -> -9 | Ast.D -> -7 | Ast.E -> -5 | Ast.F -> -4 
+  | Ast.G -> -2 | Ast.A -> 0 | Ast.B -> 2
 
-let acc_offset
-  | Nat -> 0
-  | Sharp -> 1
-  | Flat -> -1
+let acc_offset = function
+  | Ast.Nat -> 0
+  | Ast.Sharp -> 1
+  | Ast.Flat -> -1
 
-  let oct_offset = function
-  | Some o -> (o - 4) * 12
-  | None -> 0
+let oct_offset = function
+  | Ast.Orig o -> (o - 4) * 12
+  | _ -> 0
 
-let get_qn_duration () =
-    let tempo = match Ast.params.tempo with
+let get_qn_duration =
+    let tempo = 120 (*match params.tempo with
       | Some t -> t
-      | None -> 120 in
-    let timesig = match Ast.params.timesig with
+      | None -> 120*) in
+    let timesig = (4,4)(*match params.timesig with
       | Some ts -> ts
-      | None -> (4,4) in
+      | None -> (4,4)*) in
     let _, bnv = timesig in
     let bnv_duration = 60000 / tempo in
     match bnv with 
@@ -36,35 +37,39 @@ let get_qn_duration () =
     | 16 -> bnv_duration * 4
     | _ -> failwith "Invalid basic note value in time signature"
 
-let qn = get_qn_duration ();
 
-let get_note_duration = function
-    | Whole -> qn_duration * 4
-    | Half -> qn_duration * 2
-    | Quarter -> qn_duration
-    | Eighth -> qn_duration / 2
-    | Sixteenth -> qn_duration / 4
+let get_note_duration f =
+  let qn_duration = get_qn_duration in
+  match f with
+    | Ast.Whole -> qn_duration * 4
+    | Ast.Half -> qn_duration * 2
+    | Ast.Quarter -> qn_duration
+    | Ast.Eighth -> qn_duration / 2
+    | Ast.Sixteenth -> qn_duration / 4
     
 let note_translate = function
   | Ast.Sound (t, a, f, o) ->
-    let stdpitch = match Ast.params.stdpitch with
+    let stdpitch = 440 (*match Ast.params.stdpitch with
       | Some sp -> sp
-      | None -> 440 in 
+      | None -> 440*) in 
     let semitone_offset = base_offset t + acc_offset a + oct_offset o in
-    let f_out = float_of_int !stdpitch *. (2. ** (float_of_int semitone_offset /. 12.)) in
+    let f_out = float_of_int stdpitch *. (2. ** (float_of_int semitone_offset /. 12.)) in
     let f_n = f_out /. 0.06097 in
-    let hf = int_of_float in
+    let hf = int_of_float (f_n /. 256.) in
     let lf = int_of_float f_n - (256 * hf) in
     let d = get_note_duration f in
-    {highfreq: hf; lowfreq: lf; duration: d}
+    {highfreq = hf; lowfreq = lf; duration = d}
   | Ast.Rest f ->
     let d = get_note_duration f in
-    {highfreq: 0; lowfreq: 0; duration: d}
+    {highfreq = 0; lowfreq = 0; duration = d}
 
-let seq_translate = List.map note_translate Ast.seq
+let seq_translate (seq : Ast.seq) = List.map note_translate seq
 
-let seqdef_translate (Ast.seqdef {name; seq}) =
-    { Final_ast.name; seq = seq_translate seq } (* TODO: Should actually update a hashtable insead! *)
+let seqdef_translate (seqdef : Ast.seqdef) = 
+  let name = seqdef.name.id in
+  let translated_seq = seq_translate seqdef.seq in
+  Symbol_table.update_sequence name translated_seq;
+  { name = seqdef.name; seq = translated_seq }
 
 let waveform_translate = function
   | Ast.Vpulse -> Vpulse
@@ -72,15 +77,12 @@ let waveform_translate = function
   | Ast.Sawtooth -> Sawtooth
   | Ast.Noise -> Noise
 
-(*TODO: Should use the seqdef.name.id of new hashtable and waveform of waveform_translate *)
-let channel_translate = 
+let channel_translate ch = List.map (fun (sn,wf) -> (sn, waveform_translate wf)) ch
 
-let seqdef_list_translate = List.map seqdef_translate Ast.file.sqs (*TODO: Will just be the new hashtable*)
-
-let file_translate = Ast.file -> 
-    file.{ 
-      sqs: seqdef_list_translate; (*TODO: Should hold the new hashtable*)
-      ch1: channel_translate Ast.ch1;
-      ch2: channel_translate Ast.ch2; 
-      ch3: channel_translate Ast.ch3; 
-    }
+let file_translate (f : Ast.file) = 
+  List.iter seqdef_translate f.sequences;
+  {
+    ch1 = channel_translate f.channel1;
+    ch2 = channel_translate f.channel2;
+    ch3 = channel_translate f.channel3;
+  }

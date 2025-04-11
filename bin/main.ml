@@ -16,7 +16,8 @@ let () =
       Pprint.pprint_file _ast;
       (* let output = Codegen.compile ast in *)
       (* Printf.printf "Output:\n%s\n" output; *)
-
+      (*let _ast_final = Ast_translate.file_translate _ast in
+      Pprint.pprint_file _ast_final;*)
       close_in input_channel;
     with
     | e ->

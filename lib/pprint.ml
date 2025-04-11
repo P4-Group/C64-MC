@@ -46,17 +46,7 @@ let rec ast_to_generic_ast (file : Ast.file) : generic_ast =
     channels_node "Channel 3" file.channel3
   ])
 
-  and ast_to_generic_seq seq =
-    match seq with
-    | Simple notes ->
-        Node ("Simple Sequence", List.map ast_to_generic_note notes)
-    | Comp (seq1, seq2) ->
-        Node ("Compound Sequence", [ast_to_generic_seq seq1; ast_to_generic_seq seq2])
-    | Loop (seq, count) ->
-        Node ("Loop Sequence", [
-          Leaf (Printf.sprintf "Count: %d" count);
-          ast_to_generic_seq seq
-        ])
+  and ast_to_generic_seq seq = Node ("Simple Sequence", List.map ast_to_generic_note seq)
 
   and ast_to_generic_note note =
     match note with
@@ -82,7 +72,7 @@ let rec ast_to_generic_ast (file : Ast.file) : generic_ast =
 
   and pprint_frac frac =
     match frac with
-    | Full -> "Full"
+    | Whole -> "Whole"
     | Half -> "Half"
     | Quarter -> "Quarter"
     | Eighth -> "Eighth"
@@ -92,13 +82,6 @@ let rec ast_to_generic_ast (file : Ast.file) : generic_ast =
     match oct with
     | None -> "None"
     | Orig i -> Printf.sprintf "Original(%d)" i
-    | Mod (oct, transp) ->
-        Printf.sprintf "Modified(%s, %s)" (pprint_oct oct) (pprint_transp transp)
-
-  and pprint_transp transp =
-    match transp with
-    | Octup -> "Octave Up"
-    | Octdwn -> "Octave Down"
 
   (* Pretty-print a generic AST *)
   let rec pprint_generic_ast ?(indent_level=0) ast =

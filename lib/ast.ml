@@ -7,10 +7,7 @@ type loc = Lexing.position * Lexing.position
 
 type ident = { id: string; id_loc: loc }
 
-and seq =
-  | Simple of note list
-  | Comp of seq * seq
-  | Loop of seq * int
+and seq = note list
 
 and seqdef =
 { name : ident;
@@ -35,7 +32,7 @@ and acc =
   | Flat
 
 and frac =
-  | Full
+  | Whole
   | Half
   | Quarter
   | Eighth
@@ -44,11 +41,6 @@ and frac =
 and oct =
   | None
   | Orig of int
-  | Mod of oct * transp
-
-and transp =
-  | Octup
-  | Octdwn
 
 and waveform =
   | Vpulse
