@@ -1,6 +1,6 @@
 (library
  (name C64MC)
- (modules ast lexer parser utils pprint symbol_table)
+ (modules ast lexer parser utils pprint symbol_table ast_final pprint)
  (libraries menhirLib))
 
 (ocamllex lexer)
