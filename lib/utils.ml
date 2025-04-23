@@ -1,4 +1,5 @@
 open Ast
+open Exceptions
 
     (* Function to decide whether letters A-G is tones *)
     let ident_to_tone = function
@@ -9,4 +10,4 @@ open Ast
         | "e" -> E
         | "f" -> F
         | "g" -> G
-        | _ -> failwith "Invalid tone" (*TODO real error handling, not failwith*)
+        | _ -> raise (IllegalToneError "Invalid tone")

@@ -1,4 +1,5 @@
 open Ast_final
+open Exceptions
 
 exception Error of Ast.loc option * string
 
@@ -36,7 +37,7 @@ let get_qn_duration =
     | 4 -> bnv_duration
     | 8 -> bnv_duration * 2
     | 16 -> bnv_duration * 4
-    | _ -> failwith "Invalid basic note value in time signature"
+    | _ -> raise (IllegalTimeSignature "Invalid basic note value in time signature")
 
 
 let get_note_duration f =

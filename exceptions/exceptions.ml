@@ -15,3 +15,26 @@ exception FilePermissionError of string
 exception InstructionNotFoundError of string
 exception InsufficientInstructionArguments of string * int * int
 exception TooManyInstructionArguments of string * int * int
+
+(*-------------------------*)
+(*Parser Exceptions*)
+(*-------------------------*)
+
+exception IllegalDuration of string
+exception IllegalWaveform of string
+
+(*-------------------------*)
+(*Symbol Table Exceptions*)
+(*-------------------------*)
+exception DuplicateSequenceError of string
+exception MissingSequenceError of string
+
+(*-------------------------*)
+(*Utils Exceptions*)
+(*-------------------------*)
+exception IllegalToneError of string
+
+(*-------------------------*)
+(*AST Translate Exceptions*)
+(*-------------------------*)
+exception IllegalTimeSignature of string
