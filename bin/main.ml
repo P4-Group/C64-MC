@@ -22,6 +22,11 @@ let () =
         (* Pretty-print the parsed AST *)
         (*Pprint.pprint_file _ast;*)
 
+        let fin_ast = Ast_translate.file_translate _ast in
+        (* Pretty-print the final AST *)
+        Pprint_final.pprint_file fin_ast;
+
+
 
       InstructionGen.run_example ();
         close_in input_channel
