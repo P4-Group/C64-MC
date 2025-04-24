@@ -1,5 +1,5 @@
 
-open Pprint
+(*open Pprint*)
 open Exceptions
 
 (* Variant types, so the seq can hold both the sequence of the first and second AST concurrently *)
@@ -57,13 +57,17 @@ let check_sequence id =
     raise (MissingSequenceError "Sequences must be defined before adding to a channel")
 
 
+(*---Translator Helper Functions---*)
+
+
 (* Updates the sequence in the translator *)
 let update_sequence id seq mem_address = 
   if not (Hashtbl.mem symbol_table id) then
     raise (MissingSequenceError "This sequence could not be updated as it does not exist");
 
-  let symbol = SequenceSymbol {seq = FinalSequence seq; mem_address = memory_address} in 
-  Hashtbl.replace symbol_table id symbol;
+  let symbol = SequenceSymbol {seq = FinalSequence seq; mem_address = mem_address} in 
+  Hashtbl.replace symbol_table id symbol
+
 
   (* match symbol with
   | SequenceSymbol {seq = RawSequence raw_seq; _} ->
