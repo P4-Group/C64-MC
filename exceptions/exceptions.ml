@@ -28,6 +28,9 @@ exception IllegalWaveform of string
 (*-------------------------*)
 exception DuplicateSequenceError of string
 exception MissingSequenceError of string
+exception MissingMemoryAddressError of string
+exception InvalidArgument of string
+
 
 (*-------------------------*)
 (*Utils Exceptions*)
