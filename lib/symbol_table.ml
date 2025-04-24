@@ -1,5 +1,6 @@
 
-(* open Pprint *)
+(*open Pprint*)
+open Exceptions
 
 (* Variant types, so the seq can hold both the sequence of the first and second AST concurrently *)
 type sequence_type = 
@@ -36,7 +37,7 @@ let symbol_table : (string, symbol_info) Hashtbl.t = Hashtbl.create 10
 an error will be thrown. *)
 let add_sequence id seq = 
   if Hashtbl.mem symbol_table id then 
-    failwith "Sequences id's cannot be duplicated. Each sequence must have a unique id.";
+    raise (DuplicateSequenceError "Sequences id's cannot be duplicated. Each sequence must have a unique id.");
 
   let symbol = SequenceSymbol {seq = RawSequence seq; mem_address = None} in 
   Hashtbl.add symbol_table id symbol;
@@ -53,7 +54,7 @@ let add_sequence id seq =
 (* Checks if the sequence id exists. If not, an error will be thrown. *)
 let check_sequence id =
   if not (Hashtbl.mem symbol_table id) then
-     failwith "Sequences must be defined before adding to a channel"
+    raise (MissingSequenceError "Sequences must be defined before adding to a channel")
 
 
 (*---Translator Helper Functions---*)
@@ -62,10 +63,11 @@ let check_sequence id =
 (* Updates the sequence in the translator *)
 let update_sequence id seq mem_address = 
   if not (Hashtbl.mem symbol_table id) then
-    failwith "This sequence does not exist";
-  
+    raise (MissingSequenceError "This sequence could not be updated as it does not exist");
+
   let symbol = SequenceSymbol {seq = FinalSequence seq; mem_address = mem_address} in 
   Hashtbl.replace symbol_table id symbol
+
 
   (* match symbol with
   | SequenceSymbol {seq = RawSequence raw_seq; _} ->
