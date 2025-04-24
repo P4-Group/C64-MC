@@ -1,5 +1,4 @@
-let init = {|
-;; Isolate program init
+;; Isolate
                 processor 6502
                 org 2049
 
@@ -61,9 +60,7 @@ raster:
                 jmp $ea31
 
                 org $1000
-|}
 
-let playinit = {|
 ;; Isolate Play
 play_init:      
                 ldx #$00
@@ -92,9 +89,7 @@ play_init:
                 sta c_ptrhi,x
 
                 rts
-|}
 
-let note_initation = {|
 ;; Isolate note Initiation
 gatebit_off:    
                 lda #$00
@@ -128,9 +123,7 @@ counter_init:
                 sta c_counter,x
 
                 jmp update_sid
-|}
 
-let play_loop = {|
 ;; Isolate Play loop
 play:           
                 ldx #$00
@@ -169,9 +162,7 @@ next_channel:
                 cpx #$03
                 bcc play_loop
                 rts
-|}
 
-let fetches = {|
 ;; Isolate Fetch Notes/sequences
 fetch:          
                 lda c_ptrlo,x
@@ -260,9 +251,7 @@ fetch_note:
                 sta c_ptrhi,x
 
                 jmp update_sid
-|}
 
-let channel_data = {|
 ;; Isolate channel data
 c_regindex:     dc.b $00,$07,$0E
 c_freqlo:       dc.b $00,$00,$00
@@ -281,9 +270,7 @@ c_ptrlo:        dc.b $00,$00,$00
 c_ptrhi:        dc.b $00,$00,$00
 c_rtnlo:        dc.b $00,$00,$00
 c_rtnhi:        dc.b $00,$00,$00
-|}
 
-let instrument_data = {|
 ;; Isolate instrument data
 i_pulselo:      dc.b $00,$00,$00,$00
 i_pulsehi:      dc.b $00,$02,$00,$00
@@ -291,6 +278,78 @@ i_pulsespeed:   dc.b $00,$20,$00,$00
 i_ad:           dc.b $0a,$09,$58,$0a
 i_sr:           dc.b $00,$00,$aa,$00
 i_waveform:     dc.b $81,$41,$21,$11
-|}
 
 
+;; Actual code which needs to be generated
+channel1:       
+                dc.b $FA
+                dc.b $FE
+                dc.w seq_1
+
+                dc.b $FA
+                dc.b $FE
+                dc.w seq_2
+
+                dc.b $FD
+                dc.w channel1
+
+channel2:       
+                dc.b $FB
+                dc.b $FE
+                dc.w bass_1
+
+                dc.b $FB
+                dc.b $FE
+                dc.w bass_2
+
+                dc.b $FD
+                dc.w channel2
+
+channel3:       
+                dc.b $FC
+                dc.b $FE
+                dc.w arpeg
+
+                dc.b $FD
+                dc.w channel3
+
+seq_1:          
+                dc.b $d1, $12, $0E
+                dc.b $1f, $15, $0E
+                dc.b $60, $16, $0E
+                dc.b $1f, $15, $0E
+                dc.b $60, $16, $0E
+                dc.b $1f, $15, $0E
+                dc.b $d1, $12, $0E
+                dc.b $00, $00, $0E
+                dc.b $FF
+
+seq_2:          
+                dc.b $d1, $12, $0E
+                dc.b $1f, $15, $0E
+                dc.b $60, $16, $0E
+                dc.b $1f, $15, $0E
+                dc.b $d1, $12, $1C
+                dc.b $d1, $12, $1C
+                dc.b $FF
+
+bass_1:         
+                dc.b $B4, $04, $0E
+                dc.b $98, $05, $0E
+                dc.b $B4, $04, $0E
+                dc.b $98, $05, $0E
+                dc.b $FF
+
+bass_2:         
+                dc.b $98, $05, $0E
+                dc.b $0C, $07, $0E
+                dc.b $98, $05, $0E
+                dc.b $0C, $07, $0E
+                dc.b $FF
+
+arpeg:          
+                dc.b $68, $09, $0E
+                dc.b $30, $0B, $0E
+                dc.b $18, $0E, $0E
+                dc.b $30, $0B, $0E
+                dc.b $FF
