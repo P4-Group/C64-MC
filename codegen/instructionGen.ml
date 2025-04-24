@@ -1,5 +1,6 @@
 open InstructionSet
 open Exceptions
+open C64MC.Ast_final
 
 (* Global filename for the output file *)
 let filename = ref "output.asm"
@@ -46,8 +47,54 @@ let write_labelled_instructions (label : string) (instruction_table : (string, s
     write_line_tf (indentation ^ constructed_instruction)
   ) instruction_table
 
+let clean_build ()=
+  let oc = open_out !filename in
+  close_out oc
 
-  
+
+type generic_ast =
+| Node of string * (generic_ast list) 
+| Leaf of string
+
+(* Traverse the AST and convert it to a generic AST *)
+let rec ast_traverse (file : C64MC.Ast_final.file) : generic_ast =
+  let channels_node = 
+    Node ("Channels", [
+      Node ("channel1", List.map (fun (ident, waveform) ->
+        Node ("Channel Voice", [
+          Leaf (Printf.sprintf "Identifier: %s" ident.id);
+          Leaf (Printf.sprintf "Waveform: %s" (match waveform with
+            | Vpulse -> "Pulse"
+            | Triangle -> "Triangle"
+            | Sawtooth -> "Sawtooth"
+            | Noise -> "Noise"))
+        ])
+      ) file.ch1);
+
+      Node ("Channel 2", List.map (fun (ident, waveform) ->
+        Node ("Channel Voice", [
+          Leaf (Printf.sprintf "Identifier: %s" ident.id);
+          Leaf (Printf.sprintf "Waveform: %s" (match waveform with
+            | Vpulse -> "Pulse"
+            | Triangle -> "Triangle"
+            | Sawtooth -> "Sawtooth"
+            | Noise -> "Noise"))
+        ])
+      ) file.ch2);
+
+      Node ("Channel 3", List.map (fun (ident, waveform) ->
+        Node ("Channel Voice", [
+          Leaf (Printf.sprintf "Identifier: %s" ident.id);
+          Leaf (Printf.sprintf "Waveform: %s" (match waveform with
+            | Vpulse -> "Pulse"
+            | Triangle -> "Triangle"
+            | Sawtooth -> "Sawtooth"
+            | Noise -> "Noise"))
+        ])
+      ) file.ch3);
+    ])
+  in
+  Node ("AST Root", [channels_node])
 
 
 (* Example usage as a runnable function *)
