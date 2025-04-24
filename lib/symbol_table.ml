@@ -41,7 +41,7 @@ let add_sequence id seq =
 
   let symbol = SequenceSymbol {seq = RawSequence seq; mem_address = None} in 
   Hashtbl.add symbol_table id symbol;
-  Printf.printf "Symbol table id: %s \n" id
+  Printf.printf "Added sequence: %s \n" id
 
   (* we use pprint to print the sequence of the first AST *)
   (* match symbol with
@@ -66,15 +66,14 @@ let update_sequence id seq mem_address =
     raise (MissingSequenceError "This sequence could not be updated as it does not exist");
 
   let symbol = SequenceSymbol {seq = FinalSequence seq; mem_address = mem_address} in 
-  Hashtbl.replace symbol_table id symbol
+  Hashtbl.replace symbol_table id symbol;
+  Printf.printf "Updated sequence: %s \n" id;
 
 
-  (* match symbol with
-  | SequenceSymbol {seq = RawSequence raw_seq; _} ->
-      let generic = ast_to_generic_seq raw_seq in
-      pprint_generic_ast generic
-  | SequenceSymbol _ -> ()
-  | LabelSymbol _ -> () *)
+  match symbol with
+  | SequenceSymbol {seq = FinalSequence final_seq; _} ->
+      Pprint_final.pprint_notes final_seq
+  | _ -> raise (MissingSequenceError "Updated sequence not found")
 
 
 (*---Pprint Helper Functions---*)
@@ -84,16 +83,16 @@ let update_sequence id seq mem_address =
 let get_sequence id =
   match Hashtbl.find_opt symbol_table id with 
   | Some (SequenceSymbol {seq;_}) -> seq (* ;_ ignores memory address*)
-  | Some (LabelSymbol _) -> failwith "They key must be a sequence id"
-  | None -> failwith ("Sequence not found for id: " ^ id)
+  | Some (LabelSymbol _) -> raise (InvalidArgument "They key must be a sequence id")
+  | None -> raise (MissingSequenceError ("Sequence not found for id: " ^ id))
 
 
 (* Retrieves the memory address of a sequence *)
 let get_seq_memory_address id =
   match Hashtbl.find_opt symbol_table id with 
     | Some (SequenceSymbol {mem_address;_}) -> mem_address
-    | Some (LabelSymbol _) -> failwith "They key must be a sequence id"
-    | None -> failwith ("Sequence not found for id: " ^ id)
+    | Some (LabelSymbol _) -> raise (InvalidArgument "They key must be a sequence id")
+    | None -> raise (MissingSequenceError ("Sequence not found for id: " ^ id))
 
 
 (*---Assembly Helper Functions---*)
@@ -102,6 +101,6 @@ let get_seq_memory_address id =
 (* Retrieves the memory address of a label *)
 let get_label_memory_address label =
   match Hashtbl.find_opt symbol_table label with 
-    | Some (SequenceSymbol _) -> failwith "Expected a label, not a sequence id"
+    | Some (SequenceSymbol _) -> raise (InvalidArgument "Expected a label, not a sequence id")
     | Some (LabelSymbol {memory_address}) -> memory_address
-    | None -> failwith ("Memory address not found for label: " ^ label)
+    | None -> raise (MissingMemoryAddressError ("Memory address not found for label: " ^ label))
