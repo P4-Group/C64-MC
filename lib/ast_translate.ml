@@ -29,7 +29,7 @@ let get_qn_duration =
       | Some ts -> ts
       | None -> (4,4) in
     let _, bnv = timesig in
-    let bnv_duration = 60000 / tempo in
+    let bnv_duration = (60000 / tempo) / 20 in
     match bnv with 
     | 1 -> bnv_duration / 4
     | 2 -> bnv_duration / 2
