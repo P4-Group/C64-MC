@@ -4,6 +4,7 @@
     open Ast
     open Utils
     open Symbol_table
+    open Exceptions
 %}
 
 %token <int> INT
@@ -123,7 +124,7 @@ frac:
               | 4 -> Quarter
               | 8 -> Eighth
               | 16 -> Sixteenth
-              | _ -> failwith "wrong duration" }
+              | _ -> raise (IllegalDuration "Wrong duration") }
 
 channel1:
   | CHANNEL1 ASSIGN LSB ch1 = separated_list(COMMA, seqwv) RSB (* channel = [seqwv+] *)
@@ -155,7 +156,7 @@ waveform:
     | TRIANGLE    { Triangle }
     | SAWTOOTH    { Sawtooth }
     | NOISE       { Noise }
-    | IDENT { failwith "Has to be a valid waveform: vPulse, triangle, sawtooth, noise" }
+    | IDENT { raise (IllegalWaveform "Has to be a valid waveform: vPulse, triangle, sawtooth, noise") }
 
 
 ident:
