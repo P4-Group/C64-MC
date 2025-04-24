@@ -39,10 +39,11 @@ let construct_instruction (mnemonic : string) (args : string list) =
 
 (* Construct a labelled instruction block/indented instruction block *)
 let write_labelled_instructions (label : string) (instruction_table : (string, string list) Hashtbl.t) =
+  let indentation = String.make (4 * 4) ' ' in  (* 4 tabs, 4 spaces each = 16 spaces *)
   write_line_tf (label ^ ":");
   Hashtbl.iter (fun mnemonic args ->
     let constructed_instruction = construct_instruction mnemonic args in
-    write_line_tf ("  " ^ constructed_instruction)
+    write_line_tf (indentation ^ constructed_instruction)
   ) instruction_table
 
 
@@ -51,7 +52,7 @@ let write_labelled_instructions (label : string) (instruction_table : (string, s
 
 (* Example usage as a runnable function *)
 let run_example () =
-  let args = ["10"; "20"] in
+  (*let args = ["10"; "20"] in
   let constructed_instruction = construct_instruction "ADC" args in
   write_line_tf constructed_instruction; 
 
@@ -61,4 +62,11 @@ let run_example () =
   Hashtbl.add instruct_hashtbl "STA" ["$01"];
   Hashtbl.add instruct_hashtbl "JMP" ["$02"];
   write_labelled_instructions label instruct_hashtbl;
-  write_stdlib Stdlib.preamble;
+*)
+  write_stdlib Stdlib.init;
+  write_stdlib Stdlib.playinit;
+  write_stdlib Stdlib.note_initation;
+  write_stdlib Stdlib.play_loop;
+  write_stdlib Stdlib.fetches;
+  write_stdlib Stdlib.channel_data; 
+  write_stdlib Stdlib.instrument_data;
