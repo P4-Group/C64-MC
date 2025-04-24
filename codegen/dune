@@ -1,5 +1,5 @@
 (library
  (name Codegen)
  (modules instructionSet instructionGen stdlib)
- (libraries Exceptions))
+ (libraries Exceptions C64MC))
  
