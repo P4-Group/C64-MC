@@ -5,7 +5,7 @@ type ident = { id: string; id_loc: loc }
 and note = {
     highfreq: int;
     lowfreq: int;
-    duration: int; (*Milliseconds*)
+    duration: int; (*Frames*)
 }
 
 and waveform =
