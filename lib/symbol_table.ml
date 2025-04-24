@@ -1,5 +1,4 @@
 
-(*open Pprint*)
 open Exceptions
 
 (* Variant types, so the seq can hold both the sequence of the first and second AST concurrently *)
@@ -69,12 +68,9 @@ let update_sequence id seq mem_address =
   Hashtbl.replace symbol_table id symbol
 
 
-  (* match symbol with
-  | SequenceSymbol {seq = RawSequence raw_seq; _} ->
-      let generic = ast_to_generic_seq raw_seq in
-      pprint_generic_ast generic
-  | SequenceSymbol _ -> ()
-  | LabelSymbol _ -> () *)
+  match symbol with
+  | SequenceSymbol {seq = FinalSequence final_seq; _} -> Pprint_final.pprint_notes final_seq
+  | _ -> raise (MissingSequenceError "Final sequence not found in symbol table")
 
 
 (*---Pprint Helper Functions---*)
