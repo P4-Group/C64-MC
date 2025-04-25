@@ -26,6 +26,8 @@ let () =
         (* Pretty-print the final AST *)
         Pprint_final.pprint_file fin_ast;
 
+      InstructionGen.clean_build ();
+
 
       InstructionGen.clean_build ();
       InstructionGen.run_example ();
