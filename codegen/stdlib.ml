@@ -60,11 +60,12 @@ raster:
                 dec $d019
                 jmp $ea31
 
-                org $1000
+
 |}
 
 let playinit = {|
 ;; Isolate Play
+                org $1000
 play_init:      
                 ldx #$00
 
