@@ -1,9 +1,16 @@
 open InstructionSet
 open Exceptions
-
+open C64MC.Ast_final
+open List
 
 (* Global filename for the output file *)
 let filename = ref "output.asm"
+
+(* Clean the output file*)
+let clean_build ()=
+  let oc = open_out !filename in
+  close_out oc
+
 
 (* Write a line to a file without overwriting existing lines *)
 let write_line_tf (line : string) =
@@ -38,38 +45,103 @@ let construct_instruction (mnemonic : string) (args : string list) =
         let constructed_instruction = Printf.sprintf "%s %s" instr.mnemonic (String.concat ", " args) in
         constructed_instruction (* Return full instruction as string*)
 
-(* Construct a labelled instruction block/indented instruction block *)
-let write_labelled_instructions (label : string) (instruction_table : (string, string list) Hashtbl.t) =
-  let indentation = String.make (4 * 4) ' ' in  (* 4 tabs, 4 spaces each = 16 spaces *)
-  write_line_tf (label ^ ":");
-  Hashtbl.iter (fun mnemonic args ->
-    let constructed_instruction = construct_instruction mnemonic args in
-    write_line_tf (indentation ^ constructed_instruction)
-  ) instruction_table
 
-(* Clear the output file *)
-let clean_build () =
-  let oc = open_out !filename in
-  close_out oc
+
+(* Construct a labelled instruction block/indented instruction block *)
+let write_instr_group (instructions : string list) =
+  let indentation = String.make (4 * 4) ' ' in  (* 4 tabs, 4 spaces each = 16 spaces *)
+  List.iter (fun instruction ->
+    write_line_tf (indentation ^ instruction)
+  ) instructions
+
+let write_repeat_channel (channel_def : string) =
+  let indentation = String.make (4 * 4) ' ' in  (* 4 tabs, 4 spaces each = 16 spaces *)
+  write_line_tf (indentation ^ "db.c $FF");
+  write_line_tf (indentation ^ "db.c " ^ channel_def)
+
+let waveform_to_byte = function
+  | Vpulse -> "$F9"
+  | Triangle -> "$FA"
+  | Sawtooth -> "$FB"
+  | Noise -> "$FC"
+
+
+let generate (file : C64MC.Ast_final.file) =
+  
+  (*Channel code generation structure:
+    Write channel label to file;
+    Iterate through channel (ident * waveform) list
+    Write waveform, enter sequence instruction and sequence id to file
+    Write repeat channel instruction
+    repeat for the two other channels
+  *)
+
+  (*---------------Channel 1---------------*)
+  write_line_tf ("channel1:");
+  List.iter (fun (id, waveform) ->
+    let wv_byte = waveform_to_byte waveform in
+    let instruction_list = ["dc.b " ^ wv_byte;"dc.b $FE"; "dc.b $" ^ id.id] in
+    write_instr_group instruction_list
+  ) file.ch1;
+  write_repeat_channel "channel1";
+
+  (*---------------Channel 2---------------*)
+  write_line_tf ("channel2:");
+  List.iter (fun (id, waveform) ->
+    let wv_byte = waveform_to_byte waveform in
+    let instruction_list = ["dc.b " ^ wv_byte;"dc.b $FE"; "dc.b $" ^ id.id] in
+    write_instr_group instruction_list
+  ) file.ch2;
+  write_repeat_channel "channel2";
+  
+  (*---------------Channel 3---------------*)
+  write_line_tf ("channel3:");
+  List.iter (fun (id, waveform) ->
+    let wv_byte = waveform_to_byte waveform in
+    let instruction_list = ["dc.b " ^ wv_byte;"dc.b $FE"; "dc.b $" ^ id.id] in
+    write_instr_group instruction_list
+  ) file.ch3;
+  write_repeat_channel "channel3"
+
+  
+  
+  
+  
+  (*
+  For each channel (always 3 channels... so far)
+    
+      match wv with
+      | Vpulse -> instrutionlist.add "dc.b $F9"
+      | Vpulse -> "FA"
+      | Vpulse -> "FB"
+      | Noise -> "FC"
+      write_labelled_instructions (channel ^ i) instructions_list 
+  *)
 
 
 (* Example usage as a runnable function *)
-let run_example () =
-  (*let args = ["10"; "20"] in
-  let constructed_instruction = construct_instruction "ADC" args in
-  write_line_tf constructed_instruction; 
 
-  let label = "MyLabel" in
-  let instruct_hashtbl = Hashtbl.create 10 in
-  Hashtbl.add instruct_hashtbl "LDA" ["$00"; "#$FF"];
-  Hashtbl.add instruct_hashtbl "STA" ["$01"];
-  Hashtbl.add instruct_hashtbl "JMP" ["$02"];
-  write_labelled_instructions label instruct_hashtbl;
-*)
+let run_example () =
   write_stdlib Stdlib.init;
   write_stdlib Stdlib.playinit;
   write_stdlib Stdlib.note_initation;
   write_stdlib Stdlib.play_loop;
   write_stdlib Stdlib.fetches;
   write_stdlib Stdlib.channel_data; 
-  write_stdlib Stdlib.instrument_data;
+  write_stdlib Stdlib.instrument_data
+
+
+ 
+(* **** Deprecated ****
+
+let args = ["10"; "20"] in
+let constructed_instruction = construct_instruction "ADC" args in
+write_line_tf constructed_instruction; 
+
+let label = "MyLabel" in
+let instruct_hashtbl = Hashtbl.create 10 in
+Hashtbl.add instruct_hashtbl "LDA" ["$00"; "#$FF"];
+Hashtbl.add instruct_hashtbl "STA" ["$01"];
+Hashtbl.add instruct_hashtbl "JMP" ["$02"];
+write_labelled_instructions label instruct_hashtbl;
+*)
