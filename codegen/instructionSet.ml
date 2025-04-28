@@ -64,6 +64,8 @@ let instructions = [
   { name = "Transfer X to Accumulator";     mnemonic = "TXA";     max_args = 0;     min_args = 0 };
   { name = "Transfer X to Stack Pointer";   mnemonic = "TXS";     max_args = 0;     min_args = 0 };
   { name = "Transfer Y to Accumulator";     mnemonic = "TYA";     max_args = 0;     min_args = 0 };
+  { name = "Define constant Byte";          mnemonic = "dc.b";    max_args = 10;    min_args = 0 };
+  { name = "Define constant Word";          mnemonic = "dc.w";    max_args = 10;    min_args = 0 };
 ]   
 
 (*
@@ -94,3 +96,4 @@ let directives_map = [
   { name = "Define local labels in macro";      mnemonic = ".LOCAL";     max_args = 1;     min_args = 1 };
 ]
 *)
+

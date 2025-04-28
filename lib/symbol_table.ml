@@ -104,3 +104,6 @@ let get_label_memory_address label =
     | Some (SequenceSymbol _) -> raise (InvalidArgument "Expected a label, not a sequence id")
     | Some (LabelSymbol {memory_address}) -> memory_address
     | None -> raise (MissingMemoryAddressError ("Memory address not found for label: " ^ label))
+
+(*Retrieves the whole symbol table containing sequence ID's and symbol info*)
+let get_symbol_table () = symbol_table;

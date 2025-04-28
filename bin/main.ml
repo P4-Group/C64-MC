@@ -26,11 +26,10 @@ let () =
         (* Pretty-print the final AST *)
         Pprint_final.pprint_file fin_ast;
 
-      InstructionGen.clean_build ();
-
-
-      InstructionGen.clean_build ();
-      InstructionGen.run_example ();
+        InstructionGen.clean_build ();
+        InstructionGen.run_example ();
+        InstructionGen.gen_channel fin_ast;
+        InstructionGen.gen_sequence ();
         close_in input_channel
   with
   | InsufficientArguments msg ->

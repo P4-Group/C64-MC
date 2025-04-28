@@ -1,9 +1,22 @@
 open InstructionSet
 open Exceptions
+open List
+open C64MC.Ast_final
 
+module Fin_Ast = C64MC.Ast_final
+module Sym = C64MC.Symbol_table
+
+(* This module generates assembly code for the C64 music compiler.
+   It constructs instructions and writes them to a file. *)
 
 (* Global filename for the output file *)
 let filename = ref "output.asm"
+
+(* Clean the output file*)
+let clean_build ()=
+  let oc = open_out !filename in
+  close_out oc
+
 
 (* Write a line to a file without overwriting existing lines *)
 let write_line_tf (line : string) =
@@ -38,38 +51,126 @@ let construct_instruction (mnemonic : string) (args : string list) =
         let constructed_instruction = Printf.sprintf "%s %s" instr.mnemonic (String.concat ", " args) in
         constructed_instruction (* Return full instruction as string*)
 
+
+
 (* Construct a labelled instruction block/indented instruction block *)
-let write_labelled_instructions (label : string) (instruction_table : (string, string list) Hashtbl.t) =
+let write_instr_group (instructions : string list) =
   let indentation = String.make (4 * 4) ' ' in  (* 4 tabs, 4 spaces each = 16 spaces *)
-  write_line_tf (label ^ ":");
-  Hashtbl.iter (fun mnemonic args ->
-    let constructed_instruction = construct_instruction mnemonic args in
-    write_line_tf (indentation ^ constructed_instruction)
-  ) instruction_table
+  List.iter (fun instruction ->
+    write_line_tf (indentation ^ instruction)
+  ) instructions
 
-(* Clear the output file *)
-let clean_build () =
-  let oc = open_out !filename in
-  close_out oc
+(*Writes the assembly code to repeat a channel at the end*)
+let write_repeat_channel (channel_def : string) =
+  let indentation = String.make (4 * 4) ' ' in  (* 4 tabs, 4 spaces each = 16 spaces *)
+  write_line_tf (indentation ^ "dc.b $FD");
+  write_line_tf (indentation ^ "dc.w " ^ channel_def)
+
+(*Converts the waveform into the hex byte for assembly*)
+let waveform_to_byte = function
+  | Vpulse -> "$F9"
+  | Triangle -> "$FA"
+  | Sawtooth -> "$FB"
+  | Noise -> "$FC"
+
+  
+  (* Function to write code in the output.asm file
+    General structure:
+    Write channel label to file;
+    Iterate through channel (ident * waveform) list;
+    Write waveform, enter-sequence instruction and sequence id to file;
+    Write repeat channel instruction;
+    repeat for the two other channels
+  *)
+let gen_channel (file : Fin_Ast.file) =
+  (*---------------Channel 1---------------*)
+  write_line_tf ("channel1:"); (*write the label*)
+  List.iter (fun (id, waveform) ->
+    let wv_byte = waveform_to_byte waveform in
+    let instruction_list = [ (*Create a list containing instructions for the write_instr_group function*)
+      construct_instruction "dc.b" [wv_byte];
+      construct_instruction "dc.b" ["$FE"];
+      construct_instruction "dc.w" [id.id]
+    ] in
+    write_instr_group instruction_list (*Write the instructions in the output.asm file*)
+  ) file.ch1;
+  write_repeat_channel "channel1"; (*write the signal for repeating the sequence*)
+
+  (*---------------Channel 2---------------*)
+  write_line_tf ("channel2:");
+  List.iter (fun (id, waveform) ->
+    let wv_byte = waveform_to_byte waveform in
+    let instruction_list = [
+      construct_instruction "dc.b" [wv_byte];
+      construct_instruction "dc.b" ["$FE"];
+      construct_instruction "dc.w" [id.id]
+    ] in
+    write_instr_group instruction_list
+  ) file.ch2;
+  write_repeat_channel "channel2";
+  
+  (*---------------Channel 3---------------*)
+  write_line_tf ("channel3:");
+  List.iter (fun (id, waveform) ->
+    let wv_byte = waveform_to_byte waveform in
+    let instruction_list = [
+      construct_instruction "dc.b" [wv_byte];
+      construct_instruction "dc.b" ["$FE"];
+      construct_instruction "dc.w" [id.id]
+    ] in
+    write_instr_group instruction_list
+  ) file.ch3;
+  write_repeat_channel "channel3"
+
+  (* Converts an integer to a hexadecimal string *)
+  let int_to_hex (n : int) : string =
+    if n < 0 then
+      raise (Invalid_argument "Negative integers cannot be converted to hexadecimal")
+    else
+      Printf.sprintf "%02X" n
 
 
-(* Example usage as a runnable function *)
-let run_example () =
-  (*let args = ["10"; "20"] in
-  let constructed_instruction = construct_instruction "ADC" args in
-  write_line_tf constructed_instruction; 
-
-  let label = "MyLabel" in
-  let instruct_hashtbl = Hashtbl.create 10 in
-  Hashtbl.add instruct_hashtbl "LDA" ["$00"; "#$FF"];
-  Hashtbl.add instruct_hashtbl "STA" ["$01"];
-  Hashtbl.add instruct_hashtbl "JMP" ["$02"];
-  write_labelled_instructions label instruct_hashtbl;
+(*Function to generate code for the sequences in assembly
+  Gets the symbol_table and iterates through each sequence.
+  For each sequence it writes the identifier
+  Then go through the list of notes and write "dc.b $lofreq, $hifreq, $duration"
+  Ends by writing dc.b $FF to signal the end of the sequence.  
 *)
+let gen_sequence () =
+  let symbol_table = Sym.get_symbol_table () in
+  Hashtbl.iter (fun id value -> 
+      match value with
+      | Sym.LabelSymbol _ -> (); (*Do nothing, this saves for memory addresses*)
+      | Sym.SequenceSymbol {seq;_} -> (*The note lists are here somewhere*)
+        match seq with
+        | Sym.FinalSequence seq -> (* The definition of the note lists from the final AST *)
+          write_line_tf (id ^ ":"); (*Write the label*)
+          
+          let buffer = ref [] in (* Create a mutable and appendable list *)
+          List.iter (fun note ->  
+            buffer := !buffer @ [
+              construct_instruction "dc.b" [
+              "$" ^ int_to_hex note.lowfreq; 
+              "$" ^ int_to_hex note.highfreq; 
+              "$" ^ int_to_hex note.duration;
+              ] (*Appends instruction to buffer*)
+            ];
+          ) seq;
+          buffer := !buffer @ [construct_instruction "dc.b" ["$FF"]]; (*Suffixes buffer with required dc.b $FF*)
+          write_instr_group !buffer; (*Write the instructions in the output.asm file*)
+        | Sym.RawSequence _ -> (); (*Do nothing, this is for the original AST*)             
+
+      (* Print the last $FF instruction after processing each symbol *)
+  ) symbol_table
+  
+  
+
+let run_example () =
   write_stdlib Stdlib.init;
   write_stdlib Stdlib.playinit;
   write_stdlib Stdlib.note_initation;
   write_stdlib Stdlib.play_loop;
   write_stdlib Stdlib.fetches;
   write_stdlib Stdlib.channel_data; 
-  write_stdlib Stdlib.instrument_data;
+  write_stdlib Stdlib.instrument_data
+

@@ -15,10 +15,10 @@ let note_to_generic (note : note) : generic_ast =
 
 (* Helper function to convert waveform to string *)
 let waveform_to_string = function
-  | Vpulse -> "Pulse"
-  | Triangle -> "Triangle"
-  | Sawtooth -> "Sawtooth"
-  | Noise -> "Noise"
+  | Vpulse -> "$F9"
+  | Triangle -> "$FA"
+  | Sawtooth -> "$FB"
+  | Noise -> "$FC"
 
 (* Convert a channel to a generic AST *)
 let channel_to_generic (name : string) (channel : channel) : generic_ast =
