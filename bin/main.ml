@@ -28,7 +28,8 @@ let () =
 
         InstructionGen.clean_build ();
         InstructionGen.run_example ();
-        InstructionGen.generate fin_ast;
+        InstructionGen.gen_channel fin_ast;
+        InstructionGen.gen_sequence ();
         close_in input_channel
   with
   | InsufficientArguments msg ->
