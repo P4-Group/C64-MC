@@ -70,7 +70,7 @@ let seq_translate (seq : Ast.seq) = List.map note_translate seq
 let seqdef_translate (seqdef : Ast.seqdef) = 
   let seq_id = seqdef.name.id in
   let translated_seq = seq_translate seqdef.seq in
-  Symbol_table.update_sequence seq_id translated_seq None
+  Symbol_table.update_sequence seq_id translated_seq
 
 let waveform_translate = function
 | Ast.Noise -> Noise
