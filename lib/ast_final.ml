@@ -9,10 +9,10 @@ and note = {
 }
 
 and waveform =
-    | Vpulse
-    | Triangle
-    | Sawtooth
     | Noise
+    | Vpulse
+    | Sawtooth
+    | Triangle
 
 type channel = (ident * waveform) list
 

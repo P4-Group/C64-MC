@@ -31,10 +31,10 @@ let rec ast_to_generic_ast (file : Ast.file) : generic_ast =
       Node ("Channel", [
         Leaf (Printf.sprintf "Identifier: %s" ident.id);
         Leaf (Printf.sprintf "Waveform: %s" (match waveform with
+          | Noise -> "Noise"
           | Vpulse -> "Pulse"
-          | Triangle -> "Triangle"
           | Sawtooth -> "Sawtooth"
-          | Noise -> "Noise"))
+          | Triangle -> "Triangle"))
       ])
     ) channel)
   in

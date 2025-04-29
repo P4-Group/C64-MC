@@ -24,10 +24,10 @@ In a lexer everything is read as a sequence of characters (string).
         "channel1", CHANNEL1;
         "channel2", CHANNEL2;
         "channel3", CHANNEL3;
+        "noise", NOISE;
         "vPulse", VPULSE;
-        "triangle", TRIANGLE;
         "sawtooth", SAWTOOTH;
-        "noise", NOISE
+        "triangle", TRIANGLE
         ];
     fun s -> try Hashtbl.find h s with Not_found -> IDENT s
 }
