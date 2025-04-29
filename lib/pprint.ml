@@ -26,9 +26,9 @@ let rec ast_to_generic_ast (file : Ast.file) : generic_ast =
       ])
     ) file.sequences)
   in
-  let channels_node name channel =
+  let voice_node name voice =
     Node (name, List.map (fun (ident, waveform) ->
-      Node ("Channel", [
+      Node ("Voice", [
         Leaf (Printf.sprintf "Identifier: %s" ident.id);
         Leaf (Printf.sprintf "Waveform: %s" (match waveform with
           | Noise -> "Noise"
@@ -36,14 +36,14 @@ let rec ast_to_generic_ast (file : Ast.file) : generic_ast =
           | Sawtooth -> "Sawtooth"
           | Triangle -> "Triangle"))
       ])
-    ) channel)
+    ) voice)
   in
   Node ("File", [
     params_node;
     sequences_node;
-    channels_node "Channel 1" file.channel1;
-    channels_node "Channel 2" file.channel2;
-    channels_node "Channel 3" file.channel3
+    voice_node "Voice 1" file.voice1;
+    voice_node "Voice 2" file.voice2;
+    voice_node "Voice 3" file.voice3
   ])
 
   and ast_to_generic_seq seq = Node ("Simple Sequence", List.map ast_to_generic_note seq)

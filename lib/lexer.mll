@@ -21,9 +21,9 @@ In a lexer everything is read as a sequence of characters (string).
         "timeSignature", TIMESIG (4,4);
         "standardPitch", STDPITCH 440;
         "sequence", SEQUENCE;
-        "channel1", CHANNEL1;
-        "channel2", CHANNEL2;
-        "channel3", CHANNEL3;
+        "voice1", VOICE1;
+        "voice2", VOICE2;
+        "voice3", VOICE3;
         "noise", NOISE;
         "vPulse", VPULSE;
         "sawtooth", SAWTOOTH;
@@ -107,6 +107,6 @@ and comment = parse
     | "}" {read lexbuf}
     | tonename {TONENAME (tonename_of_string (Lexing.lexeme lexbuf))}
 
-and channel = parse
+and voice = parse
     | "]" {read lexbuf}
 } *)

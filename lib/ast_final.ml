@@ -14,10 +14,10 @@ and waveform =
     | Sawtooth
     | Triangle
 
-type channel = (ident * waveform) list
+type voice = (ident * waveform) list
 
 type file = {
-    ch1: channel;
-    ch2: channel;
-    ch3: channel;
+    vc1: voice;
+    vc2: voice;
+    vc3: voice;
 }

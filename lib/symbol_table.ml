@@ -54,7 +54,7 @@ let add_sequence id seq =
 (* Checks if the sequence id exists. If not, an error will be thrown. *)
 let check_sequence id =
   if not (Hashtbl.mem symbol_table id) then
-    raise (MissingSequenceError "Sequences must be defined before adding to a channel")
+    raise (MissingSequenceError "Sequences must be defined before adding to a voice")
 
 
 (*---Translator Helper Functions---*)

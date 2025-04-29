@@ -60,11 +60,11 @@ let write_instr_group (instructions : string list) =
     write_line_tf (indentation ^ instruction)
   ) instructions
 
-(*Writes the assembly code to repeat a channel at the end*)
-let write_repeat_channel (channel_def : string) =
+(*Writes the assembly code to repeat a voice at the end*)
+let write_repeat_voice (voice_def : string) =
   let indentation = String.make (4 * 4) ' ' in  (* 4 tabs, 4 spaces each = 16 spaces *)
   write_line_tf (indentation ^ "dc.b $FD");
-  write_line_tf (indentation ^ "dc.w " ^ channel_def)
+  write_line_tf (indentation ^ "dc.w " ^ voice_def)
 
 (*Converts the waveform into the hex byte for assembly*)
 let waveform_to_byte = function
@@ -76,15 +76,15 @@ let waveform_to_byte = function
   
   (* Function to write code in the output.asm file
     General structure:
-    Write channel label to file;
-    Iterate through channel (ident * waveform) list;
+    Write voice label to file;
+    Iterate through voice (ident * waveform) list;
     Write waveform, enter-sequence instruction and sequence id to file;
-    Write repeat channel instruction;
-    repeat for the two other channels
+    Write repeat voice instruction;
+    repeat for the two other voices
   *)
-let gen_channel (file : Fin_Ast.file) =
-  (*---------------Channel 1---------------*)
-  write_line_tf ("channel1:"); (*write the label*)
+let gen_voice (file : Fin_Ast.file) =
+  (*---------------Voice 1---------------*)
+  write_line_tf ("voice1:"); (*write the label*)
   List.iter (fun (id, waveform) ->
     let wv_byte = waveform_to_byte waveform in
     let instruction_list = [ (*Create a list containing instructions for the write_instr_group function*)
@@ -93,11 +93,11 @@ let gen_channel (file : Fin_Ast.file) =
       construct_instruction "dc.w" [id.id]
     ] in
     write_instr_group instruction_list (*Write the instructions in the output.asm file*)
-  ) file.ch1;
-  write_repeat_channel "channel1"; (*write the signal for repeating the sequence*)
+  ) file.vc1;
+  write_repeat_voice "voice1"; (*write the signal for repeating the sequence*)
 
-  (*---------------Channel 2---------------*)
-  write_line_tf ("channel2:");
+  (*---------------Voice 2---------------*)
+  write_line_tf ("voice2:");
   List.iter (fun (id, waveform) ->
     let wv_byte = waveform_to_byte waveform in
     let instruction_list = [
@@ -106,11 +106,11 @@ let gen_channel (file : Fin_Ast.file) =
       construct_instruction "dc.w" [id.id]
     ] in
     write_instr_group instruction_list
-  ) file.ch2;
-  write_repeat_channel "channel2";
+  ) file.vc2;
+  write_repeat_voice "voice2";
   
-  (*---------------Channel 3---------------*)
-  write_line_tf ("channel3:");
+  (*---------------Voice 3---------------*)
+  write_line_tf ("voice3:");
   List.iter (fun (id, waveform) ->
     let wv_byte = waveform_to_byte waveform in
     let instruction_list = [
@@ -119,8 +119,8 @@ let gen_channel (file : Fin_Ast.file) =
       construct_instruction "dc.w" [id.id]
     ] in
     write_instr_group instruction_list
-  ) file.ch3;
-  write_repeat_channel "channel3"
+  ) file.vc3;
+  write_repeat_voice "voice3"
 
   (* Converts an integer to a hexadecimal string *)
   let int_to_hex (n : int) : string =
@@ -171,6 +171,6 @@ let run_example () =
   write_stdlib Stdlib.note_initation;
   write_stdlib Stdlib.play_loop;
   write_stdlib Stdlib.fetches;
-  write_stdlib Stdlib.channel_data; 
+  write_stdlib Stdlib.voice_data; 
   write_stdlib Stdlib.instrument_data
 

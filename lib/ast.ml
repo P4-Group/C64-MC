@@ -48,14 +48,14 @@ and waveform =
   | Sawtooth
   | Triangle
 
-type channel = (ident * waveform) list
+type voice = (ident * waveform) list
 
 type file = {
   parameters: params;
   sequences: seqdef list;
-  channel1: channel;
-  channel2: channel;
-  channel3: channel;
+  voice1: voice;
+  voice2: voice;
+  voice3: voice;
 }
 
 
