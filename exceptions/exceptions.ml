@@ -20,6 +20,7 @@ exception TooManyInstructionArguments of string * int * int
 (*Parser Exceptions*)
 (*-------------------------*)
 
+exception IllegalOctave of string
 exception IllegalDuration of string
 exception IllegalWaveform of string
 
