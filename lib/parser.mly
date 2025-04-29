@@ -154,11 +154,11 @@ seqwv:
 
 (*Has IDENT in case that a user something other than one of the four keywords*)
 waveform:
-    | VPULSE      { Vpulse }
-    | TRIANGLE    { Triangle }
-    | SAWTOOTH    { Sawtooth }
     | NOISE       { Noise }
-    | IDENT { raise (IllegalWaveform "Has to be a valid waveform: vPulse, triangle, sawtooth, noise") }
+    | VPULSE      { Vpulse }
+    | SAWTOOTH    { Sawtooth }
+    | TRIANGLE    { Triangle }
+    | IDENT { raise (IllegalWaveform "Has to be a valid waveform: noise, vPulse, sawtooth, triangle") }
 
 
 ident:

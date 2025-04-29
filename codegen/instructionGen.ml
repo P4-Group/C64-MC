@@ -68,10 +68,10 @@ let write_repeat_channel (channel_def : string) =
 
 (*Converts the waveform into the hex byte for assembly*)
 let waveform_to_byte = function
-  | Vpulse -> "$F9"
-  | Triangle -> "$FA"
+  | Noise -> "$F9"
+  | Vpulse -> "$FA"
   | Sawtooth -> "$FB"
-  | Noise -> "$FC"
+  | Triangle -> "$FC"
 
   
   (* Function to write code in the output.asm file
