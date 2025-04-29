@@ -165,7 +165,6 @@ update_sid:
                 lda c_sr,x
                 sta $d406,y
 
-next_voice:   
                 inx
                 cpx #$03
                 bcc play_loop
