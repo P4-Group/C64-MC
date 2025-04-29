@@ -82,7 +82,7 @@ let waveform_translate = function
     { Ast_final.id = id.id; id_loc = id.id_loc }
   
 
-let channel_translate ch = List.map (fun (sn,wf) -> (ident_translate sn, waveform_translate wf)) ch
+let voice_translate ch = List.map (fun (sn,wf) -> (ident_translate sn, waveform_translate wf)) ch
 
 let set_params (p : Ast.params) =
   params := p
@@ -91,7 +91,7 @@ let file_translate (f : Ast.file) =
   set_params f.parameters;
   List.iter seqdef_translate f.sequences;
   {
-    ch1 = channel_translate f.channel1;
-    ch2 = channel_translate f.channel2;
-    ch3 = channel_translate f.channel3;
+    vc1 = voice_translate f.voice1;
+    vc2 = voice_translate f.voice2;
+    vc3 = voice_translate f.voice3;
   }

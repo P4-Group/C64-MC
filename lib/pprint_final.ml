@@ -20,21 +20,21 @@ let waveform_to_string = function
   | Sawtooth -> "$FB"
   | Triangle -> "$FC"
 
-(* Convert a channel to a generic AST *)
-let channel_to_generic (name : string) (channel : channel) : generic_ast =
+(* Convert a voice to a generic AST *)
+let voice_to_generic (name : string) (voice : voice) : generic_ast =
   Node (name, List.map (fun (ident, waveform) ->
-    Node ("Channel Voice", [
+    Node ("Voice", [
       Leaf (Printf.sprintf "Identifier: %s" ident.id);
       Leaf (Printf.sprintf "Waveform: %s" (waveform_to_string waveform));
     ])
-  ) channel)
+  ) voice)
 
 (* Convert a file to a generic AST *)
 let file_to_generic (file : file) : generic_ast =
   Node ("Final AST", [
-    channel_to_generic "Channel 1" file.ch1;
-    channel_to_generic "Channel 2" file.ch2;
-    channel_to_generic "Channel 3" file.ch3;
+    voice_to_generic "Voice 1" file.vc1;
+    voice_to_generic "Voice 2" file.vc2;
+    voice_to_generic "Voice 3" file.vc3;
   ])
 
 (* Pretty-print a generic AST with indentation *)
@@ -57,9 +57,9 @@ let pprint_note note =
   let generic_ast = note_to_generic note in
   pprint_generic_ast generic_ast
 
-(* Pretty-print a single channel *)
-let pprint_channel name channel =
-  let generic_ast = channel_to_generic name channel in
+(* Pretty-print a single voice *)
+let pprint_voice name voice =
+  let generic_ast = voice_to_generic name voice in
   pprint_generic_ast generic_ast
 
 (* Pretty-print multiple notes *)

@@ -28,7 +28,7 @@ let () =
 
         InstructionGen.clean_build ();
         InstructionGen.run_example ();
-        InstructionGen.gen_channel fin_ast;
+        InstructionGen.gen_voice fin_ast;
         InstructionGen.gen_sequence ();
         close_in input_channel
   with

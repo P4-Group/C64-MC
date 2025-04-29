@@ -14,7 +14,7 @@
 %token <string> IDENT
 %token SHARP FLAT
 %token SEQUENCE
-%token CHANNEL1 CHANNEL2 CHANNEL3
+%token VOICE1 VOICE2 VOICE3
 %token VPULSE SAWTOOTH TRIANGLE NOISE
 (*%token LOOP*)
 %token SP (* start paranthesis *)
@@ -77,8 +77,8 @@ $: used for accessing the value of non-terminals or tokens
 *)
 
 prog:
-    | p = params seql = list(seqdef) ch1 = channel1 ch2 = channel2 ch3 = channel3 EOF (* Overall file structure: Define parameters, define sequences, define channels *)
-    { {parameters = p; sequences = seql; channel1 = ch1; channel2 = ch2; channel3 = ch3 } }
+    | p = params seql = list(seqdef) vc1 = voice1 vc2 = voice2 vc3 = voice3 EOF (* Overall file structure: Define parameters, define sequences, define voices *)
+    { {parameters = p; sequences = seql; voice1 = vc1; voice2 = vc2; voice3 = vc3 } }
 
 
 params:
@@ -128,16 +128,16 @@ frac:
               | 16 -> Sixteenth
               | _ -> raise (IllegalDuration "Wrong duration") }
 
-channel1:
-  | CHANNEL1 ASSIGN LSB ch1 = separated_list(COMMA, seqwv) RSB (* channel = [seqwv+] *)
+voice1:
+  | VOICE1 ASSIGN LSB ch1 = separated_list(COMMA, seqwv) RSB (* voice = [seqwv+] *)
       { ch1 }
 
-channel2:
-  | CHANNEL2 ASSIGN LSB ch2 = separated_list(COMMA, seqwv) RSB (* channel = [seqwv+] *)
+voice2:
+  | VOICE2 ASSIGN LSB ch2 = separated_list(COMMA, seqwv) RSB (* voice = [seqwv+] *)
       { ch2 }
 
-channel3:
-  | CHANNEL3 ASSIGN LSB ch3 = separated_list(COMMA, seqwv) RSB (* channel = [seqwv+] *)
+voice3:
+  | VOICE3 ASSIGN LSB ch3 = separated_list(COMMA, seqwv) RSB (* voice = [seqwv+] *)
       { ch3 }
 
 

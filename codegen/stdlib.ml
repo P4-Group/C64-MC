@@ -75,21 +75,21 @@ play_init:
                 lda #$0f
                 sta $d418
 
-                lda #<channel1
+                lda #<voice1
                 sta c_ptrlo,x
-                lda #>channel1
+                lda #>voice1
                 sta c_ptrhi,x
 
                 inx
-                lda #<channel2
+                lda #<voice2
                 sta c_ptrlo,x
-                lda #>channel2
+                lda #>voice2
                 sta c_ptrhi,x
 
                 inx
-                lda #<channel3
+                lda #<voice3
                 sta c_ptrlo,x
-                lda #>channel3
+                lda #>voice3
                 sta c_ptrhi,x
 
                 rts
@@ -165,7 +165,7 @@ update_sid:
                 lda c_sr,x
                 sta $d406,y
 
-next_channel:   
+next_voice:   
                 inx
                 cpx #$03
                 bcc play_loop
@@ -263,8 +263,8 @@ fetch_note:
                 jmp update_sid
 |}
 
-let channel_data = {|
-;; Isolate channel data
+let voice_data = {|
+;; Isolate voice data
 c_regindex:     dc.b $00,$07,$0E
 c_freqlo:       dc.b $00,$00,$00
 c_freqlo_new:   dc.b $00,$00,$00
