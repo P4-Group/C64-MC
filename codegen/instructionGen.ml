@@ -140,25 +140,28 @@ let gen_sequence () =
   let symbol_table = Sym.get_symbol_table () in
   Hashtbl.iter (fun id value -> 
       match value with
-      | Sym.LabelSymbol _ -> (); (*Do nothing, this saves for memory addresses*)
+      | Sym.LabelSymbol _ -> assert false; (*Do nothing, this saves for memory addresses*)
       | Sym.SequenceSymbol {seq;_} -> (*The note lists are here somewhere*)
         match seq with
         | Sym.FinalSequence seq -> (* The definition of the note lists from the final AST *)
           write_line_tf (id ^ ":"); (*Write the label*)
-          
-          let buffer = ref [] in (* Create a mutable and appendable list *)
-          List.iter (fun note ->  
-            buffer := !buffer @ [
-              construct_instruction "dc.b" [
-              "$" ^ int_to_hex note.lowfreq; 
-              "$" ^ int_to_hex note.highfreq; 
-              "$" ^ int_to_hex note.duration;
-              ] (*Appends instruction to buffer*)
-            ];
+
+          let instruction_list = ref [] in (* Create a mutable and appendable list *)
+
+          List.iter (fun note ->  (*Iterate through the sequences in the symbol table*)
+            let next_instruction = (*Create the new instruction*)
+              construct_instruction "dc.b" [ 
+                  "$" ^ int_to_hex note.lowfreq; 
+                  "$" ^ int_to_hex note.highfreq; 
+                  "$" ^ int_to_hex note.duration;
+              ] in
+            instruction_list := next_instruction :: !instruction_list; (*Append the new instruction to the front of the list of instructions*)
           ) seq;
-          buffer := !buffer @ [construct_instruction "dc.b" ["$FF"]]; (*Suffixes buffer with required dc.b $FF*)
-          write_instr_group !buffer; (*Write the instructions in the output.asm file*)
-        | Sym.RawSequence _ -> (); (*Do nothing, this is for the original AST*)             
+          
+          instruction_list := construct_instruction "dc.b" ["$FF"] :: !instruction_list;    (*Appends instruction_list with required dc.b $FF*)
+          instruction_list := List.rev !instruction_list;   (* Reverses the instruction_list list*)
+          write_instr_group !instruction_list     (*Write the instructions in the output.asm file*)
+        | Sym.RawSequence _ -> assert false; (*Do nothing, this is for the original AST*)             
 
       (* Print the last $FF instruction after processing each symbol *)
   ) symbol_table
