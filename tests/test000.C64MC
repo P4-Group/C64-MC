@@ -1,6 +1,6 @@
-tempo = 300;
-timeSignature = (3,4);
-standardPitch = 440;
+tempo = 121
+timeSignature = (3,4)
+standardPitch = 440
 
 sequence seq1 = { a:8:5 b_:4:5 }
 sequence seq2 = { b:2:3 c:2:7 r:2 }

@@ -82,9 +82,9 @@ prog:
 
 
 params:
-  | TEMPO ASSIGN t = INT SEMICOLON (* tempo = int; *)
-    TIMESIG ASSIGN SP npm = INT COMMA bnv = INT EP SEMICOLON (* timeSignature = (int,int) *)
-    STDPITCH ASSIGN sp = INT SEMICOLON (* standardPitch = int; *)
+  | TEMPO ASSIGN t = INT (* tempo = int; *)
+    TIMESIG ASSIGN SP npm = INT COMMA bnv = INT EP (* timeSignature = (int,int) *)
+    STDPITCH ASSIGN sp = INT (* standardPitch = int; *)
     { {tempo = Some t; timesig = Some (npm,bnv); stdpitch = Some sp} } (* all params use Some since they are optional/options (?) *)
 
 seqdef:
