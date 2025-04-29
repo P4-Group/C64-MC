@@ -73,10 +73,10 @@ let seqdef_translate (seqdef : Ast.seqdef) =
   Symbol_table.update_sequence seq_id translated_seq None
 
 let waveform_translate = function
+| Ast.Noise -> Noise
   | Ast.Vpulse -> Vpulse
-  | Ast.Triangle -> Triangle
   | Ast.Sawtooth -> Sawtooth
-  | Ast.Noise -> Noise
+  | Ast.Triangle -> Triangle
 
   let ident_translate (id : Ast.ident) : Ast_final.ident = 
     { Ast_final.id = id.id; id_loc = id.id_loc }
