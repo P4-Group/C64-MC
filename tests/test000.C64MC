@@ -3,7 +3,7 @@ timeSignature = (3,4);
 standardPitch = 440;
 
 sequence seq1 = { a:4:5 b_:4:5 }
-sequence seq2 = { b:2:3 c:2:8 r:2 }
+sequence seq2 = { b:2:3 c:2:6 r:2 }
 sequence seq9
 = { c#:2:1 b_:2: }
 

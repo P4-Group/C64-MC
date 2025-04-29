@@ -140,7 +140,6 @@ let gen_sequence () =
   let symbol_table = Sym.get_symbol_table () in
   Hashtbl.iter (fun id value -> 
       match value with
-      | Sym.LabelSymbol _ -> (); (*Do nothing, this saves for memory addresses*)
       | Sym.SequenceSymbol {seq;_} -> (*The note lists are here somewhere*)
         match seq with
         | Sym.FinalSequence seq -> (* The definition of the note lists from the final AST *)
