@@ -115,7 +115,9 @@ acc:
 
 oct:
   | { None }
-  | i = INT { Orig i }
+  | i = INT 
+    { if (i >= 0 && i < 8) then Orig i 
+      else raise (IllegalOctave "Octave must be between 0 and 7")}
 
 frac:
   | i = INT { match i with
