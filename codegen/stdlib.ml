@@ -3,8 +3,8 @@ let init = {|
                 processor 6502
                 org 2049
 
-byteHoven       = $fb
-bitsOfBach      = $fc
+temp1           = $fb
+temp2           = $fc
 
 
 sys:            

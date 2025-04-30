@@ -1,12 +1,12 @@
-open Ast
+open Ast_src
 
 (* Define a generic AST type *)
 type generic_ast =
   | Node of string * (generic_ast list) 
   | Leaf of string                      
 
-(* Conversion of our AST's to a generic AST *)
-let rec ast_to_generic_ast (file : Ast.file) : generic_ast =
+(* Conversion of source AST to a generic AST *)
+let rec ast_to_generic_ast (file : Ast_src.file) : generic_ast =
   let params_node =
     Node ("Parameters", [
       Leaf (Printf.sprintf "Tempo: %s" (match file.parameters.tempo with Some t -> string_of_int t | None -> "None"));
@@ -81,7 +81,7 @@ let rec ast_to_generic_ast (file : Ast.file) : generic_ast =
   and pprint_oct oct =
     match oct with
     | None -> "None"
-    | Orig i -> Printf.sprintf "Original(%d)" i
+    | Defined i -> Printf.sprintf "Defined(%d)" i
 
   (* Pretty-print a generic AST *)
   let rec pprint_generic_ast ?(indent_level=0) ast =

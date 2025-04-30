@@ -1,4 +1,4 @@
-open Ast
+open Ast_src
 open Exceptions
 
     (* Function to decide whether letters A-G is tones *)
