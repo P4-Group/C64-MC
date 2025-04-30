@@ -18,12 +18,12 @@ async function executeCommand(program, args) {
 
     child.on('close', (code) => {
       if (code === 0) {
-        console.error(`Test failed as expected: ${program} ${args.join(' ')}`);
-        console.error(stderr);
-        resolve();
-      } else {
         console.log(stdout);
         reject(new Error(`Command failed with exit code ${code}`));
+      } else {
+        console.error(`Error executing command: ${program} ${args.join(' ')}`);
+        console.error(stderr);
+        resolve(new Error(`Command failed with exit code ${code}`));
       }
     });
 
