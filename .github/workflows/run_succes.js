@@ -36,7 +36,7 @@ async function executeCommand(program, args) {
 }
 
 async function runTests() {
-  const testDir = 'tests';
+  const testDir = 'tests/succes';
   try {
     const files = await fs.readdir(testDir);
     for (const file of files) {
