@@ -1,9 +1,9 @@
 open InstructionSet
 open Exceptions
 open List
-open C64MC.Ast_final
+open C64MC.Ast_tgt
 
-module Fin_Ast = C64MC.Ast_final
+module Target_Ast = C64MC.Ast_tgt
 module Sym = C64MC.Symbol_table
 
 (* This module generates assembly code for the C64 music compiler.
@@ -82,7 +82,7 @@ let waveform_to_byte = function
     Write repeat voice instruction;
     repeat for the two other voices
   *)
-let gen_voice (file : Fin_Ast.file) =
+let gen_voice (file : Target_Ast.file) =
   (*---------------Voice 1---------------*)
   write_line_tf ("voice1:"); (*write the label*)
   List.iter (fun (id, waveform) ->
@@ -142,7 +142,7 @@ let gen_sequence () =
       match value with
       | Sym.SequenceSymbol {seq;_} -> (*The note lists are here somewhere*)
         match seq with
-        | Sym.FinalSequence seq -> (* The definition of the note lists from the final AST *)
+        | Sym.FinalSequence seq -> (* The definition of the note lists from the target AST *)
           write_line_tf (id ^ ":"); (*Write the label*)
 
           let instruction_list = ref [] in (* Create a mutable and appendable list *)
@@ -160,7 +160,7 @@ let gen_sequence () =
           instruction_list := construct_instruction "dc.b" ["$FF"] :: !instruction_list;    (*Appends instruction_list with required dc.b $FF*)
           instruction_list := List.rev !instruction_list;   (* Reverses the instruction_list list*)
           write_instr_group !instruction_list     (*Write the instructions in the output.asm file*)
-        | Sym.RawSequence _ -> assert false; (*Do nothing, this is for the original AST*)             
+        | Sym.RawSequence _ -> assert false; (*Do nothing, this is for the source AST*)             
 
       (* Print the last $FF instruction after processing each symbol *)
   ) symbol_table

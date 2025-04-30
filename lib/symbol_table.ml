@@ -1,10 +1,10 @@
 
 open Exceptions
 
-(* Variant types, so the seq can hold both the sequence of the first and second AST concurrently *)
+(* Variant types, so the seq can hold both the sequence of the source and target AST concurrently *)
 type sequence_type = 
-  | RawSequence of Ast.seq
-  | FinalSequence of Ast_final.note list
+  | RawSequence of Ast_src.seq
+  | FinalSequence of Ast_tgt.note list
 
 type symbol_info = (* a record data structure used for grouping related information *)
   | SequenceSymbol of { (* the key is the sequence id, the value is sequence *)
@@ -35,9 +35,9 @@ let check_sequence id =
     raise (MissingSequenceError "Sequences must be defined before adding to a voice")
 
 
-(* This function is used in the translator when translating from the first AST to the final AST.
+(* This function is used in the translator when translating from the source AST to the target AST.
  If a sequence with the specified id exists in the symbol table, it will be replaced with 
- with the correlated updated sequence from the final AST. If no such sequence exist in the
+ with the correlated updated sequence from the target AST. If no such sequence exist in the
  symbol table, an error will be thrown. *)
 let update_sequence id seq = 
   if not (Hashtbl.mem symbol_table id) then
@@ -51,7 +51,7 @@ let update_sequence id seq =
   (* We check if the sequence has been successfully updated using pretty print *)
   match symbol with
   | SequenceSymbol {seq = FinalSequence final_seq} ->
-      Pprint_final.pprint_notes final_seq
+      Pprint_tgt.pprint_notes final_seq
   | _ -> raise (MissingSequenceError "Updated sequence not found")
 
 
