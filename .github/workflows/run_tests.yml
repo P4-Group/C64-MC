@@ -38,5 +38,9 @@ jobs:
         with:
           node-version: 'lts/*'
 
-      - name: Run tests on each file
-        run: node .github/workflows/run_tests.js
+      - name: Run each test that fails
+        run: node .github/workflows/run_fail.js
+      
+      - name: Run each test that succeeds
+        run: node .github/workflows/run_succes.js
+
