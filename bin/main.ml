@@ -18,17 +18,17 @@ let () =
         in
         let lexbuf = Lexing.from_channel input_channel in
         Printf.printf "File opened successfully. Parsing...\n"; (* Debugging line *)
-        let _ast = Parser.prog Lexer.read lexbuf in
+        let ast_src = Parser.prog Lexer.read lexbuf in
         (* Pretty-print the parsed AST *)
-        (*Pprint.pprint_file _ast;*)
+        (*Pprint_src.pprint_file ast_src;*)
 
-        let fin_ast = Ast_translate.file_translate _ast in
+        let ast_tgt = Ast_translate.file_translate ast_src in
         (* Pretty-print the final AST *)
-        Pprint_final.pprint_file fin_ast;
+        Pprint_tgt.pprint_file ast_tgt;
 
         InstructionGen.clean_build ();
         InstructionGen.run_example ();
-        InstructionGen.gen_voice fin_ast;
+        InstructionGen.gen_voice ast_tgt;
         InstructionGen.gen_sequence ();
         close_in input_channel
   with

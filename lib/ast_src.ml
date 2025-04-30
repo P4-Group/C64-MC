@@ -40,7 +40,7 @@ and frac =
 
 and oct =
   | None
-  | Orig of int
+  | Defined of int
 
 and waveform =
   | Noise

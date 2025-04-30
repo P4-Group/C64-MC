@@ -1,4 +1,5 @@
-;; Isolate
+
+;; Isolate program init
                 processor 6502
                 org 2049
 
@@ -59,9 +60,11 @@ raster:
                 dec $d019
                 jmp $ea31
 
-                org $1000
+
+
 
 ;; Isolate Play
+                org $1000
 play_init:      
                 ldx #$00
 
@@ -71,24 +74,25 @@ play_init:
                 lda #$0f
                 sta $d418
 
-                lda #<channel1
+                lda #<voice1
                 sta c_ptrlo,x
-                lda #>channel1
+                lda #>voice1
                 sta c_ptrhi,x
 
                 inx
-                lda #<channel2
+                lda #<voice2
                 sta c_ptrlo,x
-                lda #>channel2
+                lda #>voice2
                 sta c_ptrhi,x
 
                 inx
-                lda #<channel3
+                lda #<voice3
                 sta c_ptrlo,x
-                lda #>channel3
+                lda #>voice3
                 sta c_ptrhi,x
 
                 rts
+
 
 ;; Isolate note Initiation
 gatebit_off:    
@@ -124,6 +128,7 @@ counter_init:
 
                 jmp update_sid
 
+
 ;; Isolate Play loop
 play:           
                 ldx #$00
@@ -157,11 +162,11 @@ update_sid:
                 lda c_sr,x
                 sta $d406,y
 
-next_channel:   
                 inx
                 cpx #$03
                 bcc play_loop
                 rts
+
 
 ;; Isolate Fetch Notes/sequences
 fetch:          
@@ -252,7 +257,8 @@ fetch_note:
 
                 jmp update_sid
 
-;; Isolate channel data
+
+;; Isolate voice data
 c_regindex:     dc.b $00,$07,$0E
 c_freqlo:       dc.b $00,$00,$00
 c_freqlo_new:   dc.b $00,$00,$00
@@ -271,6 +277,7 @@ c_ptrhi:        dc.b $00,$00,$00
 c_rtnlo:        dc.b $00,$00,$00
 c_rtnhi:        dc.b $00,$00,$00
 
+
 ;; Isolate instrument data
 i_pulselo:      dc.b $00,$00,$00,$00
 i_pulsehi:      dc.b $00,$02,$00,$00
@@ -279,77 +286,46 @@ i_ad:           dc.b $0a,$09,$58,$0a
 i_sr:           dc.b $00,$00,$aa,$00
 i_waveform:     dc.b $81,$41,$21,$11
 
-
-;; Actual code which needs to be generated
-channel1:       
+voice1:
                 dc.b $FA
                 dc.b $FE
-                dc.w seq_1
-
+                dc.w seq2
                 dc.b $FA
                 dc.b $FE
-                dc.w seq_2
-
+                dc.w seq2
+                dc.b $FA
+                dc.b $FE
+                dc.w seq1
                 dc.b $FD
-                dc.w channel1
-
-channel2:       
+                dc.w voice1
+voice2:
                 dc.b $FB
                 dc.b $FE
-                dc.w bass_1
-
-                dc.b $FB
+                dc.w seq2
+                dc.b $F9
                 dc.b $FE
-                dc.w bass_2
-
+                dc.w seq1
+                dc.b $F9
+                dc.b $FE
+                dc.w seq3
                 dc.b $FD
-                dc.w channel2
-
-channel3:       
+                dc.w voice2
+voice3:
                 dc.b $FC
                 dc.b $FE
-                dc.w arpeg
-
+                dc.w seq2
                 dc.b $FD
-                dc.w channel3
-
-seq_1:          
-                dc.b $d1, $12, $0E
-                dc.b $1f, $15, $0E
-                dc.b $60, $16, $0E
-                dc.b $1f, $15, $0E
-                dc.b $60, $16, $0E
-                dc.b $1f, $15, $0E
-                dc.b $d1, $12, $0E
-                dc.b $00, $00, $0E
+                dc.w voice3
+seq1:
+                dc.b $61, $38, $0C
+                dc.b $BB, $3B, $18
                 dc.b $FF
-
-seq_2:          
-                dc.b $d1, $12, $0E
-                dc.b $1f, $15, $0E
-                dc.b $60, $16, $0E
-                dc.b $1f, $15, $0E
-                dc.b $d1, $12, $1C
-                dc.b $d1, $12, $1C
+seq3:
+                dc.b $38, $02, $30
+                dc.b $DD, $1D, $30
                 dc.b $FF
-
-bass_1:         
-                dc.b $B4, $04, $0E
-                dc.b $98, $05, $0E
-                dc.b $B4, $04, $0E
-                dc.b $98, $05, $0E
-                dc.b $FF
-
-bass_2:         
-                dc.b $98, $05, $0E
-                dc.b $0C, $07, $0E
-                dc.b $98, $05, $0E
-                dc.b $0C, $07, $0E
-                dc.b $FF
-
-arpeg:          
-                dc.b $68, $09, $0E
-                dc.b $30, $0B, $0E
-                dc.b $18, $0E, $0E
-                dc.b $30, $0B, $0E
+seq2:
+                dc.b $D2, $0F, $30
+                dc.b $18, $86, $30
+                dc.b $00, $00, $30
                 dc.b $FF

@@ -1,7 +1,7 @@
 (* Token Declarations *)
 
 %{
-    open Ast
+    open Ast_src
     open Utils
     open Symbol_table
     open Exceptions
@@ -28,7 +28,7 @@
 %token EOF
 
 %start prog (* axiom *)
-%type <Ast.file> prog
+%type <Ast_src.file> prog
 
 (* ---Semantic Actions--- *)
 
@@ -69,11 +69,11 @@ $: used for accessing the value of non-terminals or tokens
  *)
 
  (* semantic action: 
-    Defines the relevant building blocks of the AST and assigns values from the local variables above.
+    Defines the relevant building blocks of the source AST and assigns values from the local variables above.
     Example: 
       { {name = id; seq = sb} } 
-    Takes the value of 'id' (which as seen above is an ident) and assigns it to the 'name' of AST's seqdef
-    Takes the value of 'sb' (which as seen above is a seq) and assigns it to the 'seq' of AST's seqdef
+    Takes the value of 'id' (which as seen above is an ident) and assigns it to the 'name' of source AST's seqdef
+    Takes the value of 'sb' (which as seen above is a seq) and assigns it to the 'seq' of source AST's seqdef
 *)
 
 prog:
@@ -105,7 +105,7 @@ seq:
 note:
   | t = ident a = acc COLON f = frac COLON? o = oct (* ident accidental octave : fraction *)
   { if (t.id = "r") then ( Rest f )
-    else (let t = (ident_to_tone t.id) in (*Replaces tone ident with actual AST tone type*)
+    else (let t = (ident_to_tone t.id) in (*Replaces tone ident with actual source AST tone type*)
     Sound (t, a, f, o)) } (* Full note with octave and fraction *)
 
 acc:
@@ -116,7 +116,7 @@ acc:
 oct:
   | { None }
   | i = INT 
-    { if (i >= 0 && i < 8) then Orig i 
+    { if (i >= 0 && i < 8) then Defined i 
       else raise (IllegalOctave "Octave must be between 0 and 7")}
 
 frac:
