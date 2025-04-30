@@ -2,11 +2,10 @@ tempo = 121
 timeSignature = (3,4)
 standardPitch = 440
 
-sequence seq1 = { a:4:5 b_:4:5 }
-sequence seq2 = { b:2:3 c:2:6 r:2 }
-sequence seq9
-= { c#:2:1 b_:2: }
+sequence seq1 = { a:8:5 b_:4:5 }
+sequence seq2 = { b:2:3 c:2:7 r:2 }
+sequence seq3 = { c#:2:1 b_:2: }
 
 voice1 = [(seq2, vPulse), (seq2, vPulse), (seq1, vPulse)]
-voice2 = [(seq2, sawtooth), (seq1, noise), (seq9, noise)]
+voice2 = [(seq2, sawtooth), (seq1, noise), (seq3, noise)]
 voice3 = [(seq2, triangle)]

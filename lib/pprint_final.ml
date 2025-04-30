@@ -10,7 +10,7 @@ let note_to_generic (note : note) : generic_ast =
   Node ("Note", [
     Leaf (Printf.sprintf "High frequency: %d" note.highfreq);
     Leaf (Printf.sprintf "Low frequency: %d" note.lowfreq);
-    Leaf (Printf.sprintf "Duration: %d ms" note.duration);
+    Leaf (Printf.sprintf "Duration: %d frames" note.duration);
   ])
 
 (* Helper function to convert waveform to string *)
