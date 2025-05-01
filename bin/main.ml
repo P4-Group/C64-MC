@@ -4,40 +4,76 @@ open Codegen
 
 module Runtime_options = C64MC.Runtime_options
 
-(* This module is responsible for checking the parameters of the input file and handling errors. *)
+(* This checks the parameters of the input file and handling errors. *)
 let check_file_params () =
   let params = Array.to_list (Array.sub Sys.argv 1 (Array.length Sys.argv - 1)) in
-  let rec parse_options options files = function
-    | [] -> (options, files)
-    | "-tgt-ast" :: rest -> parse_options ("-tgt-ast" :: options) files rest
-    | "-src-ast" :: rest -> parse_options ("-src-ast" :: options) files rest
-    | "-debug" :: rest -> parse_options ("-debug" :: options) files rest
-    | "-dasm" :: rest -> parse_options ("-dasm" :: options) files rest
-    | "-sym-tab" :: rest -> parse_options ("-sym-tab" :: options) files rest
-    | "-s" :: file :: rest when Sys.file_exists file ->
-        parse_options options (file :: files) rest
-    | "-s" :: _ -> raise (FileNotFoundError "The specified source file does not exist.")
-    | _ -> raise (InsufficientArguments "Invalid arguments. Usage: <program> -s <source_file> [options]")
+  let src_file_ref = ref None in
+
+  let rec parse_args args =
+    match args with
+    | [] -> () (* Base case: no more arguments *)
+
+    (* Boolean flags *)
+    | "-tgt-ast" :: rest ->
+        Runtime_options.set_tgt_ast true;
+        parse_args rest
+    | "-src-ast" :: rest ->
+        Runtime_options.set_src_ast true;
+        parse_args rest
+    | "-debug" :: rest ->
+        Runtime_options.set_debug true;
+        parse_args rest
+    | "-sym-tab" :: rest ->
+        Runtime_options.set_sym_tab true;
+        parse_args rest
+    | "-dasm" :: rest -> 
+        Runtime_options.set_dasm true;
+        parse_args rest
+
+    (* Arguments with values *)
+    | "-s" :: file :: rest ->
+        if !src_file_ref <> None then
+          raise (InsufficientArguments "Option '-s' (source file) specified multiple times.");
+        src_file_ref := Some file;
+        parse_args rest
+    | "-s" :: [] ->
+        raise (InsufficientArguments "Option '-s' requires a file path argument.")
+
+    (* Unknown argument *)
+    | unknown :: _ ->
+        raise (InsufficientArguments ("Invalid argument or unknown option: " ^ unknown ^
+          "\nUsage: <program> -s <source_file> [-dasm] [-tgt-ast] [-src-ast] [-sym-tab] [-debug]"))
   in
-  let options, files = parse_options [] [] params in
-  List.iter
-    (function
-      | "-tgt-ast" -> Runtime_options.set_tgt_ast true
-      | "-src-ast" -> Runtime_options.set_src_ast true
-      | "-debug" -> Runtime_options.set_debug true 
-      | "-dasm" -> Runtime_options.set_dasm true 
-      | "-sym-tab" -> Runtime_options.set_sym_tab true 
-      | _ -> ())
-    options;
-  match files with
-  | [file] ->
-      List.iter (fun opt -> Printf.printf "Option enabled: %s\n" opt) options;
-      Printf.printf "Source file specified with '-s': %s\n" file;
-      file
-  | _ -> raise (InsufficientArguments "Usage: <program> -s <source_file> [options]")
+  parse_args params;
+
+  (* Check if the mandatory source file argument was provided *)
+  match !src_file_ref with
+  | Some file -> file (* Return the source file path *)
+  | None -> raise (InsufficientArguments "Missing mandatory source file argument '-s <file>'.")
+
+(* Assumes dasm is in the PATH and can be called directly *)
+(* output.asm is always in path as well, thus making the sys command just be "./dasm output.asm"*)
+(* This function assembles the output file using DASM. *)
+let assemble_file () =
+  let dasm_command = "./dasm" in 
+
+  let output_asm_file = "output.asm" in (* The output assembly file name *)
+
+  let output_binary_file = Filename.remove_extension output_asm_file ^ ".prg" in
+
+  let command = Printf.sprintf "%s %s %s" dasm_command output_asm_file output_binary_file in
+  Printf.printf "Assembling file with command: %s\n" command;
+  let result = Sys.command command in
+  if result <> 0 then
+    let error_msg = Printf.sprintf "Assembly failed (exit code: %d) using command: '%s'. Check if DASM is installed and in your PATH, if the assembly file '%s' is valid, and if you have permissions to execute dasm and write to the output directory." result command output_asm_file in
+    raise (FilePermissionError error_msg)
+  else
+    Printf.printf "File assembled successfully to %s.\n" output_binary_file
 
 
 
+
+(* Main function *)
 let () =
   try
     (* Check the input file parameters and get the input file name *)
@@ -117,6 +153,11 @@ let () =
 
       (* Generate the sequence code *)
       InstructionGen.gen_sequence ();
+
+      Runtime_options.conditional_option [Runtime_options.get_dasm] (fun () ->
+        Printf.printf "DASM option is set. Assembling file...\n";
+        assemble_file ();
+      );
 
       (* Close the input channel *)
       close_in input_channel
