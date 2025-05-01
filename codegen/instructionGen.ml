@@ -83,51 +83,20 @@ let waveform_to_byte = function
     repeat for the two other voices
   *)
 let gen_voice (file : Target_Ast.file) =
-  (*---------------Voice 1---------------*)
-  write_line_tf ("voice1:"); (*write the label*)
-  List.iter (fun (id, waveform) ->
-    let wv_byte = waveform_to_byte waveform in
-    let instruction_list = [ (*Create a list containing instructions for the write_instr_group function*)
-      construct_instruction "dc.b" [wv_byte];
-      construct_instruction "dc.b" ["$FE"];
-      construct_instruction "dc.w" [id.id]
-    ] in
-    write_instr_group instruction_list (*Write the instructions in the output.asm file*)
-  ) file.vc1;
-  write_repeat_voice "voice1"; (*write the signal for repeating the sequence*)
-
-  (*---------------Voice 2---------------*)
-  write_line_tf ("voice2:");
-  List.iter (fun (id, waveform) ->
-    let wv_byte = waveform_to_byte waveform in
-    let instruction_list = [
-      construct_instruction "dc.b" [wv_byte];
-      construct_instruction "dc.b" ["$FE"];
-      construct_instruction "dc.w" [id.id]
-    ] in
-    write_instr_group instruction_list
-  ) file.vc2;
-  write_repeat_voice "voice2";
-  
-  (*---------------Voice 3---------------*)
-  write_line_tf ("voice3:");
-  List.iter (fun (id, waveform) ->
-    let wv_byte = waveform_to_byte waveform in
-    let instruction_list = [
-      construct_instruction "dc.b" [wv_byte];
-      construct_instruction "dc.b" ["$FE"];
-      construct_instruction "dc.w" [id.id]
-    ] in
-    write_instr_group instruction_list
-  ) file.vc3;
-  write_repeat_voice "voice3"
-
-  (* Converts an integer to a hexadecimal string *)
-  let int_to_hex (n : int) : string =
-    if n < 0 then
-      raise (Invalid_argument "Negative integers cannot be converted to hexadecimal")
-    else
-      Printf.sprintf "%02X" n
+  let write_voice label voice =
+    write_line_tf (label ^ ":");
+    List.iter (fun (id, waveform) ->
+      write_instr_group [
+        construct_instruction "dc.b" [waveform_to_byte waveform];
+        construct_instruction "dc.b" ["$FE"];
+        construct_instruction "dc.w" [id.id]
+      ]
+    ) voice;
+    write_repeat_voice label
+  in
+  write_voice "voice1" file.vc1;
+  write_voice "voice2" file.vc2;
+  write_voice "voice3" file.vc3
 
 
 (*Function to generate code for the sequences in assembly
