@@ -9,25 +9,25 @@ module Sym = C64MC.Symbol_table
 (* This module generates assembly code for the C64 music compiler.
    It constructs instructions and writes them to a file. *)
 
-(* Global filename for the output file *)
-let filename = ref "output.asm"
+(* Global file_name for the output file *)
+let file_name = ref "output.asm"
 
 (* Clean the output file*)
 let clean_build ()=
-  let oc = open_out !filename in
+  let oc = open_out !file_name in
   close_out oc
 
 
 (* Write a line to a file without overwriting existing lines *)
 let write_line_tf (line : string) =
-  let oc = open_out_gen [Open_creat; Open_text; Open_append] 0o666 !filename in
+  let oc = open_out_gen [Open_creat; Open_text; Open_append] 0o666 !file_name in
   Printf.fprintf oc "%s\n" line;
   close_out oc
 
 (* Write the standard library to a file *)
 (* This function appends snippets from the stdlib to the output file *)
 let write_stdlib (stdlib_string : string) =
-  let oc = open_out_gen [Open_creat; Open_text; Open_append] 0o666 !filename in
+  let oc = open_out_gen [Open_creat; Open_text; Open_append] 0o666 !file_name in
   Printf.fprintf oc "%s\n" stdlib_string;
   close_out oc
 
