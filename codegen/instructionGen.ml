@@ -84,13 +84,18 @@ let waveform_to_byte = function
 let gen_voice (file : Target_Ast.file) =
   let write_voice label voice =
     write_line_tf (label ^ ":");
-    List.iter (fun (id, waveform) ->
+    if (voice = []) then 
       write_instr_group [
-        construct_instruction "dc.b" [waveform_to_byte waveform];
-        construct_instruction "dc.b" ["$FE"];
-        construct_instruction "dc.w" [id.id]
-      ]
-    ) voice;
+        construct_instruction "dc.b" ["$00, $00, $00"];
+      ] 
+    else
+      List.iter (fun (id, waveform) ->
+        write_instr_group [
+          construct_instruction "dc.b" [waveform_to_byte waveform];
+          construct_instruction "dc.b" ["$FE"];
+          construct_instruction "dc.w" [id.id]
+        ]
+      ) voice;
     let indentation = String.make (4 * 4) ' ' in  (* 4 tabs, 4 spaces each = 16 spaces *)
     write_line_tf (indentation ^ "dc.b $FD");
     write_line_tf (indentation ^ "dc.w " ^ label)
