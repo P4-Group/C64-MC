@@ -20,9 +20,9 @@ let oct_offset = function
   | Ast_src.Defined o -> (o - 4) * 12
   | _ -> 0
 
-(* Get duration of quarter note from tempo and basic note value. 
+(* Get duration of sixteenth note from tempo and basic note value. 
    Used as reference point for duration of specific notes *)
-let get_qn_duration () =
+let get_duration_ref () =
     let tempo_opt = !params.tempo in
     let tempo = Option.value tempo_opt ~default:120 in
     let timesig_opt = !params.timesig in
@@ -30,22 +30,22 @@ let get_qn_duration () =
     let _, bnv = timesig in
     let bnv_duration = 3000 / tempo in
     match bnv with 
-    | 1 -> bnv_duration / 4
-    | 2 -> bnv_duration / 2
-    | 4 -> bnv_duration
-    | 8 -> bnv_duration * 2
-    | 16 -> bnv_duration * 4
+    | 1 -> bnv_duration / 16
+    | 2 -> bnv_duration / 8
+    | 4 -> bnv_duration / 4
+    | 8 -> bnv_duration / 2
+    | 16 -> bnv_duration
     | _ -> raise (IllegalTimeSignature "Invalid basic note value in time signature")
 
 (* Get duration of specific note *)
 let get_note_duration f =
-  let qn_duration = get_qn_duration () in
+  let duration_ref = get_duration_ref () in
   match f with
-    | Ast_src.Whole -> qn_duration * 4
-    | Ast_src.Half -> qn_duration * 2
-    | Ast_src.Quarter -> qn_duration
-    | Ast_src.Eighth -> qn_duration / 2
-    | Ast_src.Sixteenth -> qn_duration / 4
+    | Ast_src.Whole -> duration_ref * 16
+    | Ast_src.Half -> duration_ref * 8
+    | Ast_src.Quarter -> duration_ref * 4
+    | Ast_src.Eighth -> duration_ref * 2
+    | Ast_src.Sixteenth -> duration_ref
 
 (* Translate from Ast_src.note to Ast_tgt.note *)
 let note_translate = function
