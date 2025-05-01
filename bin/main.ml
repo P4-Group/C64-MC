@@ -16,9 +16,12 @@ let () =
           try open_in_bin input_filename 
           with Sys_error _ -> raise (FilePermissionError ("Permission denied or file cannot be opened: " ^ input_filename)) 
         in
+        Printf.eprintf "lexing";
         let lexbuf = Lexing.from_channel input_channel in
-        Printf.printf "File opened successfully. Parsing...\n"; (* Debugging line *)
+        Printf.eprintf "File opened successfully. Parsing...\n"; (* Debugging line *)
         let _ast = Parser.prog Lexer.read lexbuf in
+
+        
         (* Pretty-print the parsed AST *)
         (*Pprint.pprint_file _ast;*)
 
@@ -40,6 +43,8 @@ let () =
       Printf.eprintf "Error: %s\n" msg
   | ParsingError msg ->
       Printf.eprintf "Parsing Error: %s\n" msg
+  | LexicalError msg ->
+      Printf.eprintf "Lexing Error: %s\n" msg
   | e ->
       Printf.eprintf "Unexpected Error: %s\n" (Printexc.to_string e);
       raise e
