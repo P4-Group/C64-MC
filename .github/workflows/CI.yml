@@ -31,6 +31,8 @@ jobs:
 
       - run: opam install menhir
 
+      - run: opam install ounit2
+
       - run: opam exec -- dune build
 
       - run: opam exec -- dune runtest
