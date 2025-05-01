@@ -1,6 +1,6 @@
 (library
  (name C64MC)
- (modules lexer parser utils ast_src pprint_src symbol_table ast_translate ast_tgt pprint_tgt)
+ (modules lexer parser utils ast_src pprint_src symbol_table ast_translate ast_tgt pprint_tgt runtime_options)
  (libraries menhirLib Exceptions))
 
 

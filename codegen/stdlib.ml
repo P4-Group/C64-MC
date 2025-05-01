@@ -175,14 +175,14 @@ let fetches = {|
 ;; Isolate Fetch Notes/sequences
 fetch:          
                 lda c_ptrlo,x
-                sta byteHoven
+                sta temp1
                 lda c_ptrhi,x
-                sta bitsOfBach
+                sta temp2
 
                 ldy #$00
 
 fetch_loop:     
-                lda (byteHoven),y
+                lda (temp1),y
 
                 cmp #$f9
                 bcc fetch_note
@@ -200,22 +200,22 @@ fetch_loop:
                 jmp exit_seq
 
 enter_seq:      
-                lda byteHoven
+                lda temp1
 
                 clc
                 adc #$04
                 sta c_rtnlo,x
 
-                lda bitsOfBach
+                lda temp2
                 adc #$00
                 sta c_rtnhi,x
 
 jump_addr       
-                lda (byteHoven),y
+                lda (temp1),y
                 sta c_ptrlo,x
 
                 iny
-                lda (byteHoven),y
+                lda (temp1),y
                 sta c_ptrhi,x
 
                 jmp fetch
@@ -238,11 +238,11 @@ fetch_note:
                 sta c_freqlo_new,x
 
                 iny
-                lda (byteHoven),y
+                lda (temp1),y
                 sta c_freqhi_new,x
 
                 iny
-                lda (byteHoven),y
+                lda (temp1),y
                 sta c_counternew,x
 
                 lda c_waveform,x
@@ -252,10 +252,10 @@ fetch_note:
                 iny
                 tya
                 clc
-                adc byteHoven
+                adc temp1
                 sta c_ptrlo,x
 
-                lda bitsOfBach
+                lda temp2
                 adc #$00
                 sta c_ptrhi,x
 

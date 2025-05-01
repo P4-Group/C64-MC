@@ -5,29 +5,31 @@ open C64MC.Ast_tgt
 
 module Target_Ast = C64MC.Ast_tgt
 module Sym = C64MC.Symbol_table
+module Runtime_options = C64MC.Runtime_options
+
 
 (* This module generates assembly code for the C64 music compiler.
    It constructs instructions and writes them to a file. *)
 
-(* Global filename for the output file *)
-let filename = ref "output.asm"
+(* Global file_name for the output file *)
+let file_name = ref "output.asm"
 
 (* Clean the output file*)
 let clean_build ()=
-  let oc = open_out !filename in
+  let oc = open_out !file_name in
   close_out oc
 
 
 (* Write a line to a file without overwriting existing lines *)
 let write_line_tf (line : string) =
-  let oc = open_out_gen [Open_creat; Open_text; Open_append] 0o666 !filename in
+  let oc = open_out_gen [Open_creat; Open_text; Open_append] 0o666 !file_name in
   Printf.fprintf oc "%s\n" line;
   close_out oc
 
 (* Write the standard library to a file *)
 (* This function appends snippets from the stdlib to the output file *)
 let write_stdlib (stdlib_string : string) =
-  let oc = open_out_gen [Open_creat; Open_text; Open_append] 0o666 !filename in
+  let oc = open_out_gen [Open_creat; Open_text; Open_append] 0o666 !file_name in
   Printf.fprintf oc "%s\n" stdlib_string;
   close_out oc
 
@@ -39,7 +41,9 @@ let construct_instruction (mnemonic : string) (args : string list) =
   | None -> raise (InstructionNotFoundError (Printf.sprintf "Instruction '%s' not found" mnemonic))
   | Some instr -> (*Check if instruction has correct arguments/amount of arguments*)
       let arg_count = List.length args in
-      Printf.eprintf "Argument count: %d\n" arg_count;
+      (* Print debug information if the debug option is enabled *)
+      Runtime_options.conditional_option [Runtime_options.get_debug] (fun () ->
+        Printf.printf "Constructing instruction: %s with arguments: %s\n" mnemonic (String.concat ", " args));
       
       if arg_count < instr.min_args then
         raise (InsufficientInstructionArguments (mnemonic, instr.min_args, arg_count))
@@ -60,11 +64,6 @@ let write_instr_group (instructions : string list) =
     write_line_tf (indentation ^ instruction)
   ) instructions
 
-(*Writes the assembly code to repeat a voice at the end*)
-let write_repeat_voice (voice_def : string) =
-  let indentation = String.make (4 * 4) ' ' in  (* 4 tabs, 4 spaces each = 16 spaces *)
-  write_line_tf (indentation ^ "dc.b $FD");
-  write_line_tf (indentation ^ "dc.w " ^ voice_def)
 
 (*Converts the waveform into the hex byte for assembly*)
 let waveform_to_byte = function
@@ -83,45 +82,23 @@ let waveform_to_byte = function
     repeat for the two other voices
   *)
 let gen_voice (file : Target_Ast.file) =
-  (*---------------Voice 1---------------*)
-  write_line_tf ("voice1:"); (*write the label*)
-  List.iter (fun (id, waveform) ->
-    let wv_byte = waveform_to_byte waveform in
-    let instruction_list = [ (*Create a list containing instructions for the write_instr_group function*)
-      construct_instruction "dc.b" [wv_byte];
-      construct_instruction "dc.b" ["$FE"];
-      construct_instruction "dc.w" [id.id]
-    ] in
-    write_instr_group instruction_list (*Write the instructions in the output.asm file*)
-  ) file.vc1;
-  write_repeat_voice "voice1"; (*write the signal for repeating the sequence*)
-
-  (*---------------Voice 2---------------*)
-  write_line_tf ("voice2:");
-  List.iter (fun (id, waveform) ->
-    let wv_byte = waveform_to_byte waveform in
-    let instruction_list = [
-      construct_instruction "dc.b" [wv_byte];
-      construct_instruction "dc.b" ["$FE"];
-      construct_instruction "dc.w" [id.id]
-    ] in
-    write_instr_group instruction_list
-  ) file.vc2;
-  write_repeat_voice "voice2";
+  let write_voice label voice =
+    write_line_tf (label ^ ":");
+    List.iter (fun (id, waveform) ->
+      write_instr_group [
+        construct_instruction "dc.b" [waveform_to_byte waveform];
+        construct_instruction "dc.b" ["$FE"];
+        construct_instruction "dc.w" [id.id]
+      ]
+    ) voice;
+    let indentation = String.make (4 * 4) ' ' in  (* 4 tabs, 4 spaces each = 16 spaces *)
+    write_line_tf (indentation ^ "dc.b $FD");
+    write_line_tf (indentation ^ "dc.w " ^ label)
+  in
+  write_voice "voice1" file.vc1;
+  write_voice "voice2" file.vc2;
+  write_voice "voice3" file.vc3
   
-  (*---------------Voice 3---------------*)
-  write_line_tf ("voice3:");
-  List.iter (fun (id, waveform) ->
-    let wv_byte = waveform_to_byte waveform in
-    let instruction_list = [
-      construct_instruction "dc.b" [wv_byte];
-      construct_instruction "dc.b" ["$FE"];
-      construct_instruction "dc.w" [id.id]
-    ] in
-    write_instr_group instruction_list
-  ) file.vc3;
-  write_repeat_voice "voice3"
-
   (* Converts an integer to a hexadecimal string *)
   let int_to_hex (n : int) : string =
     if n < 0 then
