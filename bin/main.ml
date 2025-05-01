@@ -25,17 +25,12 @@ let () =
         (* The Lexer module should provide the tokenization function *)
 
         let lexbuf = Lexing.from_channel input_channel in 
-        Printf.printf "File opened successfully. Parsing...\n"; (* Debugging line *)
-        let ast_src = Parser.prog Lexer.read lexbuf in
-        let ast_tgt = Ast_translate.file_translate ast_src in (* Translate the AST from source to target ast *)
         Printf.eprintf "lexing";
         let lexbuf = Lexing.from_channel input_channel in
-        Printf.eprintf "File opened successfully. Parsing...\n"; (* Debugging line *)
-        let _ast = Parser.prog Lexer.read lexbuf in
-
-        
+        Printf.printf "File opened successfully. Parsing...\n"; (* Debugging line *)
+        let ast_src = Parser.prog Lexer.read lexbuf in
         (* Pretty-print the parsed AST *)
-        (*Pprint.pprint_file _ast;*)
+        (*Pprint_src.pprint_file ast_src;*)
 
         (* Print the original AST for debugging purposes *)
         (* Pretty-print the final AST *)
