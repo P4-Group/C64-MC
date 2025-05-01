@@ -9,9 +9,9 @@ In a lexer everything is read as a sequence of characters (string).
 *)
 
 { (* Header *)
-    open Parser
 
- exception Lexical_error of string
+    open Parser
+    open Exceptions
 
 (* TODO: comments and move to Utils *)
   let ident_or_keyword =
@@ -50,7 +50,7 @@ let int = digit+ (* '+' means one or more occurences of previous pattern, so 124
 let frac = '.' digit* (* a decimal point followed by zero or more digits*)
 let float = digit* frac (* matches zero or more digits before the decimal point*)
 
-let whitespace = [' ' '\t']+
+let whitespace = [' ' '\t' '|']+ (*| is to use in the sequences, to separate bars *)
 let newline = '\n' | '\r'
 let letter = ['a'-'z' 'A'-'Z']+
 let ident = letter (letter | '-' | digit)* (* identity for a sequence *)
@@ -91,22 +91,20 @@ rule read = parse
     | "(" {SP}
     | ")" {EP}
     | ":" {COLON}
-    | ";" {SEMICOLON}
     | "," {COMMA}
     | "=" {ASSIGN}
     | eof {EOF}
+    | _ {
+        let pos = Lexing.lexeme_start_p lexbuf in
+        let line = pos.pos_lnum in 
+        let msg = Printf.sprintf
+        "Lexical error: invalid input at line %d, expected a token" line
+        in
+        raise (LexicalError msg)}
 
-(* --Mutual Recursive Rules-- *)
 
 and comment = parse
     | "*/" {read lexbuf}
     | _ {comment lexbuf}
     | eof {failwith "non terminated comment"}
 
-(* and sequence = parse
-    | "}" {read lexbuf}
-    | tonename {TONENAME (tonename_of_string (Lexing.lexeme lexbuf))}
-
-and voice = parse
-    | "]" {read lexbuf}
-} *)

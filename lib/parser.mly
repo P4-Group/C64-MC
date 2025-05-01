@@ -23,7 +23,7 @@
 %token RCB (* right curly bracket *)
 %token LSB (* left square bracket *)
 %token RSB (* right square bracket *)
-%token COLON SEMICOLON COMMA
+%token COLON COMMA
 %token ASSIGN (* = *)
 %token EOF
 
