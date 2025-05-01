@@ -4,43 +4,55 @@ open Codegen
 
 let () =
   try
+    (* Check if the input file is provided *)
     if Array.length Sys.argv < 2 then
-      raise (InsufficientArguments "Usage: <program> <input_file>") (* Check if the input file is provided *)
+      raise (InsufficientArguments "Usage: <program> <input_file>")
     else
-      let input_filename = Sys.argv.(1) in (* Get the input file name from command line arguments *)
-      Printf.printf "Opening file: %s\n" input_filename; 
+      (* Get the input file name from command line arguments *)
+      let input_filename = Sys.argv.(1) in
+      Printf.printf "Opening file: %s\n" input_filename; (* Debugging line *)
+
+      (* Check if the file exists *)
       if not (Sys.file_exists input_filename) then
-        raise (FileNotFoundError ("File not found: " ^ input_filename)) (* Check if the file exists *)
+        raise (FileNotFoundError ("File not found: " ^ input_filename))
       else
+        (* Attempt to open the file in binary mode *)
+        (* If it fails, raise a FilePermissionError *)
         let input_channel = 
-          (* Attempt to open the file in binary mode *)
-          (* If it fails, raise a FilePermissionError *)
           try open_in_bin input_filename 
           with Sys_error _ -> raise (FilePermissionError ("Permission denied or file cannot be opened: " ^ input_filename)) 
         in
 
-        (* Attempt to parse the file *)
-        (* If it fails, raise a ParsingError *)
-        (* The parsing function should be defined in the Parser module *)
-        (* The Lexer module should provide the tokenization function *)
-
-        let lexbuf = Lexing.from_channel input_channel in 
         Printf.eprintf "lexing";
+
+        (* Create a lexing buffer from the input channel *)
         let lexbuf = Lexing.from_channel input_channel in
         Printf.printf "File opened successfully. Parsing...\n"; (* Debugging line *)
+
+        (* Attempt to parse the file *)
+        (* If it fails, raise a ParsingError *)
         let ast_src = Parser.prog Lexer.read lexbuf in
-        (* Pretty-print the parsed AST *)
-        (*Pprint_src.pprint_file ast_src;*)
 
-        (* Print the original AST for debugging purposes *)
+        (* Translate the source AST to the target AST *)
+        let ast_tgt = Ast_translate.file_translate ast_src in
+
         (* Pretty-print the final AST *)
-        Pprint_tgt.pprint_file ast_tgt; (* Prints the final AST *)
+        Pprint_tgt.pprint_file ast_tgt;
 
-        InstructionGen.clean_build (); (* Clean the output file before writing *)
-        InstructionGen.run_example (); (* Write the standard library to the output file *)
-        InstructionGen.gen_voice ast_tgt; (* Generate the voice code *)
-        InstructionGen.gen_sequence (); (* Generate the sequence code *)
-        close_in input_channel (* Close the input channel *)
+        (* Clean the output file before writing *)
+        InstructionGen.clean_build ();
+
+        (* Write the standard library to the output file *)
+        InstructionGen.run_example ();
+
+        (* Generate the voice code *)
+        InstructionGen.gen_voice ast_tgt;
+
+        (* Generate the sequence code *)
+        InstructionGen.gen_sequence ();
+
+        (* Close the input channel *)
+        close_in input_channel
   with
   | InsufficientArguments msg ->
       Printf.eprintf "Error: %s\n" msg
