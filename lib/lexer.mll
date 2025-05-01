@@ -50,7 +50,7 @@ let int = digit+ (* '+' means one or more occurences of previous pattern, so 124
 let frac = '.' digit* (* a decimal point followed by zero or more digits*)
 let float = digit* frac (* matches zero or more digits before the decimal point*)
 
-let whitespace = [' ' '\t']+
+let whitespace = [' ' '\t' '|']+ (*| is to use in the sequences, to separate bars *)
 let newline = '\n' | '\r'
 let letter = ['a'-'z' 'A'-'Z']+
 let ident = letter (letter | '-' | digit)* (* identity for a sequence *)
@@ -91,7 +91,6 @@ rule read = parse
     | "(" {SP}
     | ")" {EP}
     | ":" {COLON}
-    | ";" {SEMICOLON}
     | "," {COMMA}
     | "=" {ASSIGN}
     | eof {EOF}

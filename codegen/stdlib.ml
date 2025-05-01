@@ -3,8 +3,8 @@ let init = {|
                 processor 6502
                 org 2049
 
-byteHoven       = $fb
-bitsOfBach      = $fc
+temp1           = $fb
+temp2           = $fc
 
 
 sys:            
@@ -165,7 +165,6 @@ update_sid:
                 lda c_sr,x
                 sta $d406,y
 
-next_voice:   
                 inx
                 cpx #$03
                 bcc play_loop

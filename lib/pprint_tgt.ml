@@ -1,4 +1,4 @@
-open Ast_final
+open Ast_tgt
 
 (* Define a generic AST type for printing *)
 type generic_ast =
@@ -10,7 +10,7 @@ let note_to_generic (note : note) : generic_ast =
   Node ("Note", [
     Leaf (Printf.sprintf "High frequency: %d" note.highfreq);
     Leaf (Printf.sprintf "Low frequency: %d" note.lowfreq);
-    Leaf (Printf.sprintf "Duration: %d ms" note.duration);
+    Leaf (Printf.sprintf "Duration: %d frames" note.duration);
   ])
 
 (* Helper function to convert waveform to string *)
@@ -31,7 +31,7 @@ let voice_to_generic (name : string) (voice : voice) : generic_ast =
 
 (* Convert a file to a generic AST *)
 let file_to_generic (file : file) : generic_ast =
-  Node ("Final AST", [
+  Node ("Target AST", [
     voice_to_generic "Voice 1" file.vc1;
     voice_to_generic "Voice 2" file.vc2;
     voice_to_generic "Voice 3" file.vc3;
