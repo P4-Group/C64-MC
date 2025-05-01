@@ -60,11 +60,6 @@ let write_instr_group (instructions : string list) =
     write_line_tf (indentation ^ instruction)
   ) instructions
 
-(*Writes the assembly code to repeat a voice at the end*)
-let write_repeat_voice (voice_def : string) =
-  let indentation = String.make (4 * 4) ' ' in  (* 4 tabs, 4 spaces each = 16 spaces *)
-  write_line_tf (indentation ^ "dc.b $FD");
-  write_line_tf (indentation ^ "dc.w " ^ voice_def)
 
 (*Converts the waveform into the hex byte for assembly*)
 let waveform_to_byte = function
@@ -92,7 +87,9 @@ let gen_voice (file : Target_Ast.file) =
         construct_instruction "dc.w" [id.id]
       ]
     ) voice;
-    write_repeat_voice label
+    let indentation = String.make (4 * 4) ' ' in  (* 4 tabs, 4 spaces each = 16 spaces *)
+    write_line_tf (indentation ^ "dc.b $FD");
+    write_line_tf (indentation ^ "dc.w " ^ label)
   in
   write_voice "voice1" file.vc1;
   write_voice "voice2" file.vc2;
