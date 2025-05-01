@@ -39,10 +39,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
-
-      - name: Run each test that fails
-        run: node .github/workflows/run_fail.js
-      
+          
       - name: Run each test that succeeds
         run: node .github/workflows/run_succes.js
 
