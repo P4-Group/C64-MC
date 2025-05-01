@@ -91,7 +91,6 @@ rule read = parse
     | "(" {SP}
     | ")" {EP}
     | ":" {COLON}
-    | ";" {SEMICOLON}
     | "," {COMMA}
     | "=" {ASSIGN}
     | eof {EOF}
