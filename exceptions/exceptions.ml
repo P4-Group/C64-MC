@@ -2,6 +2,7 @@
 (*Main Exceptions*)
 (*---------------*)
 
+exception LexicalError of string
 exception ParsingError of string
 exception InsufficientArguments of string
 exception FileNotFoundError of string
