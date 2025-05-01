@@ -28,6 +28,14 @@ let () =
         Printf.printf "File opened successfully. Parsing...\n"; (* Debugging line *)
         let ast_src = Parser.prog Lexer.read lexbuf in
         let ast_tgt = Ast_translate.file_translate ast_src in (* Translate the AST from source to target ast *)
+        Printf.eprintf "lexing";
+        let lexbuf = Lexing.from_channel input_channel in
+        Printf.eprintf "File opened successfully. Parsing...\n"; (* Debugging line *)
+        let _ast = Parser.prog Lexer.read lexbuf in
+
+        
+        (* Pretty-print the parsed AST *)
+        (*Pprint.pprint_file _ast;*)
 
         (* Print the original AST for debugging purposes *)
         (* Pretty-print the final AST *)
@@ -47,6 +55,8 @@ let () =
       Printf.eprintf "Error: %s\n" msg
   | ParsingError msg ->
       Printf.eprintf "Parsing Error: %s\n" msg
+  | LexicalError msg ->
+      Printf.eprintf "Lexing Error: %s\n" msg
   | e ->
       Printf.eprintf "Unexpected Error: %s\n" (Printexc.to_string e);
       raise e
