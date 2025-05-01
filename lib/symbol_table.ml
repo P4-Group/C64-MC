@@ -26,7 +26,8 @@ let add_sequence id seq =
 
   let symbol = SequenceSymbol {seq = RawSequence seq} in 
   Hashtbl.add symbol_table id symbol;
-  Printf.printf "Added sequence: %s \n" id
+  if Runtime_options.get_sym_tab () then
+    Printf.printf "Added sequence: %s \n" id
 
 
 (* This function checks if the sequence id exists. If not, an error will be thrown. *)
@@ -45,15 +46,17 @@ let update_sequence id seq =
 
   let symbol = SequenceSymbol {seq = FinalSequence seq} in 
   Hashtbl.replace symbol_table id symbol;
-  Printf.printf "Updated sequence: %s \n" id;
+  
+  if Runtime_options.get_sym_tab () then (
+    (* Print the updated sequence id *)
+    Printf.printf "Updated sequence: %s \n" id;
 
-  (* TODO: DELETE *)
   (* We check if the sequence has been successfully updated using pretty print *)
-  match symbol with
-  | SequenceSymbol {seq = FinalSequence final_seq} ->
-      Pprint_tgt.pprint_notes final_seq
-  | _ -> raise (MissingSequenceError "Updated sequence not found")
-
+    match symbol with
+    | SequenceSymbol {seq = FinalSequence final_seq} ->
+        Pprint_tgt.pprint_notes final_seq
+    | _ -> raise (MissingSequenceError "Updated sequence not found")
+    )
 
 (* This function retrieves a sequence (value) from the symbol table by the id (key). 
   If no sequence matching the specified id is found in the symbol table, an error is thrown. *)

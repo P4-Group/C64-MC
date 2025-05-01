@@ -5,6 +5,8 @@ open C64MC.Ast_tgt
 
 module Target_Ast = C64MC.Ast_tgt
 module Sym = C64MC.Symbol_table
+module Runtime_options = C64MC.Runtime_options
+
 
 (* This module generates assembly code for the C64 music compiler.
    It constructs instructions and writes them to a file. *)
@@ -39,7 +41,9 @@ let construct_instruction (mnemonic : string) (args : string list) =
   | None -> raise (InstructionNotFoundError (Printf.sprintf "Instruction '%s' not found" mnemonic))
   | Some instr -> (*Check if instruction has correct arguments/amount of arguments*)
       let arg_count = List.length args in
-      Printf.eprintf "Argument count: %d\n" arg_count;
+      (* Print debug information if the debug option is enabled *)
+      Runtime_options.conditional_option [Runtime_options.get_debug] (fun () ->
+        Printf.printf "Constructing instruction: %s with arguments: %s\n" mnemonic (String.concat ", " args));
       
       if arg_count < instr.min_args then
         raise (InsufficientInstructionArguments (mnemonic, instr.min_args, arg_count))
