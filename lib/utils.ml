@@ -1,7 +1,7 @@
 open Ast_src
 open Exceptions
 
-    (* Function to decide whether letters A-G is tones *)
+    (* Function to decide whether letters A-G are tones *)
     let ident_to_tone = function
         | "a" -> A
         | "b" -> B
