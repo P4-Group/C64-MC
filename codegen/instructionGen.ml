@@ -94,6 +94,13 @@ let gen_voice (file : Target_Ast.file) =
   write_voice "voice1" file.vc1;
   write_voice "voice2" file.vc2;
   write_voice "voice3" file.vc3
+  
+  (* Converts an integer to a hexadecimal string *)
+  let int_to_hex (n : int) : string =
+    if n < 0 then
+      raise (Invalid_argument "Negative integers cannot be converted to hexadecimal")
+    else
+      Printf.sprintf "%02X" n
 
 
 (*Function to generate code for the sequences in assembly
