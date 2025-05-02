@@ -10,8 +10,8 @@ sequence hihat16 = { f:16:6 }
 sequence snare8 = { a:8:5 }
 sequence snare16 = { a:16:5 }
 
-voice1 = [(seq2, triangle)]
-voice2 = [(seq1, triangle)]
+voice1 = [(melody1, triangle)]
+voice2 = [(melody2, triangle)]
 voice3 = [(kick, noise), (kick, sawtooth), (hihat16, noise), (kick, noise), 
           (snare8, noise), (hihat16, noise), 
           (kick, noise), (kick, sawtooth), (kick, noise), (hihat16, noise), (kick, noise), 
