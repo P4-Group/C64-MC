@@ -116,9 +116,14 @@ rule read = parse
     | "=" {ASSIGN}
     | eof {EOF}
     | _ {
-        let pos = Lexing.lexeme_start_p lexbuf in
-        let line = pos.pos_lnum in 
-        raise (LexicalError (Printf.sprintf "Lexical error: invalid input at line %d, expected a token" line))}
+        let start_pos = Lexing.lexeme_start_p lexbuf in
+        let end_pos = Lexing.lexeme_end_p lexbuf in
+        let start_ch = start_pos.pos_cnum - start_pos.pos_bol +1 in
+        let end_ch = end_pos.pos_cnum - end_pos.pos_bol in
+        let line = start_pos.pos_lnum in
+        raise (LexicalError 
+          (Printf.sprintf "Lexical error at line %d, character %d-%d, expected a token" 
+                          line start_ch end_ch))}
 
 (* ----------- Mutual Recursive Rules ----------- *)
 
