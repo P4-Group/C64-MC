@@ -1,5 +1,5 @@
 /* Parameter (standardPitch) is missing */
-/* Parser.MenhirBasics error is raised */
+/* Parsing Error: Syntax error at line 7, character 1-8 */
 
 tempo = 120
 timeSignature = (4,4)
