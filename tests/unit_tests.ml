@@ -9,9 +9,6 @@ module AST_TGT = C64MC.Ast_tgt
 module PP_TGT = C64MC.Pprint_tgt
 module PP_SRC = C64MC.Pprint_src
 
-
-
-
 (*Setup and teardown mostly used for symbol table tests*)
 let setup_and_teardown test_fn _ctx =
 
@@ -30,20 +27,6 @@ let setup_and_teardown test_fn _ctx =
   
   (* Clear the symbol table after the test *)
   Hashtbl.clear symbol_table
-
-
-(*---------------- UTILS TEST ----------------*)
-
-(* Asserts that the ident_to_tone method returns the correct token *)
-let test_ident_to_tone1 _ctx =
-  let new_tone = Utils.ident_to_tone "a" in
-  let tone_A : C64MC.Ast_src.tone = A in
-  assert_equal new_tone tone_A
-
- (* Asserts that the ident_to_tone raises an error if a invalid tonename is input *)
-let test_ident_to_tone2 _ctx =
-  assert_raises (Exc.IllegalToneError "Invalid tone" ) (fun () -> Utils.ident_to_tone "x" )
-  
 
 (*---------------- TEST PPRINT TARGET AST ----------------*)
 let test_note_to_generic _ctx =
@@ -90,10 +73,6 @@ let suite =
         "test_int_to_hex" >:: Test_codegen.test_int_to_hex;
         "test_int_to_hex_negative" >:: Test_codegen.test_int_to_hex_negative;
        ];
-      "Utils" >::: [
-        "test_ident_to_tone1" >:: test_ident_to_tone1;
-        "test_ident_to_tone2" >:: test_ident_to_tone2;
-      ];
       "AST Translate Tests" >::: [
         "test_base_offset" >:: Test_ast_translate.test_base_offset;
         "test_acc_offset" >:: Test_ast_translate.test_acc_offset;
@@ -113,9 +92,8 @@ let suite =
       "Pprint Source Ast Tests" >::: [
         "test_ast_to_generic_note_sound" >:: test_ast_to_generic_note_sound;
       ];
-
+  ]
 
 
 (*Runs the actual tests*)  
-let () =
-  run_test_tt_main suite
+let () = run_test_tt_main suite

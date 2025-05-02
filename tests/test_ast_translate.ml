@@ -1,11 +1,9 @@
 open OUnit2
 
 module Sym = C64MC.Symbol_table
-module Utils = C64MC.Utils
 module Ig = Codegen.InstructionGen
 module Exc = Exceptions
 module AST_TRSL = C64MC.Ast_translate
-
 module AST_SRC = C64MC.Ast_src
 module AST_TGT = C64MC.Ast_tgt
 module PP_TGT = C64MC.Pprint_tgt
