@@ -89,8 +89,9 @@ let () =
           let end_pos = Lexing.lexeme_end_p lexbuf in
           let start_ch = start_pos.pos_cnum - start_pos.pos_bol +1 in
           let end_ch = end_pos.pos_cnum - end_pos.pos_bol in
+          let line = start_pos.pos_lnum in
           raise (ParsingError (Printf.sprintf "Syntax error at line %d, character %d-%d"
-            start_pos.pos_lnum start_ch end_ch))
+            line start_ch end_ch))
         in
 
       (* Translate the source AST to the target AST *)
