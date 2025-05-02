@@ -121,7 +121,7 @@ let () =
       (* Close the input channel *)
       close_in input_channel
   with
-  | InsufficientArguments msg ->
+  | InsufficientArgumentsError msg ->
       Printf.eprintf "Error: %s\n" msg
   | FileNotFoundError msg ->
       Printf.eprintf "Error: %s\n" msg

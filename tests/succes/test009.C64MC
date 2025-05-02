@@ -1,0 +1,15 @@
+/* Comments within sequences and voices */
+
+tempo = 100
+timeSignature = (4,4)
+standardPitch = 440
+
+sequence scale1 = { c:8: d:8: e:8: f:8: g:8: a:8: b:8: c:8:5 }
+sequence scale2 = { /*c:8:5 d:8:5 e:8:5 f:8:5*/ g:8:5 a:8:5 b:8:5 c:8:6 } /*Comments out half of the notes*/
+sequence scale3 = { c:8:6 d:8:6 e:8:6 f:8:6 g:8:6 a:8:6 b:8:6 c:8:7 }
+
+sequence pause = { r:1 }
+
+voice1 = [(scale1, vPulse), (pause, vPulse), (pause, vPulse)]
+voice2 = [(pause, sawtooth), (scale2, sawtooth), (pause, sawtooth)]
+voice3 = [/*(pause, triangle), (pause, triangle), (scale3, triangle)*/] /*Comments out all content of voice*/
