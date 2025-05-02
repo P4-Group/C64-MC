@@ -1,4 +1,5 @@
-/* Invalid time signature */
+/* Illegal time signature */
+/* InvalidTimeSignatureError is raised */
 
 tempo = 120
 timeSignature = (3,7) /* Basic note value must be 1, 2, 4, 8 or 16 */

@@ -1,4 +1,5 @@
-/* Parameters are defined in the wrong order order */
+/* Parameters are defined in the wrong order */
+/* Parser.MenhirBasics error is raised */
 
 tempo = 120
 standardPitch = 440

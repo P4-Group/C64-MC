@@ -102,7 +102,6 @@ rule read = parse
     | newline {Lexing.new_line lexbuf; read lexbuf} 
     | ident as s {ident_or_keyword s}
     | int {INT (int_of_string (Lexing.lexeme lexbuf))}
-    (* | float (FLOAT (float_of_string (Lexing.lexeme lexbuf))) *)
     | "/*" {comment lexbuf}
     | "#"  {SHARP}
     | "_" {FLAT}
@@ -129,10 +128,11 @@ and comment = parse
     | _ {comment lexbuf}
     | eof {unterminated_comment lexbuf}
 
-(* and sequence = parse
+and sequence = parse
     | "}" {read lexbuf}
-    | tonename {TONENAME (tonename_of_string (Lexing.lexeme lexbuf))}
+    | tone {TONE (tone_of_string (Lexing.lexeme lexbuf))}
 
+(*
 and channel = parse
     | "]" {read lexbuf}
 } *)

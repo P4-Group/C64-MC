@@ -1,4 +1,5 @@
 /* Parameter names are misspelled */
+/* Parser.MenhirBasics error is raised */
 
 Tempo = 120
 timeSig = (4,4)

@@ -1,4 +1,5 @@
 /* Missing delimiters for sequences */
+/* Parser.MenhirBasics error is raised */
 
 tempo = 120
 timeSignature = (4,4)

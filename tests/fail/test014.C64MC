@@ -1,4 +1,5 @@
 /* Unterminated comment */
+/* SyntaxError (Unterminated comment) is raised */
 
 tempo = 120
 timeSignature = (4,4)

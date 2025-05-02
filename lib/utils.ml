@@ -10,4 +10,4 @@ open Exceptions
         | "e" -> E
         | "f" -> F
         | "g" -> G
-        | _ -> raise (IllegalToneError "Invalid tone")
+        | _ -> raise (InvalidToneError "Invalid tone")

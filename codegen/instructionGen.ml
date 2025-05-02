@@ -46,10 +46,10 @@ let construct_instruction (mnemonic : string) (args : string list) =
         Printf.printf "Constructing instruction: %s with arguments: %s\n" mnemonic (String.concat ", " args));
       
       if arg_count < instr.min_args then
-        raise (InsufficientInstructionArguments (mnemonic, instr.min_args, arg_count))
+        raise (InsufficientInstructionArgumentError (mnemonic, instr.min_args, arg_count))
       
       else if arg_count > instr.max_args then
-        raise (TooManyInstructionArguments (mnemonic, instr.max_args, arg_count))
+        raise (TooManyInstructionArgumentError (mnemonic, instr.max_args, arg_count))
       
       else
         let constructed_instruction = Printf.sprintf "%s %s" instr.mnemonic (String.concat ", " args) in
@@ -107,7 +107,7 @@ let gen_voice (file : Target_Ast.file) =
   (* Converts an integer to a hexadecimal string *)
   let int_to_hex (n : int) : string =
     if n < 0 then
-      raise (Invalid_argument "Negative integers cannot be converted to hexadecimal")
+      raise (InvalidArgumentError "Negative integers cannot be converted to hexadecimal")
     else
       Printf.sprintf "%02X" n
 
