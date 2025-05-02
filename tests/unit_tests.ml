@@ -1,25 +1,30 @@
 open OUnit2
+
 module Sym = C64MC.Symbol_table
 module Utils = C64MC.Utils
 module Ig = Codegen.InstructionGen
 module Exc = Exceptions
 module AST_TRSL = C64MC.Ast_translate
+module AST_SRC = C64MC.Ast_src
+module AST_TGT = C64MC.Ast_tgt
+module PP_TGT = C64MC.Pprint_tgt
+module PP_SRC = C64MC.Pprint_src
 
 
-(*---------------- SYMBOL TABLE TESTS ----------------*)
 
-(*Setup and teardown for symbol table tests*)
-let setup_and_teardown_symbol_table test_fn _ctx =
+
+(*Setup and teardown mostly used for symbol table tests*)
+let setup_and_teardown test_fn _ctx =
 
   (* Clear the symbol table before the test *)
   let symbol_table = Sym.get_symbol_table () in
   Hashtbl.clear symbol_table;
   
   let id = "new_seq" in (*Mock new seq id*)
-  let seq : C64MC.Ast_src.seq = [ (*Create mock sequence*)
-  Sound (C, Nat, Quarter, Defined 4);
-  Rest Half;
-  Sound (E, Sharp, Eighth, Defined 5)
+  let seq : AST_SRC.seq = [ (*Create mock sequence*)
+  Sound (C, Nat, Whole, Defined 4);
+  Rest Whole;
+  Sound (D, Nat, Whole, Defined 5)
   ] in
   (* Run the passed test *)
   test_fn id seq;
@@ -27,78 +32,6 @@ let setup_and_teardown_symbol_table test_fn _ctx =
   (* Clear the symbol table after the test *)
   Hashtbl.clear symbol_table
 
-
-
-(* Asserts that a sequence is added to the symbol table *)
-let test_add_sequence1 id seq = 
-  let symbol_table = Sym.get_symbol_table () in
-  Sym.add_sequence id seq;
-  assert_bool "Symbol table does not contain the expected ID" (Hashtbl.mem symbol_table id)
-
-
-
-(* Asserts that an error is thrown if sequences identiers are used twice *)
-let test_add_sequence2 id seq =
-  Sym.add_sequence id seq;
-  assert_raises (Exc.DuplicateSequenceError "Sequences id's cannot be duplicated. Each sequence must have a unique id.") 
-      (fun () -> Sym.add_sequence id seq)
-  
-  
-
-(* Asserts that exception is thrown
-if a sequence is not added to the symbol table before adding it to a voice*)
-(*_ctx is a OUnit2 parameter that passes some testing context *)
-let test_check_sequence _ctx =
-  assert_raises (Exc.MissingSequenceError "Sequences must be defined before adding to a voice") 
-      (fun () -> Sym.check_sequence "undefined_id")
-
-
-
-(* Asserts that the get sequence method returns the same key/value pair *)
-let test_get_sequence1 id seq =
-  Sym.add_sequence id seq;
-  let seq1 = match Sym.get_sequence id with
-    | RawSequence s -> s
-    | FinalSequence _ -> assert false;
-  in
-  assert_equal seq seq1
-
-
-(* Asserts that the get sequence method returns the same key/value pair *)
-let test_get_sequence2 id _seq =
-  assert_raises (Exc.MissingSequenceError ("Sequence not found for id: new_seq")) (fun () -> Sym.get_sequence id)
-
-
-(*---------------- CODEGEN TESTS ----------------*)
-
-
-(* Asserts that the construct_instruction method returns the correct instruction as a string *)  
-let test_construct_instruction1 _ctx =
-  let instruction_list = ["$FD"; "$FC"] in
-  let instruction = Ig.construct_instruction "dc.b" instruction_list in
-  assert_equal "dc.b $FD, $FC" instruction
-
-
-(* Asserts that the construct_instruction method throws an error if the incorrect assembly instruction is entered *)
-let test_construct_instruction2 _ctx =
-  let instruction_list = ["$FD"; "$FC"] in
-  assert_raises (Exc.InstructionNotFoundError "Instruction 'db.c' not found") 
-      (fun () -> Ig.construct_instruction "db.c" instruction_list)
-
-
-(* Asserts that the construct_instruction method throws an error if the argument count is too high *)
-let test_construct_instruction3 _ctx =
-  let instruction_list = ["$FD"; "$FC"; "$FC"] in
-  assert_raises (Exc.TooManyInstructionArguments ("ADC", 2, 3)) 
-      (fun () -> Ig.construct_instruction "ADC" instruction_list)
-
-
-(* Asserts that the construct_instruction method throws an error if the argument count is too low *)
-let test_construct_instruction4 _ctx =
-  let instruction_list = [] in
-  assert_raises (Exc.InsufficientInstructionArguments ("ADC", 1, 0)) 
-      (fun () -> Ig.construct_instruction "ADC" instruction_list)
-  
 
 (*---------------- UTILS TEST ----------------*)
 
@@ -113,30 +46,75 @@ let test_ident_to_tone2 _ctx =
   assert_raises (Exc.IllegalToneError "Invalid tone" ) (fun () -> Utils.ident_to_tone "x" )
   
 
-(*---------------- AST TRANSLATE TEST ----------------*)
+(*---------------- TEST PPRINT TARGET AST ----------------*)
+let test_note_to_generic _ctx =
+  let note = { AST_TGT.highfreq = 16; AST_TGT.lowfreq = 195; AST_TGT.duration = 96 } in
+  let expected_node = PP_TGT.Node ("Note", [
+    Leaf "High frequency: 16";
+    Leaf "Low frequency: 195";
+    Leaf "Duration: 96 frames";
+  ]) in
+  assert_equal expected_node (PP_TGT.note_to_generic note)
 
 
+  
+(*---------------- TEST PPRINT SOURCE AST ----------------*)
+let test_ast_to_generic_note_sound _ctx =
+  let note = AST_SRC.Sound (C, Sharp, Quarter, Defined 4) in
+  let expected = PP_SRC.Node ("Sound Note", [
+    Leaf "Tone: C";
+    Leaf "Accidental: Sharp";
+    Leaf "Fraction: Quarter";
+    Leaf "Octave: Defined(4)"
+  ]) in
+  let actual = PP_SRC.ast_to_generic_note note in
+  assert_equal expected actual
+
+(*---------------- TEST SUITE SETUP ----------------*)
 
 
 (*Setup of the test suite. The suite consist of sub suites*)
 let suite =
   "All Tests" >:::[
     "Symbol Table Tests" >::: [
-      "test_add_sequence1" >:: setup_and_teardown_symbol_table test_add_sequence1;
-      "test_add_sequence2" >:: setup_and_teardown_symbol_table test_add_sequence2;
-      "test_check_sequence" >:: test_check_sequence;
-      "test_get_sequenc1" >:: setup_and_teardown_symbol_table test_get_sequence1;
-      "test_get_sequenc2" >:: setup_and_teardown_symbol_table test_get_sequence2;
+      "test_add_sequence1" >:: setup_and_teardown Test_symbol_table.test_add_sequence1;
+      "test_add_sequence2" >:: setup_and_teardown Test_symbol_table.test_add_sequence2;
+      "test_check_sequence" >:: Test_symbol_table.test_check_sequence;
+      "test_get_sequenc1" >:: setup_and_teardown Test_symbol_table.test_get_sequence1;
+      "test_get_sequenc2" >:: setup_and_teardown Test_symbol_table.test_get_sequence2;
+      "test_update_sequence1" >:: setup_and_teardown Test_symbol_table.test_update_sequence1;
       ];
-      "Codegen" >::: [
-        "test_construct_instruction1" >:: test_construct_instruction1;
-        "test_construct_instruction2" >:: test_construct_instruction2;
-        "test_construct_instruction3" >:: test_construct_instruction3;
-        "test_construct_instruction4" >:: test_construct_instruction4;
-        ];
-        "Utils" >::: [
-          "test_ident_to_tone1" >:: test_ident_to_tone1;
-          "test_ident_to_tone2" >:: test_ident_to_tone2;
+      "Codegen Tests" >::: [
+        "test_construct_instruction1" >:: Test_codegen.test_construct_instruction1;
+        "test_construct_instruction2" >:: Test_codegen.test_construct_instruction2;
+        "test_construct_instruction3" >:: Test_codegen.test_construct_instruction3;
+        "test_construct_instruction4" >:: Test_codegen.test_construct_instruction4;
+        "test_int_to_hex" >:: Test_codegen.test_int_to_hex;
+        "test_int_to_hex_negative" >:: Test_codegen.test_int_to_hex_negative;
+       ];
+      "Utils" >::: [
+        "test_ident_to_tone1" >:: test_ident_to_tone1;
+        "test_ident_to_tone2" >:: test_ident_to_tone2;
+      ];
+      "AST Translate Tests" >::: [
+        "test_base_offset" >:: Test_ast_translate.test_base_offset;
+        "test_acc_offset" >:: Test_ast_translate.test_acc_offset;
+        "test_oct_offset" >:: Test_ast_translate.test_oct_offset;
+        "test_get_note_duration" >:: Test_ast_translate.test_get_note_duration;
+        "test_get_duration_ref" >:: Test_ast_translate.test_get_duration_ref;
+        "test_note_translate_sound" >:: Test_ast_translate.test_note_translate_sound;
+        "test_note_translate_rest" >:: Test_ast_translate.test_note_translate_rest;
+        "test_seq_translate" >:: Test_ast_translate.test_seq_translate;
+        "test_waveform_translate" >:: Test_ast_translate.test_waveform_translate;
+        "test_ident_translate" >:: Test_ast_translate.test_ident_translate;
+        "test_voice_translate" >:: Test_ast_translate.test_voice_translate;
+
+      ];
+      "Pprint Target Ast Tests" >::: [
+        "test_note_to_generic" >:: test_note_to_generic;
+      ];
+      "Pprint Source Ast Tests" >::: [
+        "test_ast_to_generic_note_sound" >:: test_ast_to_generic_note_sound;
       ];
   ]
 

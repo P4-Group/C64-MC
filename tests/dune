@@ -1,4 +1,4 @@
 (test
  (name unit_tests)
- (modules unit_tests)
+ (modules unit_tests test_ast_translate test_codegen test_symbol_table)
  (libraries C64MC menhirLib Exceptions ounit2 Codegen))
