@@ -80,19 +80,19 @@ let check_file_params () =
     (* Arguments with values *)
     | "-s" :: file :: rest ->
         if !src_file_ref <> None then
-          raise (InsufficientArguments "Option '-s' (source file) specified multiple times.");
+          raise (InsufficientArgumentsError "Option '-s' (source file) specified multiple times.");
         src_file_ref := Some file;
         parse_args rest
     | "-s" :: [] ->
-        raise (InsufficientArguments "Option '-s' requires a file path argument.")
+        raise (InsufficientArgumentsError "Option '-s' requires a file path argument.")
 
     (* Unknown argument *)
     | unknown :: _ ->
-        raise (InsufficientArguments ("Invalid argument or unknown option: " ^ unknown ^ "\n" ^ usage_msg))
+        raise (InsufficientArgumentsError ("Invalid argument or unknown option: " ^ unknown ^ "\n" ^ usage_msg))
   in
   parse_args params;
 
   (* Check if the mandatory source file argument was provided *)
   match !src_file_ref with
   | Some file -> file (* Return the source file path *)
-  | None -> raise (InsufficientArguments ("Missing mandatory source file argument '-s <file>'.\n" ^ usage_msg))
+  | None -> raise (InsufficientArgumentsError ("Missing mandatory source file argument '-s <file>'.\n" ^ usage_msg))
