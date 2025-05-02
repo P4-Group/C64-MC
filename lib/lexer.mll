@@ -72,7 +72,7 @@ let frac = '.' digit* (* a decimal point followed by zero or more digits*)
 let float = digit* frac (* matches zero or more digits before the decimal point*)
 
 let whitespace = [' ' '\t' '|']+ (*| is to use in the sequences, to separate bars *)
-let newline = '\n' | '\r'
+let newline = "\r\n" | '\n' | '\r'
 let letter = ['a'-'z' 'A'-'Z']+
 let ident = letter (letter | '-' | digit)* (* identity for a sequence *)
 
