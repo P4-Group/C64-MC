@@ -128,11 +128,10 @@ and comment = parse
     | _ {comment lexbuf}
     | eof {unterminated_comment lexbuf}
 
-and sequence = parse
+(*and sequence = parse
     | "}" {read lexbuf}
     | tone {TONE (tone_of_string (Lexing.lexeme lexbuf))}
 
-(*
 and channel = parse
     | "]" {read lexbuf}
 } *)

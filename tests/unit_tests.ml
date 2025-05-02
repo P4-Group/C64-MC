@@ -1,6 +1,5 @@
 open OUnit2
 module Sym = C64MC.Symbol_table
-module Utils = C64MC.Utils
 module Ig = Codegen.InstructionGen
 module Exc = Exceptions
 module AST_TRSL = C64MC.Ast_translate
@@ -89,28 +88,15 @@ let test_construct_instruction2 _ctx =
 (* Asserts that the construct_instruction method throws an error if the argument count is too high *)
 let test_construct_instruction3 _ctx =
   let instruction_list = ["$FD"; "$FC"; "$FC"] in
-  assert_raises (Exc.TooManyInstructionArguments ("ADC", 2, 3)) 
+  assert_raises (Exc.TooManyInstructionArgumentsError ("ADC", 2, 3)) 
       (fun () -> Ig.construct_instruction "ADC" instruction_list)
 
 
 (* Asserts that the construct_instruction method throws an error if the argument count is too low *)
 let test_construct_instruction4 _ctx =
   let instruction_list = [] in
-  assert_raises (Exc.InsufficientInstructionArguments ("ADC", 1, 0)) 
+  assert_raises (Exc.InsufficientInstructionArgumentsError ("ADC", 1, 0)) 
       (fun () -> Ig.construct_instruction "ADC" instruction_list)
-  
-
-(*---------------- UTILS TEST ----------------*)
-
-(* Asserts that the ident_to_tone method returns the correct token *)
-let test_ident_to_tone1 _ctx =
-  let new_tone = Utils.ident_to_tone "a" in
-  let tone_A : C64MC.Ast_src.tone = A in
-  assert_equal new_tone tone_A
-
- (* Asserts that the ident_to_tone raises an error if a invalid tonename is input *)
-let test_ident_to_tone2 _ctx =
-  assert_raises (Exc.IllegalToneError "Invalid tone" ) (fun () -> Utils.ident_to_tone "x" )
   
 
 (*---------------- AST TRANSLATE TEST ----------------*)
@@ -134,10 +120,6 @@ let suite =
         "test_construct_instruction3" >:: test_construct_instruction3;
         "test_construct_instruction4" >:: test_construct_instruction4;
         ];
-        "Utils" >::: [
-          "test_ident_to_tone1" >:: test_ident_to_tone1;
-          "test_ident_to_tone2" >:: test_ident_to_tone2;
-      ];
   ]
 
 

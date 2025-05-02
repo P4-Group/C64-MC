@@ -2,7 +2,6 @@
 
 %{
     open Ast_src
-    open Utils
     open Symbol_table
     open Exceptions
 %}
@@ -105,16 +104,18 @@ seq:
 note:
   | t = ident a = acc COLON f = frac COLON? o = oct (* ident accidental octave : fraction *)
   { if (t.id = "r") then ( Rest f )
-    else match t with
-      | "a" -> A
-      | "b" -> B
-      | "c" -> C
-      | "d" -> D
-      | "e" -> E
-      | "f" -> F
-      | "g" -> G
-      | _ -> raise (InvalidToneError "Invalid tone") in
-    Sound (t, a, f, o)) } (* Full note with octave and fraction *)
+    else
+      let t = match t.id with
+        | "a" -> A
+        | "b" -> B
+        | "c" -> C
+        | "d" -> D
+        | "e" -> E
+        | "f" -> F
+        | "g" -> G
+        | _ -> raise (InvalidToneError "Invalid tone") in
+      Sound (t, a, f, o) 
+      } (* Full note with octave and fraction *)
 
 acc:
   | { Nat }

@@ -33,15 +33,15 @@ let check_file_params () =
     (* Arguments with values *)
     | "-s" :: file :: rest ->
         if !src_file_ref <> None then
-          raise (InsufficientArgumentError "Option '-s' (source file) specified multiple times.");
+          raise (InsufficientArgumentsError "Option '-s' (source file) specified multiple times.");
         src_file_ref := Some file;
         parse_args rest
     | "-s" :: [] ->
-        raise (InsufficientArgumentError "Option '-s' requires a file path argument.")
+        raise (InsufficientArgumentsError "Option '-s' requires a file path argument.")
 
     (* Unknown argument *)
     | unknown :: _ ->
-        raise (InsufficientArgumentError ("Invalid argument or unknown option: " ^ unknown ^
+        raise (InsufficientArgumentsError ("Invalid argument or unknown option: " ^ unknown ^
           "\nUsage: <program> -s <source_file> [-dasm] [-tgt-ast] [-src-ast] [-sym-tab] [-debug]"))
   in
   parse_args params;
@@ -49,7 +49,7 @@ let check_file_params () =
   (* Check if the mandatory source file argument was provided *)
   match !src_file_ref with
   | Some file -> file (* Return the source file path *)
-  | None -> raise (InsufficientArgumentError "Missing mandatory source file argument '-s <file>'.")
+  | None -> raise (InsufficientArgumentsError "Missing mandatory source file argument '-s <file>'.")
 
 (* Assumes dasm is in the PATH and can be called directly *)
 (* output.asm is always in path as well, thus making the sys command just be "./dasm output.asm"*)
@@ -162,7 +162,7 @@ let () =
       (* Close the input channel *)
       close_in input_channel
   with
-  | InsufficientArguments msg ->
+  | InsufficientArgumentsError msg ->
       Printf.eprintf "Error: %s\n" msg
   | FileNotFoundError msg ->
       Printf.eprintf "Error: %s\n" msg

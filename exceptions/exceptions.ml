@@ -4,7 +4,7 @@
 
 exception LexicalError of string
 exception ParsingError of string
-exception InsufficientArgumentError of string
+exception InsufficientArgumentsError of string
 exception FileNotFoundError of string
 exception FilePermissionError of string
 exception SyntaxError of string
@@ -15,8 +15,8 @@ exception SyntaxError of string
 (*-------------------------*)
 
 exception InstructionNotFoundError of string
-exception InsufficientInstructionArgumentError of string * int * int
-exception TooManyInstructionArgumentError of string * int * int
+exception InsufficientInstructionArgumentsError of string * int * int
+exception TooManyInstructionArgumentsError of string * int * int
 
 (*-------------------------*)
 (*Parser Exceptions*)
