@@ -289,7 +289,7 @@ i_pulselo:      dc.b $00,$00,$00,$00
 i_pulsehi:      dc.b $00,$02,$00,$00
 i_pulsespeed:   dc.b $00,$20,$00,$00
 i_ad:           dc.b $0a,$09,$58,$0a
-i_sr:           dc.b $00,$00,$aa,$00
+i_sr:           dc.b $00,$00,$aa,$f0
 i_waveform:     dc.b $81,$41,$21,$11
 |}
 

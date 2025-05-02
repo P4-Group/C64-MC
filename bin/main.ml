@@ -4,58 +4,17 @@ open Codegen
 
 module Runtime_options = C64MC.Runtime_options
 
-(* This checks the parameters of the input file and handling errors. *)
-let check_file_params () =
-  let params = Array.to_list (Array.sub Sys.argv 1 (Array.length Sys.argv - 1)) in
-  let src_file_ref = ref None in
-
-  let rec parse_args args =
-    match args with
-    | [] -> () (* Base case: no more arguments *)
-
-    (* Boolean flags *)
-    | "-tgt-ast" :: rest ->
-        Runtime_options.set_tgt_ast true;
-        parse_args rest
-    | "-src-ast" :: rest ->
-        Runtime_options.set_src_ast true;
-        parse_args rest
-    | "-debug" :: rest ->
-        Runtime_options.set_debug true;
-        parse_args rest
-    | "-sym-tab" :: rest ->
-        Runtime_options.set_sym_tab true;
-        parse_args rest
-    | "-dasm" :: rest -> 
-        Runtime_options.set_dasm true;
-        parse_args rest
-
-    (* Arguments with values *)
-    | "-s" :: file :: rest ->
-        if !src_file_ref <> None then
-          raise (InsufficientArguments "Option '-s' (source file) specified multiple times.");
-        src_file_ref := Some file;
-        parse_args rest
-    | "-s" :: [] ->
-        raise (InsufficientArguments "Option '-s' requires a file path argument.")
-
-    (* Unknown argument *)
-    | unknown :: _ ->
-        raise (InsufficientArguments ("Invalid argument or unknown option: " ^ unknown ^
-          "\nUsage: <program> -s <source_file> [-dasm] [-tgt-ast] [-src-ast] [-sym-tab] [-debug]"))
-  in
-  parse_args params;
-
-  (* Check if the mandatory source file argument was provided *)
-  match !src_file_ref with
-  | Some file -> file (* Return the source file path *)
-  | None -> raise (InsufficientArguments "Missing mandatory source file argument '-s <file>'.")
 
 (* Assumes dasm is in the PATH and can be called directly *)
 (* output.asm is always in path as well, thus making the sys command just be "./dasm output.asm"*)
 (* This function assembles the output file using DASM. *)
 let assemble_file () =
-  let dasm_command = "./dasm" in 
+  let dasm_command =
+    if Sys.os_type = "Win32" || Sys.os_type = "Cygwin" then
+      "dasm.exe" (* Use dasm.exe on Windows, assuming it's in PATH *)
+    else
+      "./dasm" (* Use ./dasm on Unix-like systems *)
+  in
 
   let output_asm_file = "output.asm" in (* The output assembly file name *)
 
@@ -77,7 +36,7 @@ let assemble_file () =
 let () =
   try
     (* Check the input file parameters and get the input file name *)
-    let input_filename = check_file_params () in
+    let input_filename = Runtime_options.check_file_params () in
 
     Runtime_options.conditional_option [
       Runtime_options.get_tgt_ast;
@@ -173,7 +132,7 @@ let () =
       (* Close the input channel *)
       close_in input_channel
   with
-  | InsufficientArguments msg ->
+  | InsufficientArgumentsError msg ->
       Printf.eprintf "Error: %s\n" msg
   | FileNotFoundError msg ->
       Printf.eprintf "Error: %s\n" msg

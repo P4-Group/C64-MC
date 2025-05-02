@@ -1,0 +1,13 @@
+/* Full chord in all three voices */
+tempo = 120
+timeSignature = (4,4)
+standardPitch = 440
+
+sequence seq1 = { a:1:4 }
+sequence seq2 = { c#:1:4 }
+sequence seq3 = { e:1:5 }
+
+
+voice1 = [(seq1, triangle)]
+voice2 = [(seq2, triangle)]
+voice3 = [(seq3, triangle)]

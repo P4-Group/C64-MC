@@ -1,0 +1,13 @@
+/* Triads. Also showcases spacing for readability */
+
+tempo = 100
+timeSignature = (4,4)
+standardPitch = 440
+
+sequence root     = { c:2:3   d:2:3   e:2:3  f:2:3  g:2:3   a:2:3   b:2:3 }
+sequence third    = { e:2:3  f#:2:3  g#:2:3  a:2:3  b:2:3  c#:2:   d#:2:  }
+sequence major5th = { g:2:3   a:2:3   b:2:3  c:2:   d:2:    e:2:   f#:2:  }
+
+voice1 = [(root, triangle)]
+voice2 = [(third, triangle)]
+voice3 = [(major5th, triangle)]
