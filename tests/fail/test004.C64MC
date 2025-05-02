@@ -1,5 +1,5 @@
 /* Missing delimiters for sequences */
-/* Parser.MenhirBasics error is raised */
+/* Parsing Error: Syntax error at line 9, character 1-8 */
 
 tempo = 120
 timeSignature = (4,4)

@@ -1,5 +1,5 @@
 /* Empty sequence is defined. Will raise an error even if sequence is not used */
-/* Parser.MenhirBasics error is raised */
+/* Parsing Error: Syntax error at line 11, character 19-19 */
 
 tempo = 120
 timeSignature = (4,4)

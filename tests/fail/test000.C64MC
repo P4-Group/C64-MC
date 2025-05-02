@@ -1,5 +1,5 @@
 /* Parameters are defined in the wrong order */
-/* Parser.MenhirBasics error is raised */
+/* Raises "Parsing error: Syntax error on line 5, character 1-13" */
 
 tempo = 120
 standardPitch = 440

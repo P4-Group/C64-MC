@@ -1,26 +1,25 @@
 open OUnit2
 
-module Sym = C64MC.Symbol_table
-module Ig = Codegen.InstructionGen
-module Exc = Exceptions
-module AST_TRSL = C64MC.Ast_translate
+module SYM = C64MC.Symbol_table
 module AST_SRC = C64MC.Ast_src
 module AST_TGT = C64MC.Ast_tgt
 module PP_TGT = C64MC.Pprint_tgt
 module PP_SRC = C64MC.Pprint_src
 
-(*Setup and teardown mostly used for symbol table tests*)
+(* _ctx is a OUnit2 optional parameter that passes some testing context *)
+
+(* Setup and teardown mostly used for symbol table tests. Takes a function as a parameter *)
 let setup_and_teardown test_fn _ctx =
 
   (* Clear the symbol table before the test *)
-  let symbol_table = Sym.get_symbol_table () in
+  let symbol_table = SYM.get_symbol_table () in
   Hashtbl.clear symbol_table;
   
-  let id = "new_seq" in (*Mock new seq id*)
-  let seq : AST_SRC.seq = [ (*Create mock sequence*)
-  Sound (C, Nat, Whole, Defined 4);
-  Rest Whole;
-  Sound (D, Nat, Whole, Defined 5)
+  let id = "new_seq" in (* Mock new seq id *)
+  let seq : AST_SRC.seq = [ (* Create mock sequence *)
+    Sound (C, Nat, Whole, Defined 4);
+    Rest Whole;
+    Sound (D, Nat, Whole, Defined 5)
   ] in
   (* Run the passed test *)
   test_fn id seq;
@@ -29,8 +28,10 @@ let setup_and_teardown test_fn _ctx =
   Hashtbl.clear symbol_table
 
 (*---------------- TEST PPRINT TARGET AST ----------------*)
+
+(* Asserts that the correct generic node representation of a note is created *)
 let test_note_to_generic _ctx =
-  let note = { AST_TGT.highfreq = 16; AST_TGT.lowfreq = 195; AST_TGT.duration = 96 } in
+  let note = { AST_TGT.highfreq = 16; AST_TGT.lowfreq = 195; AST_TGT.duration = 96 } in (* Mock a note *)
   let expected_node = PP_TGT.Node ("Note", [
     Leaf "High frequency: 16";
     Leaf "Low frequency: 195";
@@ -40,19 +41,20 @@ let test_note_to_generic _ctx =
 
   
 (*---------------- TEST PPRINT SOURCE AST ----------------*)
+
+(* Asserts that the correct generic node representation of a note is created *)
 let test_ast_to_generic_note_sound _ctx =
-  let note = AST_SRC.Sound (C, Sharp, Quarter, Defined 4) in
+  let note = AST_SRC.Sound (C, Sharp, Quarter, Defined 4) in (* Mock a note *)
   let expected = PP_SRC.Node ("Sound Note", [
     Leaf "Tone: C";
     Leaf "Accidental: Sharp";
     Leaf "Fraction: Quarter";
     Leaf "Octave: Defined(4)"
   ]) in
-  let actual = PP_SRC.ast_to_generic_note note in
-  assert_equal expected actual
+  assert_equal expected (PP_SRC.ast_to_generic_note note)
+
 
 (*---------------- TEST SUITE SETUP ----------------*)
-
 
 (*Setup of the test suite. The suite consist of sub suites*)
 let suite =
@@ -95,5 +97,5 @@ let suite =
   ]
 
 
-(*Runs the actual tests*)  
+(* Runs the actual tests *)  
 let () = run_test_tt_main suite
