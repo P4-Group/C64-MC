@@ -1,7 +1,6 @@
 open OUnit2
 
 module Sym = C64MC.Symbol_table
-module Utils = C64MC.Utils
 module Ig = Codegen.InstructionGen
 module Exc = Exceptions
 module AST_TRSL = C64MC.Ast_translate
@@ -56,7 +55,6 @@ let test_note_to_generic _ctx =
   ]) in
   assert_equal expected_node (PP_TGT.note_to_generic note)
 
-
   
 (*---------------- TEST PPRINT SOURCE AST ----------------*)
 let test_ast_to_generic_note_sound _ctx =
@@ -108,7 +106,6 @@ let suite =
         "test_waveform_translate" >:: Test_ast_translate.test_waveform_translate;
         "test_ident_translate" >:: Test_ast_translate.test_ident_translate;
         "test_voice_translate" >:: Test_ast_translate.test_voice_translate;
-
       ];
       "Pprint Target Ast Tests" >::: [
         "test_note_to_generic" >:: test_note_to_generic;
@@ -116,7 +113,7 @@ let suite =
       "Pprint Source Ast Tests" >::: [
         "test_ast_to_generic_note_sound" >:: test_ast_to_generic_note_sound;
       ];
-  ]
+
 
 
 (*Runs the actual tests*)  

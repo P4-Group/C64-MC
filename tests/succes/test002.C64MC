@@ -1,0 +1,10 @@
+/* Single tone in voice 3 */
+tempo = 120
+timeSignature = (4,4)
+standardPitch = 440
+
+sequence seq1 = { e:1:5 }
+
+voice1 = []
+voice2 = []
+voice3 = [(seq1, triangle)]
