@@ -40,10 +40,25 @@ let conditional_option debug_options run =
 let check_file_params () =
   let params = Array.to_list (Array.sub Sys.argv 1 (Array.length Sys.argv - 1)) in
   let src_file_ref = ref None in
+  let usage_msg =
+    "Usage: <program> -s <source_file> [-dasm] [-tgt-ast] [-src-ast] [-sym-tab] [-debug] [-h]"
+  in
 
   let rec parse_args args =
     match args with
     | [] -> () (* Base case: no more arguments *)
+
+    (* Help flag *)
+    | "-h" :: _ ->
+        print_endline "Usage: <program> -s <source_file> [-dasm] [-tgt-ast] [-src-ast] [-sym-tab] [-debug] [-h]\n
+        -s <source_file> : Specify the source file to compile.
+        -dasm : Enable assembling of assembly code.
+        -tgt-ast : Print the target AST.
+        -src-ast : Print the source AST.
+        -sym-tab : Print the symbol table.
+        -debug : Enable debug mode.
+        -h : Show this help message.";
+        exit 0
 
     (* Boolean flags *)
     | "-tgt-ast" :: rest ->
@@ -58,7 +73,7 @@ let check_file_params () =
     | "-sym-tab" :: rest ->
         set_sym_tab true;
         parse_args rest
-    | "-dasm" :: rest -> 
+    | "-dasm" :: rest ->
         set_dasm true;
         parse_args rest
 
@@ -73,12 +88,11 @@ let check_file_params () =
 
     (* Unknown argument *)
     | unknown :: _ ->
-        raise (InsufficientArguments ("Invalid argument or unknown option: " ^ unknown ^
-          "\nUsage: <program> -s <source_file> [-dasm] [-tgt-ast] [-src-ast] [-sym-tab] [-debug]"))
+        raise (InsufficientArguments ("Invalid argument or unknown option: " ^ unknown ^ "\n" ^ usage_msg))
   in
   parse_args params;
 
   (* Check if the mandatory source file argument was provided *)
   match !src_file_ref with
   | Some file -> file (* Return the source file path *)
-  | None -> raise (InsufficientArguments "Missing mandatory source file argument '-s <file>'.")
+  | None -> raise (InsufficientArguments ("Missing mandatory source file argument '-s <file>'.\n" ^ usage_msg))
