@@ -17,13 +17,13 @@ let test_add_sequence1 id seq =
 (* Asserts that an error is thrown if sequences identifiers are used twice *)
 let test_add_sequence2 id seq =
   SYM.add_sequence id seq;
-  assert_raises (EXC.DuplicateSequenceError "Sequences id's cannot be duplicated. Each sequence must have a unique id.") 
+  assert_raises (EXC.SyntaxError "Sequences id's cannot be duplicated. Each sequence must have a unique id.") 
       (fun () -> SYM.add_sequence id seq)
     
 
 (* Asserts that exception is thrown if a sequence is not added to the symbol table before adding it to a voice*)
 let test_check_sequence _ctx =
-  assert_raises (EXC.MissingSequenceError "Sequences must be defined before adding to a voice") 
+  assert_raises (EXC.SyntaxError "Sequences must be defined before adding to a voice") 
       (fun () -> SYM.check_sequence "undefined_id")
 
 
@@ -39,7 +39,7 @@ let test_get_sequence1 id seq =
 
 (* Asserts that the get sequence raises an error if the sequence is not added to the symbol table *)
 let test_get_sequence2 id _seq =
-  assert_raises (EXC.MissingSequenceError ("Sequence not found for id: new_seq")) (fun () -> SYM.get_sequence id)
+  assert_raises (EXC.SyntaxError ("Sequence not found for id: new_seq")) (fun () -> SYM.get_sequence id)
 
 
 (* Asserts that the get sequence method returns the expected key/value pair after updating it *)
