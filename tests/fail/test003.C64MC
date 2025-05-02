@@ -1,0 +1,13 @@
+/* Invalid time signature */
+
+tempo = 120
+timeSignature = (3,7) /* Basic note value must be 1, 2, 4, 8 or 16 */
+standardPitch = 440
+
+sequence seq1 = { c:4:5 c:4:5 c:4:5 d:4:5 e:4:5 e:4:5 e:2:5 d:4:5 d:4:5 d:4:5 e:4:5 c:2:5 c:2:5 }
+sequence seq2 = { a:4:1 a:4:1 a:4:1 b:4:1 c:4:2 c:4:2 c:2:2 b:4:1 b:4:1 b:4:1 c:4:2 a:2:1 a:2:1 }
+sequence seq3 = { c:4:3 c:4:3 c:4:3 d:4:3 e:4:3 e:4:3 e:2:3 d:4:3 d:4:3 d:4:3 e:4:3 c:2:3 c:2:3 }
+
+voice1 = [(seq1, vPulse), (seq1, sawtooth)]
+voice2 = [(seq2, vPulse), (seq2, sawtooth)]
+voice3 = [(seq3, vPulse), (seq3, sawtooth)]
