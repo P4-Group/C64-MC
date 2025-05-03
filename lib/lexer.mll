@@ -121,9 +121,15 @@ rule read = parse
         let start_ch = start_pos.pos_cnum - start_pos.pos_bol +1 in
         let end_ch = end_pos.pos_cnum - end_pos.pos_bol in
         let line = start_pos.pos_lnum in
-        raise (LexicalError 
-          (Printf.sprintf "Lexical error at line %d, character %d-%d, expected a token" 
-                          line start_ch end_ch))}
+        if start_ch == end_ch then 
+          raise (LexicalError
+                (Printf.sprintf "Invalid input, expected a token at line %d character %d" 
+                line start_ch))
+        
+        else
+          raise (LexicalError 
+                (Printf.sprintf "Invalid input, expected a token at line %d character %d-%d" 
+                line start_ch end_ch))}
 
 (* ----------- Mutual Recursive Rules ----------- *)
 

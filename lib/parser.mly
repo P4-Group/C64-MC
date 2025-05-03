@@ -113,7 +113,7 @@ note:
         | "e" -> E
         | "f" -> F
         | "g" -> G
-        | _ -> raise (InvalidToneError "Invalid tone") in
+        | _ -> raise (InvalidArgumentError "Invalid tone, expected 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'r'") in
       Sound (t, a, f, o) 
       } (* Full note with octave and fraction *)
 
@@ -126,7 +126,7 @@ oct:
   | { None }
   | i = INT 
     { if (i >= 0 && i < 8) then Defined i 
-      else raise (InvalidOctaveError "Octave must be between 0 and 7")}
+      else raise (InvalidArgumentError "Invalid octave, expected an integer between 0 and 7")}
 
 frac:
   | i = INT { match i with
@@ -135,7 +135,7 @@ frac:
               | 4 -> Quarter
               | 8 -> Eighth
               | 16 -> Sixteenth
-              | _ -> raise (InvalidDurationError "Wrong duration") }
+              | _ -> raise (InvalidArgumentError "Invalid duration, expected '1', '2', '4', '8', '16'") }
 
 voice1:
   | VOICE1 ASSIGN LSB ch1 = separated_list(COMMA, seqwv) RSB (* voice = [seqwv+] *)
@@ -167,7 +167,7 @@ waveform:
     | VPULSE      { Vpulse }
     | SAWTOOTH    { Sawtooth }
     | TRIANGLE    { Triangle }
-    | IDENT { raise (InvalidWaveformError "Has to be a valid waveform: noise, vPulse, sawtooth, triangle") }
+    | IDENT { raise (InvalidArgumentError "Invalid waveform, expected 'noise', 'vPulse', 'sawtooth', 'triangle'") }
 
 
 ident:

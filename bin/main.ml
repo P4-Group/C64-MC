@@ -90,7 +90,11 @@ let () =
           let start_ch = start_pos.pos_cnum - start_pos.pos_bol +1 in
           let end_ch = end_pos.pos_cnum - end_pos.pos_bol in
           let line = start_pos.pos_lnum in
-          raise (ParsingError (Printf.sprintf "Syntax error at line %d, character %d-%d"
+          if start_ch == end_ch then
+            raise (ParsingError (Printf.sprintf "Syntax error at line %d character %d"
+            line start_ch))
+          else 
+            raise (ParsingError (Printf.sprintf "Syntax error at line %d character %d-%d"
             line start_ch end_ch))
         in
 
@@ -142,7 +146,11 @@ let () =
   | ParsingError msg ->
       Printf.eprintf "Parsing Error: %s\n" msg
   | LexicalError msg ->
-      Printf.eprintf "Lexing Error: %s\n" msg
+      Printf.eprintf "Lexical Error: %s\n" msg
+  | SyntaxError msg ->
+      Printf.eprintf "Syntax Error: %s\n" msg
+  | InvalidArgumentError msg ->
+        Printf.eprintf "Invalid Argument Error: %s\n" msg    
   | e ->
       Printf.eprintf "Unexpected Error: %s\n" (Printexc.to_string e);
       raise e
