@@ -1,8 +1,7 @@
 (* Token Declarations *)
 
 %{
-    open Ast
-    open Utils
+    open Ast_src
     open Symbol_table
     open Exceptions
 %}
@@ -23,12 +22,12 @@
 %token RCB (* right curly bracket *)
 %token LSB (* left square bracket *)
 %token RSB (* right square bracket *)
-%token COLON SEMICOLON COMMA
+%token COLON COMMA
 %token ASSIGN (* = *)
 %token EOF
 
 %start prog (* axiom *)
-%type <Ast.file> prog
+%type <Ast_src.file> prog
 
 (* ---Semantic Actions--- *)
 
@@ -69,11 +68,11 @@ $: used for accessing the value of non-terminals or tokens
  *)
 
  (* semantic action: 
-    Defines the relevant building blocks of the AST and assigns values from the local variables above.
+    Defines the relevant building blocks of the source AST and assigns values from the local variables above.
     Example: 
       { {name = id; seq = sb} } 
-    Takes the value of 'id' (which as seen above is an ident) and assigns it to the 'name' of AST's seqdef
-    Takes the value of 'sb' (which as seen above is a seq) and assigns it to the 'seq' of AST's seqdef
+    Takes the value of 'id' (which as seen above is an ident) and assigns it to the 'name' of source AST's seqdef
+    Takes the value of 'sb' (which as seen above is a seq) and assigns it to the 'seq' of source AST's seqdef
 *)
 
 prog:
@@ -109,8 +108,18 @@ seq:
 note:
   | t = ident a = acc COLON f = frac COLON? o = oct (* ident accidental octave : fraction *)
   { if (t.id = "r") then ( Rest f )
-    else (let t = (ident_to_tone t.id) in (*Replaces tone ident with actual AST tone type*)
-    Sound (t, a, f, o)) } (* Full note with octave and fraction *)
+    else
+      let t = match t.id with
+        | "a" -> A
+        | "b" -> B
+        | "c" -> C
+        | "d" -> D
+        | "e" -> E
+        | "f" -> F
+        | "g" -> G
+        | _ -> raise (InvalidArgumentError "Invalid tone, expected 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'r'") in
+      Sound (t, a, f, o) 
+      } (* Full note with octave and fraction *)
 
 acc:
   | { Nat }
@@ -120,8 +129,8 @@ acc:
 oct:
   | { None }
   | i = INT 
-    { if (i >= 0 && i < 8) then Orig i 
-      else raise (IllegalOctave "Octave must be between 0 and 7")}
+    { if (i >= 0 && i < 8) then Defined i 
+      else raise (InvalidArgumentError "Invalid octave, expected an integer between 0 and 7")}
 
 frac:
   | i = INT { match i with
@@ -130,7 +139,7 @@ frac:
               | 4 -> Quarter
               | 8 -> Eighth
               | 16 -> Sixteenth
-              | _ -> raise (IllegalDuration "Wrong duration") }
+              | _ -> raise (InvalidArgumentError "Invalid duration, expected '1', '2', '4', '8', '16'") }
 
 voice1:
   | VOICE1 ASSIGN LSB ch1 = separated_list(COMMA, seqwv) RSB (* voice = [seqwv+] *)
@@ -162,7 +171,7 @@ waveform:
     | VPULSE      { Vpulse }
     | SAWTOOTH    { Sawtooth }
     | TRIANGLE    { Triangle }
-    | IDENT { raise (IllegalWaveform "Has to be a valid waveform: noise, vPulse, sawtooth, triangle") }
+    | IDENT { raise (InvalidArgumentError "Invalid waveform, expected 'noise', 'vPulse', 'sawtooth', 'triangle'") }
 
 
 ident:
