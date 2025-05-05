@@ -49,10 +49,9 @@ let get_note_duration f =
 
 (* Translate from Ast.note to Ast_final.note *)
 let note_translate = function
-  | Ast.Sound (t, a, f, o) ->
-    let stdpitch = match !params.stdpitch with
-      | Some sp -> sp
-      | None -> 440 in 
+  | Ast_src.Sound (t, a, f, o) ->
+    let stdpitch_opt = !params.stdpitch in
+    let stdpitch = Option.value stdpitch_opt ~default:440 in
     let semitone_offset = base_offset t + acc_offset a + oct_offset o in
     let f_out = float_of_int stdpitch *. (2. ** (float_of_int semitone_offset /. 12.)) in
     let f_n = f_out /. 0.06097 in
