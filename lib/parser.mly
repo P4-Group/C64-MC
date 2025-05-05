@@ -84,7 +84,10 @@ params:
   | TEMPO ASSIGN t = INT (* tempo = int; *)
     TIMESIG ASSIGN SP npm = INT COMMA bnv = INT EP (* timeSignature = (int,int) *)
     STDPITCH ASSIGN sp = INT (* standardPitch = int; *)
-    { {tempo = Some t; timesig = Some (npm,bnv); stdpitch = Some sp} } (* all params use Some since they are optional/options (?) *)
+    { let bnv = match bnv with
+        | 1 | 2 | 4 | 8 | 16 -> bnv
+        | _ -> raise (InvalidTimeSignatureError "Parsing error: Invalid basic note value in time signature") in
+      {tempo = Some t; timesig = Some (npm,bnv); stdpitch = Some sp} } (* all params use Some since they are optional/options (?) *)
 
 seqdef:
     | SEQUENCE id = ident ASSIGN LCB sb = seq RCB (* sequence ident = { seq } *)
