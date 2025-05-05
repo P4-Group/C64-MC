@@ -20,7 +20,7 @@ let assemble_file () =
 
   let output_binary_file = Filename.remove_extension output_asm_file ^ ".prg" in
 
-  let command = Printf.sprintf "%s %s %s" dasm_command output_asm_file output_binary_file in
+  let command = Printf.sprintf "%s %s -o%s" dasm_command output_asm_file output_binary_file in
   Printf.printf "Assembling file with command: %s\n" command;
   let result = Sys.command command in
   if result <> 0 then
