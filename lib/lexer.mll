@@ -129,7 +129,7 @@ rule read = parse
                 (Printf.sprintf "Invalid input, expected a token at line %d character %d-%d" 
                 line start_ch end_ch))}
 
-(* ----------- Mutual Recursive Rules ----------- *)
+(* ----------- Lexer States ----------- *)
 
 and comment = parse
     | "*/" {read lexbuf}
