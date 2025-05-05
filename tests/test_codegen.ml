@@ -16,21 +16,21 @@ let test_construct_instruction1 _ctx =
 (* Asserts that the construct_instruction method throws an error if the incorrect assembly instruction is entered *)
 let test_construct_instruction2 _ctx =
   let instruction_list = ["$FD"; "$FC"] in
-  assert_raises (EXC.InstructionNotFoundError "Instruction 'db.c' not found") 
+  assert_raises (EXC.InstructionNotFoundException "Instruction 'db.c' not found") 
       (fun () -> IG.construct_instruction "db.c" instruction_list)
 
 
 (* Asserts that the construct_instruction method throws an error if the argument count is too high *)
 let test_construct_instruction3 _ctx =
   let instruction_list = ["$FD"; "$FC"; "$FC"] in
-  assert_raises (EXC.TooManyInstructionArgumentsError ("ADC", 2, 3)) 
+  assert_raises (EXC.TooManyInstructionArgumentsException ("ADC", 2, 3)) 
       (fun () -> IG.construct_instruction "ADC" instruction_list)
 
 
 (* Asserts that the construct_instruction method throws an error if the argument count is too low *)
 let test_construct_instruction4 _ctx =
   let instruction_list = [] in
-  assert_raises (EXC.InsufficientInstructionArgumentsError ("ADC", 1, 0)) 
+  assert_raises (EXC.InsufficientInstructionArgumentsException ("ADC", 1, 0)) 
       (fun () -> IG.construct_instruction "ADC" instruction_list)
   
 
@@ -43,7 +43,7 @@ let test_int_to_hex _ctx =
 (* Asserts that the int_to_hex method raises an error if a negative integer is input *)
 let test_int_to_hex_negative _ctx =
   let n = -1 in
-  assert_raises (EXC.InvalidArgumentError "Negative integers cannot be converted to hexadecimal") 
+  assert_raises (EXC.InvalidArgumentException "Negative integers cannot be converted to hexadecimal") 
       (fun () -> IG.int_to_hex n)
 
 

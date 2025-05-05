@@ -35,7 +35,8 @@ let get_duration_ref () =
     | 4 -> bnv_duration / 4
     | 8 -> bnv_duration / 2
     | 16 -> bnv_duration
-    | _ -> raise (InvalidTimeSignatureError "Invalid basic note value in time signature")
+    | _ -> raise (InvalidArgumentException "Invalid basic note value in time signature, expected '1', '2', '4', '8', '16'. 
+                                        (This error was caught in the translation phase, hence it was missed in the parser phase)")
 
 (* Get duration of specific note *)
 let get_note_duration f =

@@ -38,7 +38,7 @@ params:
     STDPITCH ASSIGN sp = INT
     { let bnv = match bnv with
         | 1 | 2 | 4 | 8 | 16 -> bnv
-        | _ -> raise (InvalidTimeSignatureError "Parsing error: Invalid basic note value in time signature") in
+        | _ -> raise (InvalidArgumentException "Invalid basic note value in time signature, expected '1', '2', '4', '8', '16'") in
       {tempo = Some t; timesig = Some (npm,bnv); stdpitch = Some sp} }
 
 (* List of sequence definitions is parsed. Ensures that there are no duplicate sequences. *)
@@ -67,7 +67,7 @@ note:
         | "e" -> E
         | "f" -> F
         | "g" -> G
-        | _ -> raise (InvalidArgumentError "Invalid tone, expected 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'r'") in
+        | _ -> raise (InvalidArgumentException "Invalid tone, expected 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'r'") in
       Sound (t, a, f, o) 
       }
 
@@ -81,7 +81,7 @@ oct:
   | { None }
   | i = INT 
     { if (i >= 0 && i < 8) then Defined i 
-      else raise (InvalidArgumentError "Invalid octave, expected an integer between 0 and 7")}
+      else raise (InvalidArgumentException "Invalid octave, expected an integer between 0 and 7")}
 
 frac:
   | i = INT { match i with
@@ -90,7 +90,7 @@ frac:
               | 4 -> Quarter
               | 8 -> Eighth
               | 16 -> Sixteenth
-              | _ -> raise (InvalidArgumentError "Invalid duration, expected '1', '2', '4', '8', '16'") }
+              | _ -> raise (InvalidArgumentException "Invalid duration, expected '1', '2', '4', '8', '16'") }
 
 (* The three voices are parsed. *)
 voice1:
@@ -121,7 +121,7 @@ waveform:
     | VPULSE      { Vpulse }
     | SAWTOOTH    { Sawtooth }
     | TRIANGLE    { Triangle }
-    | IDENT { raise (InvalidArgumentError "Invalid waveform, expected 'noise', 'vPulse', 'sawtooth', 'triangle'") }
+    | IDENT { raise (InvalidArgumentException "Invalid waveform, expected 'noise', 'vPulse', 'sawtooth', 'triangle'") }
 
 (* Ident is parsed with both id and location. *)
 ident:

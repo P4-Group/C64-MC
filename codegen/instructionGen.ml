@@ -38,7 +38,7 @@ let construct_instruction (mnemonic : string) (args : string list) =
   let instruction = List.find_opt (fun instr -> instr.mnemonic = mnemonic) instructions in
   
   match instruction with (* find the instruction in the instruction set *)
-  | None -> raise (InstructionNotFoundError (Printf.sprintf "Instruction '%s' not found" mnemonic))
+  | None -> raise (InstructionNotFoundException (Printf.sprintf "Instruction '%s' not found" mnemonic))
   | Some instr -> (*Check if instruction has correct arguments/amount of arguments*)
       let arg_count = List.length args in
       (* Print debug information if the debug option is enabled *)
@@ -46,10 +46,10 @@ let construct_instruction (mnemonic : string) (args : string list) =
         Printf.printf "Constructing instruction: %s with arguments: %s\n" mnemonic (String.concat ", " args));
       
       if arg_count < instr.min_args then
-        raise (InsufficientInstructionArgumentsError (mnemonic, instr.min_args, arg_count))
+        raise (InsufficientInstructionArgumentsException (mnemonic, instr.min_args, arg_count))
       
       else if arg_count > instr.max_args then
-        raise (TooManyInstructionArgumentsError (mnemonic, instr.max_args, arg_count))
+        raise (TooManyInstructionArgumentsException (mnemonic, instr.max_args, arg_count))
       
       else
         let constructed_instruction = Printf.sprintf "%s %s" instr.mnemonic (String.concat ", " args) in
@@ -107,7 +107,7 @@ let gen_voice (file : Target_Ast.file) =
   (* Converts an integer to a hexadecimal string *)
   let int_to_hex (n : int) : string =
     if n < 0 then
-      raise (InvalidArgumentError "Negative integers cannot be converted to hexadecimal")
+      raise (InvalidArgumentException "Negative integers cannot be converted to hexadecimal")
     else
       Printf.sprintf "%02X" n
 
