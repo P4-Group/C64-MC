@@ -49,7 +49,7 @@ In a lexer everything is read as a sequence of characters (string).
   let unterminated_comment lexbuf : 'a =
       let pos = Lexing.lexeme_start_p lexbuf in (* gets the start position of the current lexeme *)
       let line = pos.pos_lnum in (* gets the linenumber of the position *)
-      raise (SyntaxError (Printf.sprintf "Unterminated comment at line %d" line)) 
+      raise (SyntaxErrorException (Printf.sprintf "Unterminated comment at line %d" line)) 
 }
 
 (* ----------- Regular Expressions ----------- *)
@@ -120,12 +120,12 @@ rule read = parse
         let end_ch = end_pos.pos_cnum - end_pos.pos_bol in
         let line = start_pos.pos_lnum in
         if start_ch == end_ch then 
-          raise (LexicalError
+          raise (LexicalErrorException
                 (Printf.sprintf "Invalid input, expected a token at line %d character %d" 
                 line start_ch))
         
         else
-          raise (LexicalError 
+          raise (LexicalErrorException 
                 (Printf.sprintf "Invalid input, expected a token at line %d character %d-%d" 
                 line start_ch end_ch))}
 

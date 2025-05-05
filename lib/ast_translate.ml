@@ -35,7 +35,8 @@ let get_duration_ref () =
     | 4 -> bnv_duration / 4
     | 8 -> bnv_duration / 2
     | 16 -> bnv_duration
-    | _ -> raise (InvalidTimeSignatureError "Invalid basic note value in time signature")
+    | _ -> raise (InvalidArgumentException "Invalid basic note value in time signature, expected '1', '2', '4', '8', '16'. 
+                                        (This error was caught in the translation phase, hence it was missed in the parser phase)")
 
 (* Get duration of specific note *)
 let get_note_duration f =
@@ -50,9 +51,8 @@ let get_note_duration f =
 (* Translate from Ast_src.note to Ast_tgt.note *)
 let note_translate = function
   | Ast_src.Sound (t, a, f, o) ->
-    let stdpitch = match !params.stdpitch with
-      | Some sp -> sp
-      | None -> 440 in 
+    let stdpitch_opt = !params.stdpitch in
+    let stdpitch = Option.value stdpitch_opt ~default:440 in
     let semitone_offset = base_offset t + acc_offset a + oct_offset o in
     let f_out = float_of_int stdpitch *. (2. ** (float_of_int semitone_offset /. 12.)) in
     let f_n = f_out /. 0.06097 in
