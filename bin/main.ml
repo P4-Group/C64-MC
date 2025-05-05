@@ -16,18 +16,16 @@ let assemble_file () =
       "./dasm" (* Use ./dasm on Unix-like systems *)
   in
 
-  let output_asm_file = "output.asm" in (* The output assembly file name *)
-
   let output_binary_file = Filename.remove_extension output_asm_file ^ ".prg" in
 
-  let command = Printf.sprintf "%s %s %s" dasm_command output_asm_file output_binary_file in
+  let command = Printf.sprintf "%s %s" dasm_command output_asm_file in
   Printf.printf "Assembling file with command: %s\n" command;
   let result = Sys.command command in
   if result <> 0 then
     let error_msg = Printf.sprintf "Assembly failed (exit code: %d) using command: '%s'. Check if DASM is installed and in your PATH, if the assembly file '%s' is valid, and if you have permissions to execute dasm and write to the output directory." result command output_asm_file in
     raise (FilePermissionError error_msg)
   else
-    Printf.printf "File assembled successfully to %s.\n" output_binary_file
+    Printf.printf "File assembled successfully to a.out.\n" 
 
 
 
