@@ -22,7 +22,7 @@ let symbol_table : (string, symbol_info) Hashtbl.t = Hashtbl.create 10
 an error will be thrown. *)
 let add_sequence id seq = 
   if Hashtbl.mem symbol_table id then 
-    raise (SyntaxError "Sequences id's cannot be duplicated. Each sequence must have a unique id.");
+    raise (SyntaxErrorException "Sequences id's cannot be duplicated. Each sequence must have a unique id.");
 
   let symbol = SequenceSymbol {seq = RawSequence seq} in 
   Hashtbl.add symbol_table id symbol;
@@ -33,7 +33,7 @@ let add_sequence id seq =
 (* This function checks if the sequence id exists. If not, an error will be thrown. *)
 let check_sequence id =
   if not (Hashtbl.mem symbol_table id) then
-    raise (SyntaxError "Sequences must be defined before adding to a voice")
+    raise (SyntaxErrorException "Sequences must be defined before adding to a voice")
 
 
 (* This function is used in the translator when translating from the source AST to the target AST.
@@ -42,7 +42,7 @@ let check_sequence id =
  symbol table, an error will be thrown. *)
 let update_sequence id seq = 
   if not (Hashtbl.mem symbol_table id) then
-    raise (SyntaxError "This sequence could not be updated as it does not exist");
+    raise (SyntaxErrorException "This sequence could not be updated as it does not exist");
 
   let symbol = SequenceSymbol {seq = FinalSequence seq} in 
   Hashtbl.replace symbol_table id symbol;
@@ -55,7 +55,7 @@ let update_sequence id seq =
     match symbol with
     | SequenceSymbol {seq = FinalSequence final_seq} ->
         Pprint_tgt.pprint_notes final_seq
-    | _ -> raise (SyntaxError "Updated sequence not found")
+    | _ -> raise (SyntaxErrorException "Updated sequence not found")
     )
 
 (* This function retrieves a sequence (value) from the symbol table by the id (key). 
@@ -63,7 +63,7 @@ let update_sequence id seq =
 let get_sequence id =
   match Hashtbl.find_opt symbol_table id with 
   | Some (SequenceSymbol {seq}) -> seq
-  | None -> raise (SyntaxError ("Sequence not found for id: " ^ id))
+  | None -> raise (SyntaxErrorException ("Sequence not found for id: " ^ id))
 
 
 (* This function retrieves the whole symbol table containing sequence ID's and symbol info *)

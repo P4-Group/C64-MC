@@ -24,11 +24,14 @@ let assemble_file () =
   Printf.printf "Assembling file with command: %s\n" command;
   let result = Sys.command command in
   if result <> 0 then
-    let error_msg = Printf.sprintf "Assembly failed (exit code: %d) using command: '%s'. Check if DASM is installed and in your PATH, if the assembly file '%s' is valid, and if you have permissions to execute dasm and write to the output directory." result command output_asm_file in
-    raise (FilePermissionError error_msg)
+    let error_msg = Printf.sprintf 
+      "Assembly failed (exit code: %d) using command: '%s'. 
+      Check if DASM is installed and in your PATH, if the assembly file '%s' is valid 
+      and if you have permissions to execute dasm and write to the output directory." 
+        result command output_asm_file in
+    raise (FilePermissionException error_msg)
   else
     Printf.printf "File assembled successfully to %s.\n" output_binary_file
-
 
 
 
@@ -57,13 +60,13 @@ let () =
 
     (* Check if the file exists *)
     if not (Sys.file_exists input_filename) then
-      raise (FileNotFoundError ("File not found: " ^ input_filename))
+      raise (FileNotFoundException ("File not found: " ^ input_filename))
     else
       (* Attempt to open the file in binary mode *)
       (* If it fails, raise a FilePermissionError *)
       let input_channel = 
         try open_in_bin input_filename 
-        with Sys_error _ -> raise (FilePermissionError ("Permission denied or file cannot be opened: " ^ input_filename)) 
+        with Sys_error _ -> raise (FilePermissionException ("Permission denied or file cannot be opened: " ^ input_filename)) 
       in
 
       Runtime_options.conditional_option [Runtime_options.get_debug] (fun () ->
@@ -79,7 +82,7 @@ let () =
         Printf.printf "Starting to parse...\n"; (* Debugging line *)
       );
       (* Attempt to parse the file *)
-      (* If it fails, raise a ParsingError *)
+      (* If it fails, raise a ParsingException *)
       let ast_src = 
         try
           Parser.prog Lexer.read lexbuf
@@ -91,10 +94,10 @@ let () =
           let end_ch = end_pos.pos_cnum - end_pos.pos_bol in
           let line = start_pos.pos_lnum in
           if start_ch == end_ch then
-            raise (ParsingError (Printf.sprintf "Syntax error at line %d character %d"
+            raise (ParsingErrorException (Printf.sprintf "Syntax error at line %d character %d"
             line start_ch))
           else 
-            raise (ParsingError (Printf.sprintf "Syntax error at line %d character %d-%d"
+            raise (ParsingErrorException (Printf.sprintf "Syntax error at line %d character %d-%d"
             line start_ch end_ch))
         in
 
@@ -137,20 +140,19 @@ let () =
       (* Close the input channel *)
       close_in input_channel
   with
-  | InsufficientArgumentsError msg ->
-      Printf.eprintf "Error: %s\n" msg
-  | FileNotFoundError msg ->
-      Printf.eprintf "Error: %s\n" msg
-  | FilePermissionError msg ->
-      Printf.eprintf "Error: %s\n" msg
-  | ParsingError msg ->
-      Printf.eprintf "Parsing Error: %s\n" msg
-  | LexicalError msg ->
+
+  | FileNotFoundException msg ->
+      Printf.eprintf "File Not Found Error: %s\n" msg
+  | FilePermissionException msg ->
+      Printf.eprintf "File Permission Error: %s\n" msg
+  | LexicalErrorException msg ->
       Printf.eprintf "Lexical Error: %s\n" msg
-  | SyntaxError msg ->
+  | ParsingErrorException msg ->
+      Printf.eprintf "Parsing Error: %s\n" msg
+  | InvalidArgumentException msg ->
+      Printf.eprintf "Invalid Argument Error: %s\n" msg 
+  | SyntaxErrorException msg ->
       Printf.eprintf "Syntax Error: %s\n" msg
-  | InvalidArgumentError msg ->
-        Printf.eprintf "Invalid Argument Error: %s\n" msg    
   | e ->
       Printf.eprintf "Unexpected Error: %s\n" (Printexc.to_string e);
       raise e
