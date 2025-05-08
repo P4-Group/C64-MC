@@ -48,10 +48,10 @@ let construct_instruction (mnemonic : string) (args : string list) =
         Printf.printf "Constructing instruction: %s with arguments: %s\n" mnemonic (String.concat ", " args));
       
       if arg_count < instr.min_args then
-        raise (InsufficientInstructionArgumentsException (mnemonic, instr.min_args, arg_count))
+        raise (InsufficientInstructionArgumentsException (Printf.sprintf "%s requires at least %d arguments, but got %d" mnemonic instr.min_args arg_count))
       
       else if arg_count > instr.max_args then
-        raise (TooManyInstructionArgumentsException (mnemonic, instr.max_args, arg_count))
+        raise (TooManyInstructionArgumentsException (Printf.sprintf "%s requires at most %d arguments, but got %d" mnemonic instr.max_args arg_count))
       
       else
         let constructed_instruction = Printf.sprintf "%s %s" instr.mnemonic (String.concat ", " args) in

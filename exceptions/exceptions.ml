@@ -12,7 +12,7 @@ exception SyntaxErrorException of string
 (*-------------------------*)
 
 exception InstructionNotFoundException of string
-exception InsufficientInstructionArgumentsException of string * int * int
-exception TooManyInstructionArgumentsException of string * int * int
+exception InsufficientInstructionArgumentsException of string 
+exception TooManyInstructionArgumentsException of string 
 
 
