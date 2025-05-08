@@ -149,7 +149,7 @@ let gen_sequence () =
   
   
 
-let run_example () =
+let write_preample () =
   write_stdlib Stdlib.init;
   write_stdlib Stdlib.playinit;
   write_stdlib Stdlib.note_initation;
