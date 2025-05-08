@@ -79,10 +79,12 @@ let check_file_params () =
 
     (* Arguments with values *)
     | "-s" :: file :: rest ->
-        if !src_file_ref <> None then
-          raise (InvalidArgumentException "Option '-s' (source file) specified multiple times.");
-        src_file_ref := Some file;
-        parse_args rest
+      if !src_file_ref <> None then
+        raise (InvalidArgumentException "Option '-s' (source file) specified multiple times.");
+      if not (Filename.check_suffix file ".nptn") then
+        raise (InvalidArgumentException "Source file must have .nptn extension.");
+      src_file_ref := Some file;
+      parse_args rest
     | "-s" :: [] ->
         raise (InvalidArgumentException "Option '-s' requires a file path argument.")
 
