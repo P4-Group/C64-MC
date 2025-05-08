@@ -14,10 +14,12 @@ module Runtime_options = C64MC.Runtime_options
 (* Global file_name for the output file *)
 let file_name = ref "output.asm"
 
-(* Clean the output file*)
-let clean_build ()=
-  let oc = open_out !file_name in
-  close_out oc
+(* Delete the output file if it exists *)
+let clean_build () =
+  if Sys.file_exists !file_name then
+    Sys.remove !file_name
+  else
+    () (* do nothing *)
 
 
 (* Write a line to a file without overwriting existing lines *)
