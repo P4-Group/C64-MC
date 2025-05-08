@@ -23,16 +23,15 @@ let test_construct_instruction2 _ctx =
 (* Asserts that the construct_instruction method throws an error if the argument count is too high *)
 let test_construct_instruction3 _ctx =
   let instruction_list = ["$FD"; "$FC"; "$FC"] in
-  assert_raises (EXC.TooManyInstructionArgumentsException ("ADC", 2, 3)) 
+  assert_raises (EXC.TooManyInstructionArgumentsException "ADC requires at most 1 arguments, but got 3") 
       (fun () -> IG.construct_instruction "ADC" instruction_list)
 
 
 (* Asserts that the construct_instruction method throws an error if the argument count is too low *)
 let test_construct_instruction4 _ctx =
   let instruction_list = [] in
-  assert_raises (EXC.InsufficientInstructionArgumentsException ("ADC", 1, 0)) 
+  assert_raises (EXC.InsufficientInstructionArgumentsException "ADC requires at least 1 arguments, but got 0") 
       (fun () -> IG.construct_instruction "ADC" instruction_list)
-  
 
 (* Asserts that the int_to_hex method returns the correct hexadecimal value for decimal value 255 *)
 let test_int_to_hex _ctx =

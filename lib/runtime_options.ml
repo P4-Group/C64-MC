@@ -88,11 +88,11 @@ let check_file_params () =
 
     (* Unknown argument *)
     | unknown :: _ ->
-        raise (InvalidArgumentException ("Invalid argument or unknown option: " ^ unknown ^ "\n" ^ usage_msg))
+        raise (InvalidArgumentException (Printf.sprintf "Invalid argument or unknown option: %s\n %s" unknown usage_msg))
   in
   parse_args params;
 
   (* Check if the mandatory source file argument was provided *)
   match !src_file_ref with
   | Some file -> file (* Return the source file path *)
-  | None -> raise (InvalidArgumentException ("Missing mandatory source file argument '-s <file>'.\n" ^ usage_msg))
+  | None -> raise ( InvalidArgumentException (Printf.sprintf "Missing mandatory source file argument '-s <file>'.\n %s" usage_msg))
