@@ -23,7 +23,7 @@ let test_construct_instruction2 _ctx =
 (* Asserts that the construct_instruction method throws an error if the argument count is too high *)
 let test_construct_instruction3 _ctx =
   let instruction_list = ["$FD"; "$FC"; "$FC"] in
-  assert_raises (EXC.TooManyInstructionArgumentsException "ADC requires at most 1 arguments, but got 3") 
+  assert_raises (EXC.TooManyInstructionArgumentsException "ADC requires at most 2 arguments, but got 3") 
       (fun () -> IG.construct_instruction "ADC" instruction_list)
 
 
