@@ -68,13 +68,16 @@ let suite =
       "test_update_sequence1" >:: setup_and_teardown Test_symbol_table.test_update_sequence1;
       ];
       "Codegen Tests" >::: [
+        "test_clean_build" >:: Test_codegen.test_clean_build;
+        "test_write_line_tf" >:: Test_codegen.test_write_line_tf;
         "test_construct_instruction1" >:: Test_codegen.test_construct_instruction1;
         "test_construct_instruction2" >:: Test_codegen.test_construct_instruction2;
         "test_construct_instruction3" >:: Test_codegen.test_construct_instruction3;
         "test_construct_instruction4" >:: Test_codegen.test_construct_instruction4;
+        "test_waveform_to_byte" >:: Test_codegen.test_waveform_to_byte;
         "test_int_to_hex" >:: Test_codegen.test_int_to_hex;
         "test_int_to_hex_negative" >:: Test_codegen.test_int_to_hex_negative;
-       ];
+      ];
       "AST Translate Tests" >::: [
         "test_base_offset" >:: Test_ast_translate.test_base_offset;
         "test_acc_offset" >:: Test_ast_translate.test_acc_offset;
