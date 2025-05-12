@@ -1,5 +1,5 @@
 /* Octave value exceeds 7 */
-/* InvalidOctaveError is raised */
+/* Invalid Argument Error: Invalid octave, expected an integer between 0 and 7 */
 
 tempo = 120
 timeSignature = (4,4)

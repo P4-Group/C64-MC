@@ -1,5 +1,5 @@
 /* Parameter names are misspelled */
-/* Raises "Parsing Error: Syntax error at line 4, character 1-5" */
+/* Raises "Parsing Error: Syntax error at line 4 character 1-5" */
 
 Tempo = 120
 timeSig = (4,4)

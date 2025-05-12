@@ -1,5 +1,5 @@
 /* Duplicate sequence name */
-/* DuplicateSequenceError is raised */
+/* Syntax Error: Sequences id's cannot be duplicated. Each sequence must have a unique id. */
 
 tempo = 120
 timeSignature = (4,4)

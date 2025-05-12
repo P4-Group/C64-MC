@@ -1,5 +1,5 @@
 /* Invalid tones x, y and z are used */
-/* IllegalToneError is raised */
+/* Invalid Argument Error: Invalid tone, expected 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'r' */
 
 tempo = 120
 timeSignature = (4,4)

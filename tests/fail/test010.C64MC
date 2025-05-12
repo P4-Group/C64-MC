@@ -1,5 +1,5 @@
 /* Negative octave value. Shows that generally, negative values are treated as just invalid tokens */
-/* Raises "Lexing Error: Lexical error at line 8, character 23-23, expected a token" */
+/* Lexical Error: Invalid input, expected a token at line 8 character 23 */
 
 tempo = 120
 timeSignature = (4,4)
