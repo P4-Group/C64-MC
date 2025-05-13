@@ -76,21 +76,21 @@ play_init:
                 sta $d418
 
                 lda #<voice1
-                sta c_ptrlo,x
+                sta v_ptrlo,x
                 lda #>voice1
-                sta c_ptrhi,x
+                sta v_ptrhi,x
 
                 inx
                 lda #<voice2
-                sta c_ptrlo,x
+                sta v_ptrlo,x
                 lda #>voice2
-                sta c_ptrhi,x
+                sta v_ptrhi,x
 
                 inx
                 lda #<voice3
-                sta c_ptrlo,x
+                sta v_ptrlo,x
                 lda #>voice3
-                sta c_ptrhi,x
+                sta v_ptrhi,x
 
                 rts
 |}
@@ -99,34 +99,34 @@ let note_initation = {|
 ;; Isolate note Initiation
 gatebit_off:    
                 lda #$00
-                sta c_waveform,x
+                sta v_waveform,x
                 jmp counter_init
 
 note_init:      
-                lda c_freqlo_new,x
+                lda v_freqlo_new,x
                 beq gatebit_off
-                sta c_freqlo,x
-                lda c_freqhi_new,x
-                sta c_freqhi,x
+                sta v_freqlo,x
+                lda v_freqhi_new,x
+                sta v_freqhi,x
 
-                ldy c_instr,x
+                ldy v_instr,x
 
                 lda i_pulselo,y
-                sta c_pulselo,x
+                sta v_pulselo,x
                 lda i_pulsehi,y
-                sta c_pulsehi,x
+                sta v_pulsehi,x
 
                 lda i_waveform,y
-                sta c_waveform,x
+                sta v_waveform,x
 
                 lda i_ad,y
-                sta c_ad,x
+                sta v_ad,x
                 lda i_sr,y
-                sta c_sr,x
+                sta v_sr,x
 
 counter_init:   
-                lda c_counternew,x
-                sta c_counter,x
+                lda v_counternew,x
+                sta v_counter,x
 
                 jmp update_sid
 |}
@@ -137,32 +137,32 @@ play:
                 ldx #$00
 
 play_loop:      
-                lda c_counter,x
+                lda v_counter,x
                 beq note_init
 
                 cmp #$02
                 beq fetch
 
 update_sid:     
-                dec c_counter,x
-                ldy c_regindex,x
+                dec v_counter,x
+                ldy v_regindex,x
 
-                lda c_freqlo,x
+                lda v_freqlo,x
                 sta $d400,y
-                lda c_freqhi,x
+                lda v_freqhi,x
                 sta $d401,y
 
-                lda c_pulselo,x
+                lda v_pulselo,x
                 sta $d402,y
-                lda c_pulsehi,x
+                lda v_pulsehi,x
                 sta $d403,y
 
-                lda c_waveform,x
+                lda v_waveform,x
                 sta $d404,y
 
-                lda c_ad,x
+                lda v_ad,x
                 sta $d405,y
-                lda c_sr,x
+                lda v_sr,x
                 sta $d406,y
 
                 inx
@@ -174,9 +174,9 @@ update_sid:
 let fetches = {|
 ;; Isolate Fetch Notes/sequences
 fetch:          
-                lda c_ptrlo,x
+                lda v_ptrlo,x
                 sta temp1
-                lda c_ptrhi,x
+                lda v_ptrhi,x
                 sta temp2
 
                 ldy #$00
@@ -204,83 +204,83 @@ enter_seq:
 
                 clc
                 adc #$04
-                sta c_rtnlo,x
+                sta v_rtnlo,x
 
                 lda temp2
                 adc #$00
-                sta c_rtnhi,x
+                sta v_rtnhi,x
 
 jump_addr       
                 lda (temp1),y
-                sta c_ptrlo,x
+                sta v_ptrlo,x
 
                 iny
                 lda (temp1),y
-                sta c_ptrhi,x
+                sta v_ptrhi,x
 
                 jmp fetch
 
 exit_seq:       
-                lda c_rtnlo,x
-                sta c_ptrlo,x
-                lda c_rtnhi,x
-                sta c_ptrhi,x
+                lda v_rtnlo,x
+                sta v_ptrlo,x
+                lda v_rtnhi,x
+                sta v_ptrhi,x
 
                 jmp fetch
 
 load_instr:     
                 sec
                 sbc #$F9
-                sta c_instr,x
+                sta v_instr,x
                 jmp fetch_loop
 
 fetch_note:     
-                sta c_freqlo_new,x
+                sta v_freqlo_new,x
 
                 iny
                 lda (temp1),y
-                sta c_freqhi_new,x
+                sta v_freqhi_new,x
 
                 iny
                 lda (temp1),y
-                sta c_counternew,x
+                sta v_counternew,x
 
-                lda c_waveform,x
+                lda v_waveform,x
                 and #$fe
-                sta c_waveform,x
+                sta v_waveform,x
 
                 iny
                 tya
                 clc
                 adc temp1
-                sta c_ptrlo,x
+                sta v_ptrlo,x
 
                 lda temp2
                 adc #$00
-                sta c_ptrhi,x
+                sta v_ptrhi,x
 
                 jmp update_sid
 |}
 
 let voice_data = {|
 ;; Isolate voice data
-c_regindex:     dc.b $00,$07,$0E
-c_freqlo:       dc.b $00,$00,$00
-c_freqlo_new:   dc.b $00,$00,$00
-c_freqhi:       dc.b $00,$00,$00
-c_freqhi_new:   dc.b $00,$00,$00
-c_instr         dc.b $00,$00,$00
-c_pulselo       dc.b $00,$00,$00
-c_pulsehi       dc.b $00,$00,$00
-c_waveform:     dc.b $00,$00,$00
-c_ad:           dc.b $00,$00,$00
-c_sr:           dc.b $00,$00,$00
-c_counter:      dc.b $02,$02,$02
-c_counternew:   dc.b $00,$00,$00
-c_ptrlo:        dc.b $00,$00,$00
-c_ptrhi:        dc.b $00,$00,$00
-c_rtnlo:        dc.b $00,$00,$00
-c_rtnhi:        dc.b $00,$00,$00
+v_regindex:     dc.b $00,$07,$0E
+v_freqlo:       dc.b $00,$00,$00
+v_freqlo_new:   dc.b $00,$00,$00
+v_freqhi:       dc.b $00,$00,$00
+v_freqhi_new:   dc.b $00,$00,$00
+v_instr         dc.b $00,$00,$00
+v_pulselo       dc.b $00,$00,$00
+v_pulsehi       dc.b $00,$00,$00
+v_waveform:     dc.b $00,$00,$00
+v_ad:           dc.b $00,$00,$00
+v_sr:           dc.b $00,$00,$00
+v_counter:      dc.b $02,$02,$02
+v_counternew:   dc.b $00,$00,$00
+v_ptrlo:        dc.b $00,$00,$00
+v_ptrhi:        dc.b $00,$00,$00
+v_rtnlo:        dc.b $00,$00,$00
+v_rtnhi:        dc.b $00,$00,$00
 |}
 
 let instrument_data = {|
