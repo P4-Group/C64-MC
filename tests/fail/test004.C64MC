@@ -1,5 +1,5 @@
 /* Missing delimiters for sequences */
-/* Parsing Error: Syntax error at line 9, character 1-8 */
+/* Parsing Error: Syntax error at line 9 character 1-8 */
 
 tempo = 120
 timeSignature = (4,4)
