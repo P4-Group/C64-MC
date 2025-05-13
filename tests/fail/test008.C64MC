@@ -1,5 +1,5 @@
 /* Invalid fraction 47. Must be 1, 2, 4, 8 or 16 */
-/* InvalidNoteDurationError is raised */
+/* Invalid Argument Error: Invalid duration, expected '1', '2', '4', '8', '16' */
 
 tempo = 120
 timeSignature = (4,4)

@@ -1,5 +1,5 @@
 /* Parameters are defined in the wrong order */
-/* Raises "Parsing error: Syntax error on line 5, character 1-13" */
+/* Raises "Parsing Error: Syntax error at line 5 character 1-13" */
 
 tempo = 120
 standardPitch = 440
