@@ -1,7 +1,7 @@
 let init = {|
 ;; Isolate program init
                 processor 6502
-                org 2049
+                org 2048
 
 temp1           = $fb
 temp2           = $fc
