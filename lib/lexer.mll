@@ -36,7 +36,7 @@ In a lexer everything is read as a sequence of characters (string).
           "noise", NOISE;
           "vPulse", VPULSE;
           "sawtooth", SAWTOOTH;
-          "triangle", TRIANGLE
+          "triangle", TRIANGLE;
           ];
     fun s -> try Hashtbl.find hashtbl s with Not_found -> IDENT s
 
@@ -90,8 +90,9 @@ let int = digit+ (* '+' means one or more occurences of previous pattern, so 124
 
 let whitespace = [' ' '\t' '|']+ (*| is to use in the sequences, to separate bars *)
 let newline = "\r\n" | '\n' | '\r'
+let tone = "a" | "b" | "c" | "d" | "e" | "f" | "g" | "r" 
 let letter = ['a'-'z' 'A'-'Z']
-let ident = letter (letter | '-' | digit)* (* identity for a sequence *)
+let ident = letter (letter | '-' | digit)+ (* identity for a sequence *)
 
 (* ---Lexing Rules--- *)
 
@@ -117,6 +118,7 @@ continues on reading the input.
 rule read = parse
     | whitespace {read lexbuf} (* calls itself recursively *)
     | newline {Lexing.new_line lexbuf; read lexbuf} 
+    | tone {TONE (Lexing.lexeme lexbuf)}
     | ident as s {ident_or_keyword s}
     | int {INT (int_of_string (Lexing.lexeme lexbuf))}
     | "/*" {comment lexbuf}
