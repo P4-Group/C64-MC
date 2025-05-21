@@ -1,210 +1,190 @@
-#   C64-MC: Chiptune Music Generator for Commodore 64
 
-In the fourth semester, we've been tasked to create a compiler. The compiler was choosen to translate a custom music langauge into 6502 assembly code, which then can be executed on the commodore 64. The commodore would then utilies the SID 6581 sound chip to produce authentic 8-bit chiptune music.
-
-## Table of Contents
-
--   [Introduction](#introduction)
--   [Features](#current-features)
--   [Music Theory](#music-theory)
--   [Commodore 64 and SID 6581](#commodore-64-and-sid-6581)
--   [Getting Started](#getting-started)
--   [Prerequisites](#prerequisites)
--   [Installation](#installation)
--   [Usage](#usage)
--   [Language Design](#language-design)
--   [Compiler Architecture](#compiler-architecture)
--   [Contributing](#contributing)
--   [License](#license)
--   [Acknowledgments](#acknowledgments)
-
-## Introduction
-
-Chiptune music finds it's root in the sound chips of vintage arcade machines and older computers such as the Commodore 64, for many which holds a nostalgic sound and for others is interesting in the sense of retro hardware hobbies. This project tries to create authentic chiptune music using the Commodore 64 by developing a specialized compiler which makes the process of developing chiptune music easier.
-
-The Commodore 64 and it's SID 6581 sound chip were crucial in the chiptune genre's rise to fame. However, programming the SID 6581 chip directly in assembly or basic can be very complex and time consuming. Thus this project is meant to brigde that gap by introducing a higher-level langauge music description langauge that abstracts the complexities that comes with writing assembly code or basic. The goal is therefore to make programming for the Commodore and in particular the SID 6581 chip more accessible.
+![Logo](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/th5xamgrr6se0x5ro4g6.png)
 
 
-## Current Features
+# Neptune - An Intermediate Language for Music Composition on the Commodore 64
 
-| **Category**           | **Features**                                                                 |
-|-------------------------|-----------------------------------------------------------------------------|
-| **Must Have**           | - TODO                                                                      |
-|                         | - TODO                                                                      |
-|                         | - TODO                                                                      |
-| **Should Have**         | - TODO                                                                      |
-|                         | - TODO                                                                      |
-|                         | - TODO                                                                      |
-| **Could Have**          | - TODO                                                                      |
-|                         | - TODO                                                                      |
-|                         | - TODO                                                                      |
-| **Won't Have (for now)**| - TODO                                                                      |
-|                         | - TODO                                                                      |
-|                         | - TODO                                                                      |
+Neptune is an intermediate language designed to bridge the gap between high-level programming and direct interaction with the Commodore 64 and its iconic SID chip. It provides a more accessible way to harness the power of this classic machine.
 
-##  Music Theory
+This project was created as part of a fourth-semester semester project at Aalborg University (Copenhagen). Our task was to develop a compiler, and we chose to translate a custom music language into 6502 assembly code. This assembly code can then be executed on the Commodore 64, allowing it to utilize the SID 6581 sound chip to produce authentic 8-bit chiptune music.
 
-The project's music description language is designed around concepts from Western music theory. Key elements include:
+Curious to learn more? You can access the complete project report [here](https://github.com/P4-Group/Neptune-Report/blob/main/SW4_Group_8.pdf).
 
-* **Note Types:** Representation of note durations (whole, half, quarter, etc.) within the language.
-* **Time Signatures:** How time signatures (e.g., 4/4, 3/4) are defined in the language to structure music.
-* **Tempo:** Controlling the speed of the music (BPM) through the language.
-* **Tones and Pitch:** Defining notes (C, D, E, F, G, A, B) and accidentals (#, b) in the language, including octave notation.
-* **Volume/Dynamics:** Language syntax for specifying volume levels (pianissimo, forte, etc.) and changes (crescendo, decrescendo).
-   [cite: 861, 862, 863, 864, 865, 866, 867, 869, 870, 871, 872, 873, 875, 876, 877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890, 891, 892, 893, 894, 895, 896, 897, 898, 899, 900, 901, 902, 903, 904, 909, 910, 911, 912, 913, 914]
+## Features
 
-##  Commodore 64 and SID 6581
-
-This section provides background on the hardware that your compiler targets:
-
-* **Commodore 64:** Brief overview of the C64 and its importance in chiptune. [cite: 969, 970, 971, 972, 973, 974, 975, 976, 977, 978, 979, 980, 981, 982, 983, 984, 985, 986, 987, 988, 989, 990, 991, 992, 993, 994, 995, 996, 997, 998, 999, 1000, 1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010, 1011, 1012, 1013, 1014, 1015, 1016, 1017, 1018, 1019, 1020, 1021, 1022, 1023, 1024, 1025, 1026, 1027, 1028, 1029, 1030, 1031, 1032, 1033, 1034, 1035, 1036, 1037, 1038, 1039, 1040, 1041, 1042, 1043, 1044, 1045, 1046, 1047, 1048, 1049, 1050, 1051, 1052, 1053, 1054, 1055, 1056, 1057, 1058, 1059, 1060, 1061, 1062, 1063, 1064, 1065, 1066, 1067, 1068, 1069]
-* **SID 6581:** Details about the SID chip's capabilities (voices, waveforms, envelopes, filters) and how your compiler leverages them.
+- Clear Error reporting: Provides line and char number if errors occur.
+- 6502 Assembli Compliation: Translate Neptune code into 6502 Assembly ready
+- dasm Integration: Integrates with the dasm assembler for easy generation of .prg files for the Commodore 64.
+- High-Level Music Language: intuitive and expressive if need be.
+- SID Chip Control: Gives simplified control over the Commodore 64's SID Sound chip.
 
 
-##  Getting Started
 
-This section explains how to set up and use the C64-MC compiler.
+## Running Locally
 
 ### Prerequisites
 
-List any software or hardware requirements:
+This project relies on the following:
 
-* A Commodore 64 or a C64 emulator (e.g., Vice)
-* Supported operative systems: Mac OS, Linux(Tested on Arch and Ubuntu), and Windows
+* **OCaml**: Version 4.07.0 or newer.
+* **MenhirLib**: Any version.
+* **Dune**: Version 3.17 or newer.
 
+For full functionality, you'll also need:
 
+* **dasm**: Ensure the `dasm` executable is in the compilers PATH.
 
-### Installation Steps
+### Compiling the Project
 
-1.  **Clone the Repository:**
+Clone the project
 
-    Open your terminal or command prompt and clone the C64-MC repository from GitHub:
+```bash
+  git clone hhttps://github.com/P4-Group/Neptune
+```
 
-    ```bash
-    git clone https://github.com/P4-Group/C64-MC/
-    cd C64-MC
-    ```
+Go to the project directory
 
-2.  **Install Dependencies:**
+```bash
+  cd Neptune
+```
 
-    This project might have additional dependencies beyond the tools listed above.
+Install dependencies
 
-    * **Check Dependency Documentation:** Ensure you review the documentation for each dependency (e.g., Dune, opam) to find OS-specific installation instructions. These details are often available on the official websites or in the project's own documentation.
+```bash
+  opam install dune &
+  opam install MenhirLib
+```
 
-3.  **Compile the Compiler:**
+Build the project
 
-    Use Dune to build the compiler:
+```bash
+  dune build
+```
 
-    ```bash
-    dune build
-    ```
+An executable will be generated in "_build/default/bin/"
 
-    * This command compiles the C64-MC compiler. The resulting executable will be located in the `_build/default/` directory or a similar path, depending on your Dune configuration.
+### Running Tests
 
-### Post-Installation
+To run tests, run the following command
 
-After successful installation, you can proceed to use the compiler to generate chiptune music for the Commodore 64. See the "Usage" section for instructions.
-
-
-### Usage
-
-To use the C64-MC compiler, follow these steps:
-
-1. **Create a Music File:**
-    Write your music in the custom music description language. Save it with a `.c64mc` extension. Below is an example:
-
-    ```c64mc
-    TITLE Coolest song ever
-    COMPOSER Jens jensen
-
-    tempo = 121
-    timeSignature = (3, 4)
-    standardPitch = 441
-
-    // This is a comment
-
-    sequence newSequenceMoody = { 
-      c4:5 c c# | d_ e' e, e2 d4 d d e c2 c
-    }
-    channel1 = [(newSequenceMoody; VPulse), (newSequence; Sawtooth), (newSequence4, Triangle)]
-
-    generate(channel1,)
-    ```
-
-2. **Compile the Music File:**
-    Use the C64-MC compiler to translate your `.c64mc` file into 6502 assembly code. Run the following command:
-
-    ```bash
-    ./_build/default/c64mc your_music_file.c64mc
-    ```
-
-    Replace `your_music_file.c64mc` with the path to your music file.
-
-3. **Load the Output on a Commodore 64:**
-    The compiler will generate an `.asm` file containing the 6502 assembly code. You can assemble this file using an assembler like `ca65` to produce a `.prg` file.
-
-4. **Play the Music:**
-    Once you have the `.prg` file, load it onto a Commodore 64 or an emulator like Vice to play your chiptune music.
-    Run the `.prg` file on your Commodore 64 or emulator to hear your chiptune music.
-
-For more details on the music description language syntax, refer to the "Language Design" section.
-
-##  Language Design
-
-The tests folder of the GitHub repository. These samples demonstrate various features of the language and serve as a reference for creating your own music files. You can find them in the `tests/` directory of the project repository.
-
-### Language Keywords Documentation
-
-| **Keyword** | **Usage Example**       | **Description**                          |
-|-------------|-------------------------|------------------------------------------|
-| `TITLE`     | `TITLE My Song`         | Specifies the title of the music piece.  |
-| `COMPOSER`  | `COMPOSER John Doe`     | Defines the composer of the music.       |
-| `tempo`     | `tempo = 120`           | Sets the tempo of the music in BPM.      |
+```bash
+  dune runtest
+```
 
 
+### Command-Line Usage
 
-##  Compiler Architecture
+The Neptune compiler is a command-line tool. You **must** provide a source file, and you can add optional flags to modify its behavior.
 
-This section provides an overview of the C64-MC compiler's architecture.
+```bash
+./Neptune -s <source_file> [OPTIONS]
+```
 
-* **Compiler Stages:** 
-    * Lexical analysis (scanning)
-    * Syntax analysis (parsing)
-    * Code generation (6502 assembly)
-* **Key Components:** <!-- TODO -->
-* **Data Structures:** <!-- TODO -->
+#### Essential Usage
 
-##  Contributing
+**Specify Your Source File:** The core of using this compiler is telling it which file to process. You do this with the `-s` flag, followed by the path to your source file.
 
-## Contributing
+Example: 
+```bash
+./Neptune -s my_project/song.nptn
+```
 
-We welcome your interest in the C64-MC project! Here's how you can engage with the project:
+#### Optional Flags
 
-### Reporting Bugs
-If you encounter any bugs or issues, please report them using the GitHub Issues feature. When submitting a bug report, include the following details:
-- A clear and descriptive title.
-- Steps to reproduce the issue.
-- Expected and actual behavior.
-- Any relevant logs, screenshots, or error messages.
+These flags can be added individually or combined to get different outputs or behaviors:
 
-### Suggesting Features
-We encourage you to suggest new features or improvements via GitHub Issues. When submitting a feature request, please provide:
-- A clear description of the feature.
-- The problem it solves or the value it adds.
-- Any relevant examples or use cases.
+| **Flag** | **Description** |
+|----------|-----------------|
+| `-dasm` | Enable the use of DASM to assemble output. Requires the DASM executable to be available in your system's PATH. |
+| `-tgt-ast` | Display the Target Abstract Syntax Tree (AST) that the compiler generates. |
+| `-src-ast` | Display the Source Abstract Syntax Tree (AST) as parsed from your input file. |
+| `-sym-tab` | Print the compiler's Symbol Table, showing defined symbols and their properties. |
+| `-debug` | Turn on debug mode for more detailed output that can help with troubleshooting. |
+| `-h` | Show a help message with all available options and exit. |
 
-### Code Contributions
-As this is a university project, we are not accepting code contributions until a few months after Summer 2025. Once contributions are open, we will provide detailed guidelines for submitting pull requests.
+#### Examples
 
-### Coding Style Guidelines
-To ensure consistency across the codebase, contributors will be required to follow the project's coding style guidelines. These guidelines will be shared when contributions are open.
+**Basic Compilation:**
+```bash
+./Neptune -s song.nptn
+```
 
-❤️ Thank you for your interest and support! ❤️
+**Compile and view Source AST:**
+```bash
+./Neptune -s chiptune.nptn -src-ast
+```
 
-##  License
+**Full debugging with DASM and Symbol Table:**
+```bash
+./Neptune -s complex_song.nptn -dasm -sym-tab -debug
+```
 
-This project is licensed under the GNU General Public License v3.0. You can find the full license text in the `LICENSE` file or at [https://www.gnu.org/licenses/gpl-3.0.en.html](https://www.gnu.org/licenses/gpl-3.0.en.html).
 
-##  Acknowledgments
+## Code Snippet Samples
 
-We would like to express our heartfelt gratitude to the incredible lecturers at Aalborg University Copenhagen. Their dedication, expertise, and passion for teaching have been instrumental in shaping our understanding of compiler design and retro computing. Their guidance and support have been invaluable throughout this project. Thank you for inspiring us to push the boundaries of our knowledge and creativity!
+More code snippets can be seen in [success tests](https://github.com/P4-Group/Neptune/tree/main/tests/succes).
+
+#### Incy Wincy Spider
+```
+tempo = 300
+timeSignature = (4,4)
+standardPitch = 440
+
+sequence seq1 = { c:4:5 c:4:5 c:4:5 d:4:5 e:4:5 e:4:5 e:2:5 d:4:5 d:4:5 d:4:5 e:4:5 c:2:5 c:2:5 }
+sequence seq2 = { a:4:1 a:4:1 a:4:1 b:4:1 c:4:2 c:4:2 c:2:2 b:4:1 b:4:1 b:4:1 c:4:2 a:2:1 a:2:1 }
+sequence seq3 = { c:4:3 c:4:3 c:4:3 d:4:3 e:4:3 e:4:3 e:2:3 d:4:3 d:4:3 d:4:3 e:4:3 c:2:3 c:2:3 }
+
+voice1 = [(seq1, vPulse), (seq1, sawtooth)]
+voice2 = [(seq2, vPulse), (seq2, sawtooth)]
+voice3 = [(seq3, vPulse), (seq3, sawtooth)]
+```
+
+#### Poor attempt at Never gonna give you up - Rick Astley
+
+```
+tempo = 118
+timeSignature = (3,4)
+standardPitch = 440
+
+sequence neverGonnaGiveYouUpMelodyPart1 = {
+  d:4:2 d:4:2 e:4:2 d:4:2 b:4:4 b:4:4 a:4:4
+}
+
+sequence neverGonnaGiveYouUpMelodyPart2 = {
+  b:4:3 d:4:4 e:4:4 f#:4:4 e:4:4 d:4:4 b:2:3
+}
+
+sequence neverGonnaGiveYouUpBass = {
+  e:2:3 e:2:3 a:2:2 b:2:2 e:2:3 e:2:3 a:2:3 b:2:2
+}
+
+sequence simpleKick = {
+  c:2:1 r:2 c:2:1
+}
+
+sequence simpleSnare = {
+  r:2 c:2:2 r:2
+}
+
+voice1 = [(neverGonnaGiveYouUpMelodyPart1, vPulse), (neverGonnaGiveYouUpMelodyPart2, vPulse)]
+voice2 = [(neverGonnaGiveYouUpBass, sawtooth)]
+voice3 = [(simpleKick, vPulse), (simpleSnare, noise)]
+```
+## Socials for Project Founders
+
+| Name                  | Socials                                                                                                                                                                                                                                                                                                                        |
+| :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Emil S. Andersen      | [![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/emil-andersen-4a92ba2b3/) [![github](https://img.shields.io/badge/github-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/emandersen)               |
+| Felix B. Lindberg     | [![github](https://img.shields.io/badge/github-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/FelixBjerre)                                                                                                                                                                                   |
+| Alberte Lohse         | [![github](https://img.shields.io/badge/github-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/wefjyl)                                                                                                                                                                                      |
+| Nikolaj K. van Gool   | [![github](https://img.shields.io/badge/github-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/BinGbONg7aau)                                                                                                                                                                                 |
+| Cecilie S. Vebner     | [![github](https://img.shields.io/badge/github-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/ceci000)                                                                                                                                                                                      |
+
+## Acknowledgements
+
+- [The dasm assembler Project](https://github.com/dasm-assembler/dasm)
+- Our Supervisor Leon
+## License
+
+[GNU General Public License v3.0](https://github.com/P4-Group/Neptune/blob/main/LICENSE)
+
