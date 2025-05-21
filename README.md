@@ -63,7 +63,7 @@ Build the project
 
 An executable will be generated in "_build/default/bin/"
 
-## Running Tests
+### Running Tests
 
 To run tests, run the following command
 
@@ -72,7 +72,7 @@ To run tests, run the following command
 ```
 
 
-## Command-Line Usage
+### Command-Line Usage
 
 The Neptune compiler is a command-line tool. You **must** provide a source file, and you can add optional flags to modify its behavior.
 
@@ -80,7 +80,7 @@ The Neptune compiler is a command-line tool. You **must** provide a source file,
 ./Neptune -s <source_file> [OPTIONS]
 ```
 
-### Essential Usage
+#### Essential Usage
 
 **Specify Your Source File:** The core of using this compiler is telling it which file to process. You do this with the `-s` flag, followed by the path to your source file.
 
@@ -89,7 +89,7 @@ Example:
 ./Neptune -s my_project/song.nptn
 ```
 
-### Optional Flags
+#### Optional Flags
 
 These flags can be added individually or combined to get different outputs or behaviors:
 
@@ -102,7 +102,7 @@ These flags can be added individually or combined to get different outputs or be
 | `-debug` | Turn on debug mode for more detailed output that can help with troubleshooting. |
 | `-h` | Show a help message with all available options and exit. |
 
-### Examples
+#### Examples
 
 **Basic Compilation:**
 ```bash
@@ -170,6 +170,8 @@ voice1 = [(neverGonnaGiveYouUpMelodyPart1, vPulse), (neverGonnaGiveYouUpMelodyPa
 voice2 = [(neverGonnaGiveYouUpBass, sawtooth)]
 voice3 = [(simpleKick, vPulse), (simpleSnare, noise)]
 ```
+## Socials for Project Founders
+
 | Name                  | Socials                                                                                                                                                                                                                                                                                                                        |
 | :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Emil S. Andersen      | [![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/emil-andersen-4a92ba2b3/) [![github](https://img.shields.io/badge/github-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/emandersen)               |
