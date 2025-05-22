@@ -23,13 +23,13 @@ let oct_offset = function
 (* Get duration of sixteenth note from tempo and basic note value. 
    Used as reference point for duration of specific notes *)
 let get_duration_ref () =
-    let tempo_opt = !params.tempo in
-    let tempo = Option.value tempo_opt ~default:120 in
-    let timesig_opt = !params.timesig in
-    let timesig = Option.value timesig_opt ~default:(4,4) in
-    let _, bnv = timesig in
-    let bnv_duration = 3000 / tempo in
-    match bnv with 
+  let tempo_opt = !params.tempo in
+  let tempo = Option.value tempo_opt ~default:120 in
+  let timesig_opt = !params.timesig in
+  let timesig = Option.value timesig_opt ~default:(4,4) in
+  let _, bnv = timesig in
+  let bnv_duration = 3000 / tempo in
+  match bnv with 
     | 1 -> bnv_duration / 16
     | 2 -> bnv_duration / 8
     | 4 -> bnv_duration / 4

@@ -12,8 +12,8 @@ let rec ast_to_generic_ast (file : Ast_src.file) : generic_ast =
       Leaf (Printf.sprintf "Tempo: %s" (match file.parameters.tempo with Some t -> string_of_int t | None -> "None"));
       Leaf (Printf.sprintf "Time Signature: %s"
               (match file.parameters.timesig with
-               | Some (n, d) -> Printf.sprintf "%d/%d" n d
-               | None -> "None"));
+                | Some (n, d) -> Printf.sprintf "%d/%d" n d
+                | None -> "None"));
       Leaf (Printf.sprintf "Standard Pitch: %s"
               (match file.parameters.stdpitch with Some p -> string_of_int p | None -> "None"))
     ])
@@ -50,48 +50,48 @@ let rec ast_to_generic_ast (file : Ast_src.file) : generic_ast =
 
   and ast_to_generic_note note =
     match note with
-    | Sound (tone, acc, frac, oct) ->
-        Node ("Sound Note", [
-          Leaf (Printf.sprintf "Tone: %s" (pprint_tone tone));
-          Leaf (Printf.sprintf "Accidental: %s" (pprint_acc acc));
-          Leaf (Printf.sprintf "Fraction: %s" (pprint_frac frac));
-          Leaf (Printf.sprintf "Octave: %s" (pprint_oct oct))
-        ])
-    | Rest frac ->
-        Node ("Rest Note", [Leaf (Printf.sprintf "Fraction: %s" (pprint_frac frac))])
+      | Sound (tone, acc, frac, oct) ->
+          Node ("Sound Note", [
+            Leaf (Printf.sprintf "Tone: %s" (pprint_tone tone));
+            Leaf (Printf.sprintf "Accidental: %s" (pprint_acc acc));
+            Leaf (Printf.sprintf "Fraction: %s" (pprint_frac frac));
+            Leaf (Printf.sprintf "Octave: %s" (pprint_oct oct))
+          ])
+      | Rest frac ->
+          Node ("Rest Note", [Leaf (Printf.sprintf "Fraction: %s" (pprint_frac frac))])
 
   and pprint_tone tone =
     match tone with
-    | A -> "A" | B -> "B" | C -> "C" | D -> "D" | E -> "E" | F -> "F" | G -> "G"
+      | A -> "A" | B -> "B" | C -> "C" | D -> "D" | E -> "E" | F -> "F" | G -> "G"
 
   and pprint_acc acc =
     match acc with
-    | Nat -> "Natural"
-    | Sharp -> "Sharp"
-    | Flat -> "Flat"
+      | Nat -> "Natural"
+      | Sharp -> "Sharp"
+      | Flat -> "Flat"
 
   and pprint_frac frac =
     match frac with
-    | Whole -> "Whole"
-    | Half -> "Half"
-    | Quarter -> "Quarter"
-    | Eighth -> "Eighth"
-    | Sixteenth -> "Sixteenth"
+      | Whole -> "Whole"
+      | Half -> "Half"
+      | Quarter -> "Quarter"
+      | Eighth -> "Eighth"
+      | Sixteenth -> "Sixteenth"
 
   and pprint_oct oct =
     match oct with
-    | None -> "None"
-    | Defined i -> Printf.sprintf "Defined(%d)" i
+      | None -> "None"
+      | Defined i -> Printf.sprintf "Defined(%d)" i
 
   (* Pretty-print a generic AST *)
   let rec pprint_generic_ast ?(indent_level=0) ast =
     let indent = String.make (indent_level * 2) ' ' in
     match ast with
-    | Node (name, children) ->
-        Printf.printf "%s%s:\n" indent name;
-        List.iter (pprint_generic_ast ~indent_level:(indent_level + 1)) children
-    | Leaf value ->
-        Printf.printf "%s- %s\n" indent value
+      | Node (name, children) ->
+          Printf.printf "%s%s:\n" indent name;
+          List.iter (pprint_generic_ast ~indent_level:(indent_level + 1)) children
+      | Leaf value ->
+          Printf.printf "%s- %s\n" indent value
 
   (* Entry point for pretty-printing a file *)
   let pprint_file file =

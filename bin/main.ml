@@ -89,17 +89,6 @@ let () =
         with
         | Parser.Error ->
           raise (ParsingErrorException ("Syntax error " ^ Lexer.lexeme_error lexbuf)) 
-          (* let start_pos = Lexing.lexeme_start_p lexbuf in
-          let end_pos = Lexing.lexeme_end_p lexbuf in
-          let start_ch = start_pos.pos_cnum - start_pos.pos_bol +1 in
-          let end_ch = end_pos.pos_cnum - end_pos.pos_bol in
-          let line = start_pos.pos_lnum in
-          if start_ch == end_ch then
-            raise (ParsingErrorException (Printf.sprintf "Syntax error at line %d character %d"
-            line start_ch))
-          else 
-            raise (ParsingErrorException (Printf.sprintf "Syntax error at line %d character %d-%d"
-            line start_ch end_ch)) *)
         in
 
       (* Translate the source AST to the target AST *)
