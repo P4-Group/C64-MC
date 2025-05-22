@@ -10,6 +10,10 @@ This project was created as part of a fourth-semester semester project at Aalbor
 
 Curious to learn more? You can access the complete project report [here](https://github.com/P4-Group/Neptune-Report/blob/main/SW4_Group_8.pdf).
 
+<div align="center">
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/UmX4kyB2wfg7" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+
 ## Table of Contents
 
 * [Neptune - An Intermediate Language for Music Composition on the Commodore 64](#neptune---an-intermediate-language-for-music-composition-on-the-commodore-64)
