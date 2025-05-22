@@ -124,7 +124,7 @@ let () =
       InstructionGen.clean_build ();
 
       (* Write the standard library to the output file *)
-      InstructionGen.write_preample ();
+      InstructionGen.write_preamble ();
 
       (* Generate the voice code *)
       InstructionGen.gen_voice ast_tgt;

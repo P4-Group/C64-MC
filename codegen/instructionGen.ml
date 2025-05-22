@@ -151,7 +151,7 @@ let gen_sequence () =
   
   
 
-let write_preample () =
+let write_preamble () =
   write_stdlib Stdlib.init;
   write_stdlib Stdlib.playinit;
   write_stdlib Stdlib.note_initation;
