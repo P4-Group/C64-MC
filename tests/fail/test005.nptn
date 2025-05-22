@@ -1,5 +1,5 @@
 /* Empty sequence is defined. Will raise an error even if sequence is not used */
-/* Parsing Error: Syntax error at line 11, character 19-19 */
+/* Parsing Error: Syntax error at line 11 character 19 */
 
 tempo = 120
 timeSignature = (4,4)

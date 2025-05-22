@@ -7,9 +7,8 @@ exception ParsingErrorException of string
 exception InvalidArgumentException of string
 exception SyntaxErrorException of string
 
-(*-------------------------*)
-(*InstructionGen Exceptions*)
-(*-------------------------*)
+
+(*------------ InstructionGen Exceptions -------------*)
 
 exception InstructionNotFoundException of string
 exception InsufficientInstructionArgumentsException of string 

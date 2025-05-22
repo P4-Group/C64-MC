@@ -1,5 +1,5 @@
 /* Invalid waveforms */
-/* InvalidWaveformError is raised */
+/* Invalid Argument Error: Invalid waveform, expected 'noise', 'vPulse', 'sawtooth', 'triangle' */
 
 tempo = 120
 timeSignature = (4,4)

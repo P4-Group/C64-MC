@@ -1,5 +1,5 @@
 /* Undefined sequence name used */
-/* MissingSequenceError is raised */
+/* Syntax Error: Sequences must be defined before adding to a voice */
 
 tempo = 120
 timeSignature = (4,4)

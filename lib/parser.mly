@@ -8,6 +8,7 @@
 %token <int> STDPITCH
 %token <int> TEMPO
 %token <int*int> TIMESIG
+%token <string> TONE
 %token <string> IDENT
 %token SHARP FLAT
 %token SEQUENCE
@@ -27,7 +28,7 @@
 
 (* Source file is parsed starting from the axiom. *)
 prog:
-    | p = params seql = list(seqdef) vc1 = voice1 vc2 = voice2 vc3 = voice3 EOF
+  | p = params seql = list(seqdef) vc1 = voice1 vc2 = voice2 vc3 = voice3 EOF
     { {parameters = p; sequences = seql; voice1 = vc1; voice2 = vc2; voice3 = vc3 } }
 
 
@@ -39,37 +40,40 @@ params:
     { let bnv = match bnv with
         | 1 | 2 | 4 | 8 | 16 -> bnv
         | _ -> raise (InvalidArgumentException "Invalid basic note value in time signature, expected '1', '2', '4', '8', '16'") in
-      {tempo = Some t; timesig = Some (npm,bnv); stdpitch = Some sp} }
+      {tempo = Some t; timesig = Some (npm,bnv); stdpitch = Some sp} 
+    }
 
 (* List of sequence definitions is parsed. Ensures that there are no duplicate sequences. *)
 seqdef:
-    | SEQUENCE id = ident ASSIGN LCB sb = seq RCB
-
-    (* Adds sequence to the symbol table. Raises an exception if a sequence with the same id is already in the table. *)
-    { add_sequence id.id sb;
+  | SEQUENCE id = ident ASSIGN LCB sb = seq RCB
+    
+    { (* Adds sequence to the symbol table. Raises an exception if a sequence with the same id is already in the table. *)
+      add_sequence id sb;
       {name = id; seq = sb}  
     }
 
 (* Sequence is parsed as a list of notes. *)
 seq:
-    | nl = nonempty_list(note) { nl }
+  | nl = nonempty_list(note) { nl }
 
-(* Notes are parsed, either as sound or rest subtype. Ensures that tone is valid. *)
+(* Notes are parsed, either as sound or rest subtype. If it's not a rest, the parser matches the string of the TONE token
+to a corresponding variant constructor of type 'tone' (defined in the ast_src). *)
 note:
-  | t = ident a = acc COLON f = frac COLON? o = oct
-  { if (t.id = "r") then ( Rest f )
-    else
-      let t = match t.id with
-        | "a" -> A
-        | "b" -> B
-        | "c" -> C
-        | "d" -> D
-        | "e" -> E
-        | "f" -> F
-        | "g" -> G
-        | _ -> raise (InvalidArgumentException "Invalid tone, expected 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'r'") in
-      Sound (t, a, f, o) 
-      }
+  | t = TONE a = acc COLON f = frac COLON? o = oct
+    { if (t = "r") then ( Rest f )
+      else
+        let tone_value = match t with
+          | "a" -> A
+          | "b" -> B
+          | "c" -> C
+          | "d" -> D
+          | "e" -> E
+          | "f" -> F
+          | "g" -> G
+          | _ -> raise (InvalidArgumentException "Invalid tone, expected 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'r'
+            (This error was caught in the parsing phase, hence it was missed in the lexer phase)") in
+        Sound (tone_value, a, f, o) 
+    }
 
 (* Accidentals, octaves and fractions are parsed. *)
 acc:
@@ -85,45 +89,44 @@ oct:
 
 frac:
   | i = INT { match i with
-              | 1 -> Whole
-              | 2 -> Half
-              | 4 -> Quarter
-              | 8 -> Eighth
-              | 16 -> Sixteenth
-              | _ -> raise (InvalidArgumentException "Invalid duration, expected '1', '2', '4', '8', '16'") }
+                | 1 -> Whole
+                | 2 -> Half
+                | 4 -> Quarter
+                | 8 -> Eighth
+                | 16 -> Sixteenth
+                | _ -> raise (InvalidArgumentException "Invalid duration, expected '1', '2', '4', '8', '16'") 
+            }
 
 (* The three voices are parsed. *)
 voice1:
-  | VOICE1 ASSIGN LSB ch1 = separated_list(COMMA, seqwv) RSB
-      { ch1 }
+  | VOICE1 ASSIGN LSB vc1 = separated_list(COMMA, seqwv) RSB
+    { vc1 }
 
 voice2:
-  | VOICE2 ASSIGN LSB ch2 = separated_list(COMMA, seqwv) RSB
-      { ch2 }
+  | VOICE2 ASSIGN LSB vc2 = separated_list(COMMA, seqwv) RSB
+    { vc2 }
 
 voice3:
-  | VOICE3 ASSIGN LSB ch3 = separated_list(COMMA, seqwv) RSB
-      { ch3 }
+  | VOICE3 ASSIGN LSB vc3 = separated_list(COMMA, seqwv) RSB
+    { vc3 }
 
 (* Sequence id and waveform pair of a voice is parsed. Ensures that sequence has been defined. *)
 seqwv:
-    | SP seqid = ident COMMA wv = waveform EP  
-
-    { 
-      (* Checks if the sequence exists in the the symbol table. Raises an exception if it is not. *)
-      check_sequence seqid.id;
+  | SP seqid = ident COMMA wv = waveform EP  
+    { (* Checks if the sequence exists in the the symbol table. Raises an exception if it is not. *)
+      check_sequence seqid;
       (seqid, wv) 
     }
 
 (* Waveform is parsed. Raise exception if value does not correspond to a waveform keyword. *)
 waveform:
-    | NOISE       { Noise }
-    | VPULSE      { Vpulse }
-    | SAWTOOTH    { Sawtooth }
-    | TRIANGLE    { Triangle }
-    | IDENT { raise (InvalidArgumentException "Invalid waveform, expected 'noise', 'vPulse', 'sawtooth', 'triangle'") }
+  | NOISE       { Noise }
+  | VPULSE      { Vpulse }
+  | SAWTOOTH    { Sawtooth }
+  | TRIANGLE    { Triangle }
+  | IDENT       { raise (InvalidArgumentException "Invalid waveform, expected 'noise', 'vPulse', 'sawtooth', 'triangle'")}
 
 (* Ident is parsed with both id and location. *)
 ident:
-| id = IDENT { { id = id; id_loc = $startpos, $endpos } }
+  | id = IDENT {id}
 ;

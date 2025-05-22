@@ -1,6 +1,4 @@
-type loc = Lexing.position * Lexing.position
-
-type ident = { id: string; id_loc: loc }
+type ident = string
 
 and note = {
     highfreq: int;

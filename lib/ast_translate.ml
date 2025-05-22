@@ -23,13 +23,13 @@ let oct_offset = function
 (* Get duration of sixteenth note from tempo and basic note value. 
    Used as reference point for duration of specific notes *)
 let get_duration_ref () =
-    let tempo_opt = !params.tempo in
-    let tempo = Option.value tempo_opt ~default:120 in
-    let timesig_opt = !params.timesig in
-    let timesig = Option.value timesig_opt ~default:(4,4) in
-    let _, bnv = timesig in
-    let bnv_duration = 3000 / tempo in
-    match bnv with 
+  let tempo_opt = !params.tempo in
+  let tempo = Option.value tempo_opt ~default:120 in
+  let timesig_opt = !params.timesig in
+  let timesig = Option.value timesig_opt ~default:(4,4) in
+  let _, bnv = timesig in
+  let bnv_duration = 3000 / tempo in
+  match bnv with 
     | 1 -> bnv_duration / 16
     | 2 -> bnv_duration / 8
     | 4 -> bnv_duration / 4
@@ -70,7 +70,7 @@ let seq_translate (seq : Ast_src.seq) = List.map note_translate seq
 (* Take id and seq from Ast_src.seqdef, translate seq using seq_translate and 
    update them in the symbol table. *)
 let seqdef_translate (seqdef : Ast_src.seqdef) = 
-  let seq_id = seqdef.name.id in
+  let seq_id = seqdef.name in
   let translated_seq = seq_translate seqdef.seq in
   Symbol_table.update_sequence seq_id translated_seq
 
@@ -82,8 +82,7 @@ let waveform_translate = function
   | Ast_src.Triangle -> Triangle
 
 (* Translates idents from Ast_src to Ast_tgt *)
-let ident_translate (id : Ast_src.ident) : Ast_tgt.ident = 
-    { Ast_tgt.id = id.id; id_loc = id.id_loc }
+let ident_translate (id : Ast_src.ident) : Ast_tgt.ident = id
 
 (* Translates voice from Ast_src to Ast_tgt *)
 let voice_translate vc = List.map (fun (sn,wf) -> (ident_translate sn, waveform_translate wf)) vc

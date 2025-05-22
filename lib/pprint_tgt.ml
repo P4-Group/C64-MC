@@ -24,7 +24,7 @@ let waveform_to_string = function
 let voice_to_generic (name : string) (voice : voice) : generic_ast =
   Node (name, List.map (fun (ident, waveform) ->
     Node ("Voice", [
-      Leaf (Printf.sprintf "Identifier: %s" ident.id);
+      Leaf (Printf.sprintf "Identifier: %s" ident);
       Leaf (Printf.sprintf "Waveform: %s" (waveform_to_string waveform));
     ])
   ) voice)
@@ -41,11 +41,11 @@ let file_to_generic (file : file) : generic_ast =
 let rec pprint_generic_ast ?(indent_level=0) ast =
   let indent = String.make (indent_level * 2) ' ' in
   match ast with
-  | Node (name, children) ->
-      Printf.printf "%s%s:\n" indent name;
-      List.iter (pprint_generic_ast ~indent_level:(indent_level + 1)) children
-  | Leaf value ->
-      Printf.printf "%s- %s\n" indent value
+    | Node (name, children) ->
+        Printf.printf "%s%s:\n" indent name;
+        List.iter (pprint_generic_ast ~indent_level:(indent_level + 1)) children
+    | Leaf value ->
+        Printf.printf "%s- %s\n" indent value
 
 (* Main function for pretty-printing a file *)
 let pprint_file file =

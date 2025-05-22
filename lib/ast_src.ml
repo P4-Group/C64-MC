@@ -1,17 +1,18 @@
-type params =
-  { tempo : int option ;
-    timesig : (int * int) option ;
-    stdpitch : int option; }
+type params = {
+  tempo : int option;
+  timesig : (int * int) option;
+  stdpitch : int option; 
+}
 
-type loc = Lexing.position * Lexing.position
 
-type ident = { id: string; id_loc: loc }
+type ident = string
 
 and seq = note list
 
-and seqdef =
-{ name : ident;
-  seq : seq ;}
+and seqdef = { 
+  name : ident;
+  seq : seq;
+}
 
 and note =
   | Sound of tone * acc * frac * oct
@@ -57,57 +58,3 @@ type file = {
   voice2: voice;
   voice3: voice;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-(*
-type tone =
-  | C
-  | D
-  | E
-  | F
-  | G
-  | A
-  | B
-
-type octave = int
-type frac = float
-
-type sequenceStmt =
-  | Note        of tone * octave * frac
-  | Transpose   of sequenceStmt list * int
-
-  | Loop        of sequenceStmt list * floopy_controly
-    and floopy_controly =
-    | x of int
-    | While of bool
-
-type Sequence = {
-    name      : string;
-    formals   : string list;
-    body      : sequenceStmt list;
-}
-
-type params = string list
-
-type file = {
-    params : params;
-    sequences : Sequence list;
-}
-*)

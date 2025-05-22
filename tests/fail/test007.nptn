@@ -1,5 +1,5 @@
 /* Invalid tones x, y and z are used */
-/* IllegalToneError is raised */
+/* Lexical Error: Invalid input, expected a token at line 8 character 19 */
 
 tempo = 120
 timeSignature = (4,4)
