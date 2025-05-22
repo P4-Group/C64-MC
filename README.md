@@ -230,7 +230,7 @@ Vice will automatically load and run the program, and you should hear your sweet
 ## Acknowledgements
 
 - [The dasm assembler Project](https://github.com/dasm-assembler/dasm)
-- Our Supervisor Leon
+- Our Supervisor Léon Gondelman, deepest gratitude for his guidance and support
 ## License
 
 [GNU General Public License v3.0](https://github.com/P4-Group/Neptune/blob/main/LICENSE)
