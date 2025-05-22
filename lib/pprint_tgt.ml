@@ -24,7 +24,7 @@ let waveform_to_string = function
 let voice_to_generic (name : string) (voice : voice) : generic_ast =
   Node (name, List.map (fun (ident, waveform) ->
     Node ("Voice", [
-      Leaf (Printf.sprintf "Identifier: %s" ident.id);
+      Leaf (Printf.sprintf "Identifier: %s" ident);
       Leaf (Printf.sprintf "Waveform: %s" (waveform_to_string waveform));
     ])
   ) voice)
