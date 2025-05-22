@@ -24,7 +24,7 @@ Curious to learn more? You can access the complete project report [here](https:/
             * [Essential Usage](#essential-usage)
             * [Optional Flags](#optional-flags)
             * [Examples](#examples)
-    * [Code Snippet Samples](#code-snippet-samples)
+    * [Code Snippet Sample](#code-snippet-samples)
         * [Incy Wincy Spider](#incy-wincy-spider)
     * [Playing the Music](#playing-the-music)
         * [Using an Emulator (Recommended: Vice)](#using-an-emulator-recommended-vice)
@@ -141,10 +141,9 @@ These flags can be added individually or combined to get different outputs or be
 ./Neptune -s complex_song.nptn -dasm -sym-tab -debug
 ```
 
+## Neptune Sample Code
 
-## Code Snippet Samples
-
-More code snippets can be seen in [success tests](https://github.com/P4-Group/Neptune/tree/main/tests/succes).
+More code samples can be found [here](https://github.com/P4-Group/Neptune/tree/main/src_code_samples).
 
 #### Incy Wincy Spider
 ```
@@ -163,11 +162,11 @@ voice3 = [(seq3, vPulse), (seq3, sawtooth)]
 
 ## Playing the Music
 
-Once you've compiled your Neptune code, you'll have a .prg file (e.g., song.prg) in your project directory. This file contains the 6502 assembly code that the Commodore 64 understands. To hear your music, you'll need a Commodore 64 emulator or actual Commodore 64 hardware.
+Once you have compiled your Neptune code, you will have a .prg file (e.g., song.prg) in your project directory. This file contains the 6502 assembly code that the Commodore 64 understands. To play your music, you need a Commodore 64 emulator or the actual Commodore 64 hardware.
 
 ### Using an Emulator (Recommended: Vice)
 
-We highly recommend using the **Vice** emulator. Here's how to load and play your .prg file:
+We highly recommend using the **Vice** emulator. Here is how to load and play your .prg file:
 
 
 1.  **Generate your .prg file:** Compile your Neptune source file with the -dasm flag:
@@ -184,7 +183,16 @@ We highly recommend using the **Vice** emulator. Here's how to load and play you
 
 Vice will automatically load and run the program, and you should hear your sweet Nep**tunes**!
 
-(Do note to use the original emulated SID 6581 chip, you do need to change your audio settings inside Vice and set it to "6581")
+**Recommended Settings for VICE**
+
+To achieve the most accurate emulation of the SID 6581, and well-produced sound output we recommend the following audio settings in VICE:
+* Go to Preferences > Settings > Audio > SID
+  
+**For UNIX**:
+* select the '6581 (reSID)' and 'Resampling' options
+
+**For Windows**:
+* select the '6581' and 'Resampling' options
 
 https://www.linkedin.com/in/cecilie-foege-vebner-b898702a6/
 
