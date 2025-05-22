@@ -21,7 +21,7 @@ let rec ast_to_generic_ast (file : Ast_src.file) : generic_ast =
   let sequences_node =
     Node ("Sequences", List.map (fun seqdef ->
       Node ("Sequence", [
-        Leaf (Printf.sprintf "Identifier: %s" seqdef.name.id);
+        Leaf (Printf.sprintf "Identifier: %s" seqdef.name);
         ast_to_generic_seq seqdef.seq
       ])
     ) file.sequences)
@@ -29,7 +29,7 @@ let rec ast_to_generic_ast (file : Ast_src.file) : generic_ast =
   let voice_node name voice =
     Node (name, List.map (fun (ident, waveform) ->
       Node ("Voice", [
-        Leaf (Printf.sprintf "Identifier: %s" ident.id);
+        Leaf (Printf.sprintf "Identifier: %s" ident);
         Leaf (Printf.sprintf "Waveform: %s" (match waveform with
           | Noise -> "Noise"
           | Vpulse -> "Pulse"
