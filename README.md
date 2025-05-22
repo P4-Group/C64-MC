@@ -186,6 +186,7 @@ Vice will automatically load and run the program, and you should hear your sweet
 
 (Do note to use the original emulated SID 6581 chip, you do need to change your audio settings inside Vice and set it to "6581")
 
+https://www.linkedin.com/in/cecilie-foege-vebner-b898702a6/
 
 
 ## Socials for Project Founders
@@ -195,8 +196,8 @@ Vice will automatically load and run the program, and you should hear your sweet
 | Emil S. Andersen      | [![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/emil-andersen-4a92ba2b3/) [![github](https://img.shields.io/badge/github-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/emandersen)               |
 | Felix B. Lindberg     | [![github](https://img.shields.io/badge/github-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/FelixBjerre)                                                                                                                                                                                   |
 | Alberte Lohse         | [![github](https://img.shields.io/badge/github-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/wefjyl)                                                                                                                                                                                      |
-| Nikolaj K. van Gool   | [![github](https://img.shields.io/badge/github-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/BinGbONg7aau)                                                                                                                                                                                 |
-| Cecilie S. Vebner     | [![github](https://img.shields.io/badge/github-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/ceci000)                                                                                                                                                                                      |
+| Nikolaj K. van Gool   | [![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/nikolaj-van-gool-339b772b2/) [![github](https://img.shields.io/badge/github-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/BinGbONg7aau)                                                                                                                                                                                 |
+| Cecilie S. Vebner     | [![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/cecilie-foege-vebner-b898702a6/) [![github](https://img.shields.io/badge/github-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/ceci000)                                                                                                                                                                                      |
 
 ## Acknowledgements
 
