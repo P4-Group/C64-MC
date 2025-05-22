@@ -10,6 +10,27 @@ This project was created as part of a fourth-semester semester project at Aalbor
 
 Curious to learn more? You can access the complete project report [here](https://github.com/P4-Group/Neptune-Report/blob/main/SW4_Group_8.pdf).
 
+## Table of Contents
+
+* [Neptune - An Intermediate Language for Music Composition on the Commodore 64](#neptune---an-intermediate-language-for-music-composition-on-the-commodore-64)
+    * [Features](#features)
+    * [Running Locally](#running-locally)
+        * [Prerequisites](#prerequisites)
+        * [Compiling the Project](#compiling-the-project)
+        * [Running Tests](#running-tests)
+        * [Command-Line Usage](#command-line-usage)
+            * [Essential Usage](#essential-usage)
+            * [Optional Flags](#optional-flags)
+            * [Examples](#examples)
+    * [Code Snippet Samples](#code-snippet-samples)
+        * [Incy Wincy Spider](#incy-wincy-spider)
+        * [Poor attempt at Never gonna give you up - Rick Astley](#poor-attempt-at-never-gonna-give-you-up---rick-astley)
+    * [Playing the Music](#playing-the-music)
+        * [Using an Emulator (Recommended: Vice)](#using-an-emulator-recommended-vice)
+    * [Socials for Project Founders](#socials-for-project-founders)
+    * [Acknowledgements](#acknowledgements)
+    * [License](#license)
+
 ## Features
 
 - Clear Error reporting: Provides line and char number if errors occur.
@@ -170,6 +191,32 @@ voice1 = [(neverGonnaGiveYouUpMelodyPart1, vPulse), (neverGonnaGiveYouUpMelodyPa
 voice2 = [(neverGonnaGiveYouUpBass, sawtooth)]
 voice3 = [(simpleKick, vPulse), (simpleSnare, noise)]
 ```
+
+## Playing the Music
+
+Once you've compiled your Neptune code, you'll have a .prg file (e.g., song.prg) in your project directory. This file contains the 6502 assembly code that the Commodore 64 understands. To hear your music, you'll need a Commodore 64 emulator or actual Commodore 64 hardware.
+
+### Using an Emulator (Recommended: Vice)
+
+We highly recommend using the **Vice** emulator. Here's how to load and play your .prg file:
+
+1.  **Generate your .prg file:** Compile your Neptune source file with the -dasm flag:
+
+    ./Neptune -s your_song.nptn -dasm
+
+    This will create your_song.prg in your current directory.
+
+2.  **Launch Vice:** Start the Vice emulator on your system.
+
+3.  **Load the program:**
+    * Go to File > Autostart disk/tape image...
+    * Navigate to where your your_song.prg file is saved and select it.
+
+Vice will automatically load and run the program, and you should hear your sweet Nep**tunes**!
+
+
+
+
 ## Socials for Project Founders
 
 | Name                  | Socials                                                                                                                                                                                                                                                                                                                        |
