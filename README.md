@@ -183,7 +183,7 @@ We highly recommend using the **Vice** emulator. Here is how to load and play yo
 
 Vice will automatically load and run the program, and you should hear your sweet Nep**tunes**!
 
-**Recommended Settings for VICE**
+### Recommended Settings for VICE
 
 To achieve the most accurate emulation of the SID 6581, and well-produced sound output we recommend the following audio settings in VICE:
 * Go to Preferences > Settings > Audio > SID
