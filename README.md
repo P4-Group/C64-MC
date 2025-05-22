@@ -170,6 +170,32 @@ voice1 = [(neverGonnaGiveYouUpMelodyPart1, vPulse), (neverGonnaGiveYouUpMelodyPa
 voice2 = [(neverGonnaGiveYouUpBass, sawtooth)]
 voice3 = [(simpleKick, vPulse), (simpleSnare, noise)]
 ```
+
+## Playing the Music
+
+Once you've compiled your Neptune code, you'll have a .prg file (e.g., song.prg) in your project directory. This file contains the 6502 assembly code that the Commodore 64 understands. To hear your music, you'll need a Commodore 64 emulator or actual Commodore 64 hardware.
+
+### Using an Emulator (Recommended: Vice)
+
+We highly recommend using the **Vice** emulator. Here's how to load and play your .prg file:
+
+1.  **Generate your .prg file:** Compile your Neptune source file with the -dasm flag:
+
+    ./Neptune -s your_song.nptn -dasm
+
+    This will create your_song.prg in your current directory.
+
+2.  **Launch Vice:** Start the Vice emulator on your system.
+
+3.  **Load the program:**
+    * Go to File > Autostart disk/tape image...
+    * Navigate to where your your_song.prg file is saved and select it.
+
+Vice will automatically load and run the program, and you should hear your sweet Nep**tunes**!
+
+
+
+
 ## Socials for Project Founders
 
 | Name                  | Socials                                                                                                                                                                                                                                                                                                                        |
