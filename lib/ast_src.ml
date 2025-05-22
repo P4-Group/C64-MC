@@ -1,16 +1,18 @@
-type params =
-  { tempo : int option ;
-    timesig : (int * int) option ;
-    stdpitch : int option; }
+type params = {
+  tempo : int option;
+  timesig : (int * int) option;
+  stdpitch : int option; 
+}
 
 
 type ident = string
 
 and seq = note list
 
-and seqdef =
-{ name : ident;
-  seq : seq ;}
+and seqdef = { 
+  name : ident;
+  seq : seq;
+}
 
 and note =
   | Sound of tone * acc * frac * oct
