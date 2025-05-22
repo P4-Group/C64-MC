@@ -188,8 +188,10 @@ Vice will automatically load and run the program, and you should hear your sweet
 
 To achieve the most accurate emulation of the SID 6581, and well-produced sound output we recommend the following audio settings in VICE:
 * Go to Preferences > Settings > Audio > SID
+  
 **For UNIX**:
 * select the '6581 (reSID)' and 'Resampling' options
+
 **For Windows**
 * select the '6581' and 'Resampling' options
 
