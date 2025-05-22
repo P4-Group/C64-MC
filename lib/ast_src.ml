@@ -3,9 +3,8 @@ type params =
     timesig : (int * int) option ;
     stdpitch : int option; }
 
-type loc = Lexing.position * Lexing.position
 
-type ident = { id: string; id_loc: loc }
+type ident = string
 
 and seq = note list
 

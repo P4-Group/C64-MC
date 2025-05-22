@@ -93,7 +93,7 @@ let gen_voice (file : Target_Ast.file) =
         write_instr_group [
           construct_instruction "dc.b" [waveform_to_byte waveform];
           construct_instruction "dc.b" ["$FE"];
-          construct_instruction "dc.w" [id.id]
+          construct_instruction "dc.w" [id]
         ]
       ) voice;
     let indentation = String.make (4 * 4) ' ' in  (* 4 tabs, 4 spaces each = 16 spaces *)

@@ -47,7 +47,7 @@ seqdef:
     | SEQUENCE id = ident ASSIGN LCB sb = seq RCB
 
     (* Adds sequence to the symbol table. Raises an exception if a sequence with the same id is already in the table. *)
-    { add_sequence id.id sb;
+    { add_sequence id sb;
       {name = id; seq = sb}  
     }
 
@@ -115,7 +115,7 @@ seqwv:
 
     { 
       (* Checks if the sequence exists in the the symbol table. Raises an exception if it is not. *)
-      check_sequence seqid.id;
+      check_sequence seqid;
       (seqid, wv) 
     }
 
@@ -129,5 +129,5 @@ waveform:
 
 (* Ident is parsed with both id and location. *)
 ident:
-| id = IDENT { { id = id; id_loc = $startpos, $endpos } }
+| id = IDENT {id}
 ;

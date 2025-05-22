@@ -89,23 +89,21 @@ let test_waveform_translate _ctx =
 
 (* Asserts that a identifier is translated correctly to the target AST *)
 let test_ident_translate _ctx =
-  let dummy_loc = (Lexing.dummy_pos, Lexing.dummy_pos) in (* dummy_pos mocks a lexing position*)
-  let ident : AST_SRC.ident = { id = "test"; id_loc = dummy_loc } in
-  let expected_ident : AST_TGT.ident = { id = "test"; id_loc = dummy_loc } in
+  let ident : AST_SRC.ident = "test" in
+  let expected_ident : AST_TGT.ident = "test" in
   assert_equal expected_ident (AST_TRSL.ident_translate ident)
   
 
 (* Asserts that a voice definition is translated correctly to the target AST *)
 let test_voice_translate _ctx =
-  let dummy_loc = (Lexing.dummy_pos, Lexing.dummy_pos) in (* dummy_pos mocks a lexing position*)
   let input_voice : AST_SRC.voice = [ (* Mocking a source AST voice *)
-    ({ AST_SRC.id = "seq1"; id_loc = dummy_loc }, AST_SRC.Triangle);
-    ({ AST_SRC.id = "seq2"; id_loc = dummy_loc }, AST_SRC.Noise)
+    ("seq1", AST_SRC.Triangle);
+    ("seq2", AST_SRC.Noise)
   ] in
 
   let expected_voice : AST_TGT.voice = [ (* The expected voice in target AST *)
-    ({ AST_TGT.id = "seq1"; id_loc = dummy_loc }, AST_TGT.Triangle);
-    ({ AST_TGT.id = "seq2"; id_loc = dummy_loc }, AST_TGT.Noise)
+    ("seq1", AST_TGT.Triangle);
+    ("seq2", AST_TGT.Noise)
   ] in
 
   assert_equal expected_voice (AST_TRSL.voice_translate input_voice)
