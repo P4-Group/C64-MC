@@ -24,9 +24,8 @@ Curious to learn more? You can access the complete project report [here](https:/
             * [Essential Usage](#essential-usage)
             * [Optional Flags](#optional-flags)
             * [Examples](#examples)
-    * [Code Snippet Samples](#code-snippet-samples)
+    * [Code Snippet Sample](#code-snippet-samples)
         * [Incy Wincy Spider](#incy-wincy-spider)
-        * [Poor attempt at Never gonna give you up - Rick Astley](#poor-attempt-at-never-gonna-give-you-up---rick-astley)
     * [Playing the Music](#playing-the-music)
         * [Using an Emulator (Recommended: Vice)](#using-an-emulator-recommended-vice)
     * [Socials for Project Founders](#socials-for-project-founders)
@@ -143,7 +142,7 @@ These flags can be added individually or combined to get different outputs or be
 ```
 
 
-## Code Snippet Samples
+## Code Snippet Sample
 
 More code snippets can be seen in [success tests](https://github.com/P4-Group/Neptune/tree/main/tests/succes).
 
