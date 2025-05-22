@@ -26,7 +26,6 @@ Curious to learn more? You can access the complete project report [here](https:/
             * [Examples](#examples)
     * [Code Snippet Samples](#code-snippet-samples)
         * [Incy Wincy Spider](#incy-wincy-spider)
-        * [Poor attempt at Never gonna give you up - Rick Astley](#poor-attempt-at-never-gonna-give-you-up---rick-astley)
     * [Playing the Music](#playing-the-music)
         * [Using an Emulator (Recommended: Vice)](#using-an-emulator-recommended-vice)
     * [Socials for Project Founders](#socials-for-project-founders)
