@@ -43,7 +43,7 @@ let construct_instruction (mnemonic : string) (args : string list) =
       let arg_count = List.length args in
       (* Print debug information if the debug option is enabled *)
       Runtime_options.conditional_option [Runtime_options.get_debug] (fun () ->
-        Printf.printf "Construc ting instruction: %s with arguments: %s\n" mnemonic (String.concat ", " args));
+        Printf.printf "Constructing instruction: %s with arguments: %s\n" mnemonic (String.concat ", " args));
       
       if arg_count < instr.min_args then
         raise (InsufficientInstructionArgumentsException (mnemonic, instr.min_args, arg_count))
