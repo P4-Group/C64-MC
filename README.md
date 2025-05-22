@@ -10,7 +10,7 @@ This project was created as part of a fourth-semester semester project at Aalbor
 
 Curious to learn more? You can access the complete project report [here](https://github.com/P4-Group/Neptune-Report/blob/main/SW4_Group_8.pdf).
 
-[![Watch the video](http://img.youtube.com/vi/aL3N1mXy3iM/hqdefault.jpg)](http://www.youtube.com/watch?v=EqYkdAdsoK8)
+[![Watch the video]([http://img.youtube.com/vi/aL3N1mXy3iM/hqdefault.jpg](https://i3.ytimg.com/vi/EqYkdAdsoK8/maxresdefault.jpg))](http://www.youtube.com/watch?v=EqYkdAdsoK8)
 
 ## Table of Contents
 
