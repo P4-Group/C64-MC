@@ -192,7 +192,7 @@ To achieve the most accurate emulation of the SID 6581, and well-produced sound 
 **For UNIX**:
 * select the '6581 (reSID)' and 'Resampling' options
 
-**For Windows**
+**For Windows**:
 * select the '6581' and 'Resampling' options
 
 
