@@ -24,7 +24,7 @@ Curious to learn more? You can access the complete project report [here](https:/
             * [Essential Usage](#essential-usage)
             * [Optional Flags](#optional-flags)
             * [Examples](#examples)
-    * [Code Snippet Samples](#code-snippet-samples)
+    * [Code Snippet Sample](#code-snippet-samples)
         * [Incy Wincy Spider](#incy-wincy-spider)
     * [Playing the Music](#playing-the-music)
         * [Using an Emulator (Recommended: Vice)](#using-an-emulator-recommended-vice)
@@ -140,7 +140,6 @@ These flags can be added individually or combined to get different outputs or be
 ```bash
 ./Neptune -s complex_song.nptn -dasm -sym-tab -debug
 ```
-
 
 ## Neptune Sample Code
 
