@@ -201,7 +201,7 @@ Once you've compiled your Neptune code, you'll have a .prg file (e.g., song.prg)
 ### Using an Emulator (Recommended: Vice)
 
 We highly recommend using the **Vice** emulator. Here's how to load and play your .prg file:
-(Do note to use the original emulated SID 6581 chip, you do need to change your audio settings inside Vice and set it to "6581")
+
 
 1.  **Generate your .prg file:** Compile your Neptune source file with the -dasm flag:
 
@@ -217,6 +217,7 @@ We highly recommend using the **Vice** emulator. Here's how to load and play you
 
 Vice will automatically load and run the program, and you should hear your sweet Nep**tunes**!
 
+(Do note to use the original emulated SID 6581 chip, you do need to change your audio settings inside Vice and set it to "6581")
 
 
 
