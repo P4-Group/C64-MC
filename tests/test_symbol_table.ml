@@ -54,6 +54,6 @@ let test_update_sequence1 id seq =
 
   (* Verify the updated sequence *)
   match SYM.get_sequence id with
-  | FinalSequence seq -> assert_equal expected_seq seq
-  | _ -> assert_failure "Could not retrieve the updated sequence from the symbol table"
+    | FinalSequence seq -> assert_equal expected_seq seq
+    | _ -> assert_failure "Could not retrieve the updated sequence from the symbol table"
   

@@ -67,33 +67,3 @@ let instructions = [
   { name = "Define constant Byte";          mnemonic = "dc.b";    max_args = 10;    min_args = 0 };
   { name = "Define constant Word";          mnemonic = "dc.w";    max_args = 10;    min_args = 0 };
 ]   
-
-(*
-  * Uncommented for now since we might switch to DASM (Host host meget imod det)
-  
-let directives_map = [
-  { name = "Define 8-bit byte values";          mnemonic = ".BYTE";      max_args = 1;     min_args = 1 };
-  { name = "Define 16-bit word values";         mnemonic = ".WORD";      max_args = 1;     min_args = 1 };
-  { name = "Reserve uninitialized memory";      mnemonic = ".RES";       max_args = 1;     min_args = 1 };
-  { name = "Define ASCII characters";           mnemonic = ".TEXT";      max_args = 1;     min_args = 1 };
-  { name = "Define null-terminated string";     mnemonic = ".ASCIZ";     max_args = 1;     min_args = 1 };
-  { name = "Define character values";           mnemonic = ".CHAR";      max_args = 1;     min_args = 1 };
-  { name = "Fill memory with value";            mnemonic = ".FILL";      max_args = 2;     min_args = 1 };
-  { name = "Set starting address";              mnemonic = ".ORG";       max_args = 1;     min_args = 1 };
-  { name = "Define constant or label";          mnemonic = "EQU";        max_args = 1;     min_args = 1 };
-  { name = "Mark end of source file";           mnemonic = ".END";       max_args = 0;     min_args = 0 };
-  { name = "Include another file";              mnemonic = ".INCLUDE";   max_args = 1;     min_args = 1 };
-  { name = "Define a macro";                    mnemonic = ".MACRO";     max_args = 1;     min_args = 1 };
-  { name = "End macro definition";              mnemonic = ".ENDM";      max_args = 0;     min_args = 0 };
-  { name = "Repeat block of code";              mnemonic = ".REPT";      max_args = 1;     min_args = 1 };
-  { name = "End repeat block";                  mnemonic = ".ENDR";      max_args = 0;     min_args = 0 };
-  { name = "Conditional assembly";              mnemonic = ".IF";        max_args = 1;     min_args = 1 };
-  { name = "Else block for condition";          mnemonic = ".ELSE";      max_args = 0;     min_args = 0 };
-  { name = "End conditional block";             mnemonic = ".ENDIF";     max_args = 0;     min_args = 0 };
-  { name = "Assemble if symbol defined";        mnemonic = ".IFDEF";     max_args = 1;     min_args = 1 };
-  { name = "Assemble if symbol not defined";    mnemonic = ".IFNDEF";    max_args = 1;     min_args = 1 };
-  { name = "Exit current macro";                mnemonic = ".EXITMACRO"; max_args = 0;     min_args = 0 };
-  { name = "Define local labels in macro";      mnemonic = ".LOCAL";     max_args = 1;     min_args = 1 };
-]
-*)
-
