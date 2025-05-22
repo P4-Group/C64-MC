@@ -10,6 +10,8 @@ This project was created as part of a fourth-semester semester project at Aalbor
 
 Curious to learn more? You can access the complete project report [here](https://github.com/P4-Group/Neptune-Report/blob/main/SW4_Group_8.pdf).
 
+[Click here](http://www.youtube.com/watch?v=EqYkdAdsoK8) below to hear a sample of the Tetris theme, produced by Neptune.
+
 ## Table of Contents
 
 * [Neptune - An Intermediate Language for Music Composition on the Commodore 64](#neptune---an-intermediate-language-for-music-composition-on-the-commodore-64)
@@ -24,7 +26,6 @@ Curious to learn more? You can access the complete project report [here](https:/
             * [Examples](#examples)
     * [Code Snippet Samples](#code-snippet-samples)
         * [Incy Wincy Spider](#incy-wincy-spider)
-        * [Poor attempt at Never gonna give you up - Rick Astley](#poor-attempt-at-never-gonna-give-you-up---rick-astley)
     * [Playing the Music](#playing-the-music)
         * [Using an Emulator (Recommended: Vice)](#using-an-emulator-recommended-vice)
     * [Socials for Project Founders](#socials-for-project-founders)
@@ -160,38 +161,6 @@ voice2 = [(seq2, vPulse), (seq2, sawtooth)]
 voice3 = [(seq3, vPulse), (seq3, sawtooth)]
 ```
 
-#### Poor attempt at Never gonna give you up - Rick Astley
-
-```
-tempo = 118
-timeSignature = (3,4)
-standardPitch = 440
-
-sequence neverGonnaGiveYouUpMelodyPart1 = {
-  d:4:2 d:4:2 e:4:2 d:4:2 b:4:4 b:4:4 a:4:4
-}
-
-sequence neverGonnaGiveYouUpMelodyPart2 = {
-  b:4:3 d:4:4 e:4:4 f#:4:4 e:4:4 d:4:4 b:2:3
-}
-
-sequence neverGonnaGiveYouUpBass = {
-  e:2:3 e:2:3 a:2:2 b:2:2 e:2:3 e:2:3 a:2:3 b:2:2
-}
-
-sequence simpleKick = {
-  c:2:1 r:2 c:2:1
-}
-
-sequence simpleSnare = {
-  r:2 c:2:2 r:2
-}
-
-voice1 = [(neverGonnaGiveYouUpMelodyPart1, vPulse), (neverGonnaGiveYouUpMelodyPart2, vPulse)]
-voice2 = [(neverGonnaGiveYouUpBass, sawtooth)]
-voice3 = [(simpleKick, vPulse), (simpleSnare, noise)]
-```
-
 ## Playing the Music
 
 Once you've compiled your Neptune code, you'll have a .prg file (e.g., song.prg) in your project directory. This file contains the 6502 assembly code that the Commodore 64 understands. To hear your music, you'll need a Commodore 64 emulator or actual Commodore 64 hardware.
@@ -199,6 +168,7 @@ Once you've compiled your Neptune code, you'll have a .prg file (e.g., song.prg)
 ### Using an Emulator (Recommended: Vice)
 
 We highly recommend using the **Vice** emulator. Here's how to load and play your .prg file:
+
 
 1.  **Generate your .prg file:** Compile your Neptune source file with the -dasm flag:
 
@@ -214,6 +184,7 @@ We highly recommend using the **Vice** emulator. Here's how to load and play you
 
 Vice will automatically load and run the program, and you should hear your sweet Nep**tunes**!
 
+(Do note to use the original emulated SID 6581 chip, you do need to change your audio settings inside Vice and set it to "6581")
 
 
 
