@@ -10,8 +10,8 @@ In a lexer everything is read as a sequence of characters (string).
 
 { (* Header *)
 
-    open Parser
-    open Exceptions
+  open Parser
+  open Exceptions
 
   (* ----------- Helper Functions ----------- *)
 
@@ -25,19 +25,19 @@ In a lexer everything is read as a sequence of characters (string).
     
   let ident_or_keyword =
     let hashtbl = Hashtbl.create 17 in
-      List.iter (fun (keyword,token) -> Hashtbl.add hashtbl keyword token)
-        [ "tempo", TEMPO 120;
-          "timeSignature", TIMESIG (4,4);
-          "standardPitch", STDPITCH 440;
-          "sequence", SEQUENCE;
-          "voice1", VOICE1;
-          "voice2", VOICE2;
-          "voice3", VOICE3;
-          "noise", NOISE;
-          "vPulse", VPULSE;
-          "sawtooth", SAWTOOTH;
-          "triangle", TRIANGLE;
-          ];
+    List.iter (fun (keyword,token) -> Hashtbl.add hashtbl keyword token)
+      [ "tempo", TEMPO 120;
+        "timeSignature", TIMESIG (4,4);
+        "standardPitch", STDPITCH 440;
+        "sequence", SEQUENCE;
+        "voice1", VOICE1;
+        "voice2", VOICE2;
+        "voice3", VOICE3;
+        "noise", NOISE;
+        "vPulse", VPULSE;
+        "sawtooth", SAWTOOTH;
+        "triangle", TRIANGLE;
+        ];
     fun s -> try Hashtbl.find hashtbl s with Not_found -> IDENT s
 
 
@@ -48,9 +48,9 @@ In a lexer everything is read as a sequence of characters (string).
     The function has parameter lexbuf and returns 'a. *)
 
   let unterminated_comment lexbuf : 'a =
-      let pos = Lexing.lexeme_start_p lexbuf in (* gets the start position of the current lexeme *)
-      let line = pos.pos_lnum in (* gets the linenumber of the position *)
-      raise (SyntaxErrorException (Printf.sprintf "Unterminated comment at line %d" line))
+    let pos = Lexing.lexeme_start_p lexbuf in (* gets the start position of the current lexeme *)
+    let line = pos.pos_lnum in (* gets the linenumber of the position *)
+    raise (SyntaxErrorException (Printf.sprintf "Unterminated comment at line %d" line))
 
 
   (* This helper function is used for lexical and parsing errors. It retrieves the position of the
@@ -58,17 +58,17 @@ In a lexer everything is read as a sequence of characters (string).
     position of the lexeme. *)
 
   let lexeme_error lexbuf : 'a =
-      let start_pos = Lexing.lexeme_start_p lexbuf in
-      let end_pos = Lexing.lexeme_end_p lexbuf in
-      let start_ch = start_pos.pos_cnum - start_pos.pos_bol +1 in
-      let end_ch = end_pos.pos_cnum - end_pos.pos_bol in
-      let line = start_pos.pos_lnum in
-      if start_ch == end_ch then 
-        (Printf.sprintf "at line %d character %d" 
-        line start_ch)
-      else
-        (Printf.sprintf "at line %d character %d-%d" 
-        line start_ch end_ch)
+    let start_pos = Lexing.lexeme_start_p lexbuf in
+    let end_pos = Lexing.lexeme_end_p lexbuf in
+    let start_ch = start_pos.pos_cnum - start_pos.pos_bol +1 in
+    let end_ch = end_pos.pos_cnum - end_pos.pos_bol in
+    let line = start_pos.pos_lnum in
+    if start_ch == end_ch then 
+      (Printf.sprintf "at line %d character %d" 
+      line start_ch)
+    else
+      (Printf.sprintf "at line %d character %d-%d" 
+      line start_ch end_ch)
 }
 
 (* ----------- Regular Expressions ----------- *)
@@ -116,42 +116,34 @@ continues on reading the input.
 *)
 
 rule read = parse
-    | whitespace {read lexbuf} (* calls itself recursively *)
-    | newline {Lexing.new_line lexbuf; read lexbuf} 
-    | tone {TONE (Lexing.lexeme lexbuf)}
-    | ident as s {ident_or_keyword s}
-    | int {INT (int_of_string (Lexing.lexeme lexbuf))}
-    | "/*" {comment lexbuf}
-    | "#"  {SHARP}
-    | "_" {FLAT}
-    | "{" {LCB}
-    | "}" {RCB}
-    | "[" {LSB}
-    | "]" {RSB}
-    | "(" {SP}
-    | ")" {EP}
-    | ":" {COLON}
-    | "," {COMMA}
-    | "=" {ASSIGN}
-    | eof {EOF}
-    | _ {raise (LexicalErrorException 
-        ("Invalid input, expected a token " ^ lexeme_error lexbuf))}
+  | whitespace {read lexbuf} (* calls itself recursively *)
+  | newline {Lexing.new_line lexbuf; read lexbuf} 
+  | tone {TONE (Lexing.lexeme lexbuf)}
+  | ident as s {ident_or_keyword s}
+  | int {INT (int_of_string (Lexing.lexeme lexbuf))}
+  | "/*" {comment lexbuf}
+  | "#"  {SHARP}
+  | "_" {FLAT}
+  | "{" {LCB}
+  | "}" {RCB}
+  | "[" {LSB}
+  | "]" {RSB}
+  | "(" {SP}
+  | ")" {EP}
+  | ":" {COLON}
+  | "," {COMMA}
+  | "=" {ASSIGN}
+  | eof {EOF}
+  | _ {raise (LexicalErrorException 
+      ("Invalid input, expected a token " ^ lexeme_error lexbuf))}
 
 (* ----------- Lexer States ----------- *)
 
 and comment = parse
-    | "*/" {read lexbuf}
-    | newline {unterminated_comment lexbuf} 
-    | _ {comment lexbuf}
-    | eof {unterminated_comment lexbuf}
-
-(*and sequence = parse
-    | "}" {read lexbuf}
-    | tone {TONE (tone_of_string (Lexing.lexeme lexbuf))}
-
-and channel = parse
-    | "]" {read lexbuf}
-} *)
+  | "*/" {read lexbuf}
+  | newline {unterminated_comment lexbuf} 
+  | _ {comment lexbuf}
+  | eof {unterminated_comment lexbuf}
 
 
 

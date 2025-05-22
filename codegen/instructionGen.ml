@@ -38,8 +38,8 @@ let construct_instruction (mnemonic : string) (args : string list) =
   let instruction = List.find_opt (fun instr -> instr.mnemonic = mnemonic) instructions in
   
   match instruction with (* find the instruction in the instruction set *)
-  | None -> raise (InstructionNotFoundException (Printf.sprintf "Instruction '%s' not found" mnemonic))
-  | Some instr -> (*Check if instruction has correct arguments/amount of arguments*)
+    | None -> raise (InstructionNotFoundException (Printf.sprintf "Instruction '%s' not found" mnemonic))
+    | Some instr -> (*Check if instruction has correct arguments/amount of arguments*)
       let arg_count = List.length args in
       (* Print debug information if the debug option is enabled *)
       Runtime_options.conditional_option [Runtime_options.get_debug] (fun () ->
@@ -122,29 +122,29 @@ let gen_sequence () =
   let symbol_table = Sym.get_symbol_table () in
   Hashtbl.iter (fun id value -> 
       match value with
-      | Sym.SequenceSymbol {seq;_} -> (*The note lists are here somewhere*)
-        match seq with
-        | Sym.FinalSequence seq -> (* The definition of the note lists from the target AST *)
-          write_line_tf (id ^ ":"); (*Write the label*)
+        | Sym.SequenceSymbol {seq;_} -> (*The note lists are here somewhere*)
+          match seq with
+            | Sym.FinalSequence seq -> (* The definition of the note lists from the target AST *)
+              write_line_tf (id ^ ":"); (*Write the label*)
 
-          let instruction_list = ref [] in (* Create a mutable and appendable list *)
+              let instruction_list = ref [] in (* Create a mutable and appendable list *)
 
-          List.iter (fun note ->  (*Iterate through the sequences in the symbol table*)
-            let next_instruction = (*Create the new instruction*)
-              construct_instruction "dc.b" [ 
-                  "$" ^ int_to_hex note.lowfreq; 
-                  "$" ^ int_to_hex note.highfreq; 
-                  "$" ^ int_to_hex note.duration;
-              ] in
-            instruction_list := next_instruction :: !instruction_list; (*Append the new instruction to the front of the list of instructions*)
-          ) seq;
-          
-          instruction_list := construct_instruction "dc.b" ["$FF"] :: !instruction_list;    (*Appends instruction_list with required dc.b $FF*)
-          instruction_list := List.rev !instruction_list;   (* Reverses the instruction_list list*)
-          write_instr_group !instruction_list     (*Write the instructions in the output.asm file*)
-        | Sym.RawSequence _ -> assert false; (*Do nothing, this is for the source AST*)             
+              List.iter (fun note ->  (*Iterate through the sequences in the symbol table*)
+                let next_instruction = (*Create the new instruction*)
+                  construct_instruction "dc.b" [ 
+                      "$" ^ int_to_hex note.lowfreq; 
+                      "$" ^ int_to_hex note.highfreq; 
+                      "$" ^ int_to_hex note.duration;
+                  ] in
+                instruction_list := next_instruction :: !instruction_list; (*Append the new instruction to the front of the list of instructions*)
+              ) seq;
+              
+              instruction_list := construct_instruction "dc.b" ["$FF"] :: !instruction_list;    (*Appends instruction_list with required dc.b $FF*)
+              instruction_list := List.rev !instruction_list;   (* Reverses the instruction_list list*)
+              write_instr_group !instruction_list     (*Write the instructions in the output.asm file*)
+            | Sym.RawSequence _ -> assert false; (*Do nothing, this is for the source AST*)             
 
-      (* Print the last $FF instruction after processing each symbol *)
+        (* Print the last $FF instruction after processing each symbol *)
   ) symbol_table
   
   
