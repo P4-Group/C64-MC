@@ -194,8 +194,6 @@ To achieve the most accurate emulation of the SID 6581, and well-produced sound 
 **For Windows**:
 * select the '6581' and 'Resampling' options
 
-https://www.linkedin.com/in/cecilie-foege-vebner-b898702a6/
-
 
 ## Project Founders
 
