@@ -18,7 +18,8 @@ let pp_src (ast : Ast_src.file) =
   let string_of_oct = function
     | None -> "" | Defined n -> string_of_int n in
   
-  let string_of_note = function
+  let string_of_note = function 
+  (* Turns the note into a string by concatenating the components *)
     | Sound (tone, acc, frac, oct) ->
         Printf.sprintf "%s%s %s %s"
           (string_of_tone tone) (string_of_acc acc)

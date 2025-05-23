@@ -13,7 +13,8 @@ let pp_tgt (ast : Ast_tgt.file) =
   (* Helper function to print a voice *)
   let print_voice name voice =
     Printf.printf "\nVoice %s:\n" name;
-    List.iter (fun (id, wf) ->
+    List.iter (fun (id, wf) -> (*Iterate over the voice list*)
+      (* Print the id and waveform *)
       Printf.printf "  %s: %s\n" id (string_of_waveform wf)
     ) voice
   in
