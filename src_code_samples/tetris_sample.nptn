@@ -1,0 +1,45 @@
+tempo = 150
+timeSignature = (2,4)
+standardPitch = 440
+
+sequence main = { 
+    e:4:  b:8:3 c:8: | d:8: e:16: d:16: c:8: b:8:3 | a:4:3 a:8:3 c:8: | e:4:  d:8  c:8  |
+    b:4:3 r:8   c:8  | d:4              e:4        | c:4   a:4:3      | a:4:3 r:4       |
+    r:8 d:4:    f:8: | a:4:             g:8: f:8:  | e:4:  r:8   c:8: | e:4:  d:8: c:8: | 
+    b:4:3 r:8   c:8: | d:4:             e:4:       | c:4:  a:4:3      | a:4:3 r:4       |
+}
+
+sequence bridge = {
+    e:2: | c:2: | d:2: | b:2:3 |
+}
+
+sequence bridgeA = {
+    c:2: | a:2:3 | g#:4:3 b:4:3 | e:4: r:4|
+}
+
+sequence bridgeB = {
+    a:4:3 e:4: | a:2: | g#:2 | r:2 |
+}
+
+sequence bass1 = { 
+    e:8:2  e:8:3  e:8:2  e:8:3  | e:8:2  e:8:3  e:8:2  e:8:3  | a:8:1 a:8:2 a:8:1 a:8:2 | a:8:1 a:8:2 a:8:1 a:8:2 |
+    g#:8:1 g#:8:2 g#:8:1 g#:8:2 | g#:8:1 g#:8:2 g#:8:1 g#:8:2 | a:8:1 a:8:2 a:8:1 a:8:2 | a:8:1 a:8:1 b:8:1 c:8:2 | 
+}
+
+sequence bass2 = {
+    d:8:2 d:8:3 d:8:2 d:8:3 | d:8:2 d:8:3 d:8:2 d:8:3 | c:8:2 c:8:3 c:8:2 c:8:3 | c:8:2 c:8:3 c:8:2 c:8:3 |
+    b:8:1 b:8:2 b:8:1 b:8:2 | b:8:1 b:8:2 b:8:1 b:8:2 | a:8:1 a:8:2 a:8:1 a:8:2 | a:8:1 a:8:2 a:8:1 a:8:2 |
+}
+
+sequence bass3 = {
+    a:8:1 a:8:2 a:8:1 a:8:2 | a:8:1 a:8:2 a:8:1 a:8:2 | g#:8:1 g#:8:2 g#:8:1 g#:8:2 | g#:8:1 g#:8:2 g#:8:1 g#:8:2 |
+    a:8:1 a:8:2 a:8:1 a:8:2 | a:8:1 a:8:2 a:8:1 a:8:2 | g#:8:1 g#:8:2 g#:8:1 g#:8:2 | r:8    g#:8:2 g#:4:2        |
+}
+
+sequence kickHit = { d:16:0 }
+sequence kickResonate = { d:8:0 r:16 }
+sequence snare = { a:8:5 r:8 }
+
+voice1 = [(main, triangle), (bridge, triangle), (bridgeA, triangle), (bridge, triangle), (bridgeB, triangle)]
+voice2 = [(bass1,sawtooth), (bass2, sawtooth), (bass3, sawtooth), (bass3, sawtooth)]
+voice3 = [(kickHit,noise),(kickResonate,vPulse), (snare, noise)]

@@ -1,15 +1,5 @@
-(* Specifies how to recognise the tokens - the "rules"
-to find the vocabulary in the input text.
-the actual implementation of the lexical analysis
-that scans the input and matches regular expressions to
-the tokens (defined in token.mli)
-Converts input into corresponding tokens
 
-In a lexer everything is read as a sequence of characters (string).
-*)
-
-{ (* Header *)
-
+{
   open Parser
   open Exceptions
 
@@ -74,17 +64,6 @@ In a lexer everything is read as a sequence of characters (string).
 (* ----------- Regular Expressions ----------- *)
 
 
-(* Regular Expression Patterns *)
-
-(*
- '+' one or more occurences
- '*' zero or more occurences
- '?' indicates an optional component
- '[]' indicates a range
- '()' indicates a group
- '|' indicates or
- *)
-
 let digit = ['0'-'9'] (* matches any single character between 0-9*)
 let int = digit+ (* '+' means one or more occurences of previous pattern, so 124,22,456 etc *)
 
@@ -94,26 +73,14 @@ let tone = "a" | "b" | "c" | "d" | "e" | "f" | "g" | "r"
 let letter = ['a'-'z' 'A'-'Z']
 let ident = letter (letter | '-' | digit)+ (* identity for a sequence *)
 
+
 (* ---Lexing Rules--- *)
 
-(* the lexing rules use the regular expression patterns to recognise tokens.
-Maps regex patterns to tokens - when the lexer matches a pattern
-it returns the corresponding token the parser *)
-
-(*
-{}: the action
-lexbuf: a lexical buffer that stores the text being analysed.
-Lexing: a module that provides functions for manipulating lexbuf
-lexeme: the string of characters from the input that matches the current lexer rule
-Lexing.lexeme lexbuf: extracts  the matched text as a string
-int_of_string: converts the string to an integer
-tonename_of_string: converts string to type tonename
-{read lexbuf}: read is the main function that reads the input which should
-be tokenized. The input is stored in lexbuf. If there's a white space it
-calls itself recursively since whitespaces shouldnt be tokenised so it just
-continues on reading the input.
-{newline}: updates the line counter in the lexing buffer
-*)
+(* The read function is the main function of our lexer. It reads the input and tokenises it by matching 
+   segments of the input string to the regex patterns. If it matches a regex pattern, the lexer 
+   will perform the semantic action paired with the matched regex. If it does not match any of the 
+   regex patterns, it raises a Lexical Error Exception. 
+   It uses a recursive descent approach to process the input. *)
 
 rule read = parse
   | whitespace {read lexbuf} (* calls itself recursively *)
@@ -144,6 +111,7 @@ and comment = parse
   | newline {unterminated_comment lexbuf} 
   | _ {comment lexbuf}
   | eof {unterminated_comment lexbuf}
+
 
 
 
